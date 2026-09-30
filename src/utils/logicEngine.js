@@ -1,11 +1,34 @@
-export function spin(foods, history, allergies, currentMealType, profile = null) {
+export function spin(foods, history, allergies, currentMealType, profile = null, options = {}) {
+  const {
+    budgetTier = 'ALL', // 'ALL' | 'budget' | 'standard' | 'treat'
+    weatherMood = 'normal', // 'normal' | 'rain' | 'hot' | 'quick'
+    groupAllergies = [] // Dị ứng tổng hợp từ đồng nghiệp đi cùng
+  } = options;
+
   // 1. Lọc cứng (Hard Filters)
+  // Tổng hợp dị ứng cá nhân + dị ứng nhóm
+  const allMergedAllergies = Array.from(new Set([...allergies, ...groupAllergies]));
+
   let available = foods.filter(f => !f.hidden);
   available = available.filter(f => f.categories.includes(currentMealType));
-  available = available.filter(f => !((f.allergies || f.allergens || []).some(a => allergies.includes(a))));
+  available = available.filter(f => !((f.allergies || f.allergens || []).some(a => allMergedAllergies.includes(a))));
+
+  // Lọc cứng theo Hầu bao nếu người dùng chỉ định cụ thể
+  if (budgetTier !== 'ALL') {
+    const budgetFiltered = available.filter(f => f.priceTier === budgetTier);
+    if (budgetFiltered.length > 0) {
+      available = budgetFiltered;
+    }
+  }
 
   if (available.length === 0) {
-    return { food: null, reason: "Không tìm thấy món phù hợp với cài đặt dị ứng và buổi ăn của bạn." };
+    let msg = "Không tìm thấy món phù hợp với cài đặt dị ứng và buổi ăn của bạn.";
+    if (groupAllergies.length > 0) {
+      msg = `Không tìm thấy món né được toàn bộ dị ứng chung của nhóm (${allMergedAllergies.join(', ')}). Hãy thử tắt bớt kiêng cữ!`;
+    } else if (budgetTier !== 'ALL') {
+      msg = `Không tìm thấy món thuộc phân khúc giá này cho bữa ${currentMealType}. Hãy chọn 'Tất cả mức giá'!`;
+    }
+    return { food: null, reason: msg };
   }
 
   // 2. Tính toán điểm số (Weights)
@@ -46,7 +69,51 @@ export function spin(foods, history, allergies, currentMealType, profile = null)
       weight += 6;
     }
 
-    // Ưu tiên theo Mục tiêu Sức khỏe & Thể trạng (Body Profile)
+    // 🌟 1. Ưu tiên theo Thời tiết & Tâm trạng (Weather & Mood)
+    if (weatherMood === 'rain') {
+      const isWarmSoup = (food.mood && food.mood.includes('rain')) || 
+        ['Bún bò Huế', 'Phở bò', 'Phở gà', 'Lẩu Thái', 'Bánh canh cua', 'Hủ tiếu Nam Vang', 'Cháo lòng má heo', 'Canh chua cá lóc miền Tây'].some(n => food.name.includes(n));
+      if (isWarmSoup) {
+        weight += 25;
+        reasons.push("trời mưa lạnh rất thích hợp để xì xụp một tô món nước bốc khói nghi ngút");
+      }
+    } else if (weatherMood === 'hot') {
+      const isCoolRefreshing = (food.mood && food.mood.includes('hot')) || 
+        ['Salad', 'Gỏi cuốn', 'Bún chả', 'Bún thịt nướng', 'Cơm chay', 'Rau muống'].some(n => food.name.includes(n)) ||
+        food.nutrition === 'Rau củ';
+      if (isCoolRefreshing) {
+        weight += 25;
+        reasons.push("nắng nóng oi bức, món thanh đạm mát ruột này là cứu tinh cho bạn");
+      }
+    } else if (weatherMood === 'quick') {
+      const isFastFood = (food.mood && food.mood.includes('quick')) || 
+        ['Bánh mì', 'Xôi', 'Cơm chiên', 'Gỏi cuốn'].some(n => food.name.includes(n));
+      if (isFastFood) {
+        weight += 30;
+        reasons.push("ăn nhanh gọn lẹ dưới 15 phút để bạn kịp nghỉ trưa hoặc họp gấp");
+      }
+    }
+
+    // 🌟 2. Ưu tiên theo Ngân sách nếu chọn "Cuối tháng kẹt tiền" (budget)
+    if (budgetTier === 'budget' || (food.priceTier === 'budget' && budgetTier === 'ALL' && Math.random() > 0.7)) {
+      if (food.priceTier === 'budget') {
+        weight += 12;
+        if (weatherMood === 'normal') {
+          reasons.push("món bình dân giá rẻ (tiết kiệm hầu bao cuối tháng) mà vẫn no nê chất lượng");
+        }
+      }
+    } else if (food.priceTier === 'treat' && budgetTier === 'treat') {
+      weight += 20;
+      reasons.push("tự thưởng cho bản thân một bữa thật thịnh soạn, xả stress");
+    }
+
+    // 🌟 3. Ưu tiên theo Ăn cùng đồng nghiệp (Group Harmony)
+    if (groupAllergies.length > 0) {
+      weight += 10;
+      reasons.push(`món an toàn không chạm vào bất kỳ dị ứng nào của cả nhóm (${allMergedAllergies.join(', ')})`);
+    }
+
+    // 🌟 4. Ưu tiên theo Mục tiêu Sức khỏe & Thể trạng (Body Profile)
     if (profile && profile.goal) {
       if (profile.goal === 'Giảm cân') {
         if (food.nutrition === 'Rau củ') {
@@ -89,13 +156,6 @@ export function spin(foods, history, allergies, currentMealType, profile = null)
       reasons.push("đã lâu bạn chưa có món rau xanh nào vào bụng");
     }
 
-    // Thời tiết ngẫu nhiên mô phỏng
-    const isRaining = Math.random() > 0.88;
-    if (isRaining && ['Bún bò Huế', 'Phở bò', 'Phở gà', 'Lẩu Thái', 'Bánh canh cua', 'Hủ tiếu mực ống'].includes(food.name)) {
-      weight += 10;
-      reasons.push("không khí hôm nay rất hợp để thưởng thức một tô món nước ấm nóng");
-    }
-
     if (weight < 0) weight = 0;
 
     if (reasons.length === 0) {
@@ -111,7 +171,7 @@ export function spin(foods, history, allergies, currentMealType, profile = null)
   });
 
   if (totalWeight === 0) {
-    weightedList.forEach(f => f.weight = 1);
+    weightedList.forEach(f => { f.weight = 1; });
     totalWeight = weightedList.length;
   }
 

@@ -3,9 +3,11 @@ import { useStorage, calculateBMI } from '../hooks/useStorage';
 import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
+import GroupModal from '../components/GroupModal';
 import { 
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
-  Flame, ShieldAlert, Award, Activity, Clock
+  Flame, ShieldAlert, Award, Activity, Clock, 
+  CloudRain, Sun, Zap, Users, ExternalLink, Share2
 } from 'lucide-react';
 
 const ITEM_HEIGHT = 90;
@@ -18,13 +20,26 @@ const getTranslateForIndex = (index) => {
 };
 
 export default function HomePage({ onOpenProfile }) {
-  const { foods, history, allergies, addHistory, profile } = useStorage();
+  const { 
+    foods, history, allergies, addHistory, profile, 
+    groupMembers, toggleGroupMember, addGroupMember, removeGroupMember 
+  } = useStorage();
+
   const [mealType, setMealType] = useState(() => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 11) return 'Sáng';
     if (hour >= 11 && hour < 16) return 'Trưa';
     return 'Tối';
   });
+
+  // Feature 1: Budget Mode ('ALL', 'budget', 'standard', 'treat')
+  const [budgetTier, setBudgetTier] = useState('ALL');
+
+  // Feature 2: Weather & Mood ('normal', 'rain', 'hot', 'quick')
+  const [weatherMood, setWeatherMood] = useState('normal');
+
+  // Feature 4: Group Dining Modal state
+  const [groupModalOpen, setGroupModalOpen] = useState(false);
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState(null);
@@ -54,6 +69,11 @@ export default function HomePage({ onOpenProfile }) {
 
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
 
+  // Active Group Members & Allergies
+  const activeMembers = groupMembers.filter(m => m.active);
+  const isGroupActive = activeMembers.length > 1;
+  const groupAllergies = Array.from(new Set(activeMembers.flatMap(m => m.allergies || [])));
+
   // Quick stats for recommendations
   const recentHistory = history.slice(-5);
   const missingVeggie = !recentHistory.some(h => {
@@ -72,7 +92,11 @@ export default function HomePage({ onOpenProfile }) {
 
     let picked;
     try {
-      picked = spin(foods, history, allergies, mealType, profile);
+      picked = spin(foods, history, allergies, mealType, profile, {
+        budgetTier,
+        weatherMood,
+        groupAllergies: isGroupActive ? groupAllergies : []
+      });
     } catch (err) {
       console.error("Spin calculation error:", err);
       setResult({ food: null, reason: "Đã xảy ra lỗi tính toán. Hãy kiểm tra lại sổ món!" });
@@ -82,7 +106,7 @@ export default function HomePage({ onOpenProfile }) {
     if (!picked || !picked.food) {
       setResult({ 
         food: null, 
-        reason: picked?.reason || "Không tìm thấy món ăn phù hợp với bữa ăn và dị ứng hiện tại." 
+        reason: picked?.reason || "Không tìm thấy món ăn phù hợp với bữa ăn và các bộ lọc hiện tại." 
       });
       return;
     }
@@ -90,7 +114,7 @@ export default function HomePage({ onOpenProfile }) {
     const { food, reason } = picked;
     setResult(null);
     setIsSpinning(true);
-    setStatusMessage('🔍 Đang lọc món theo thể trạng & bữa ăn...');
+    setStatusMessage('🔍 Đang lọc món theo thể trạng & bộ lọc đã chọn...');
 
     const availablePool = foods.filter(f => !f.hidden && f.categories.includes(mealType));
     const pool = availablePool.length > 2 ? availablePool : foods;
@@ -127,7 +151,13 @@ export default function HomePage({ onOpenProfile }) {
 
     // AI Status progression
     const statusTimers = [
-      setTimeout(() => setStatusMessage(`⚡ Áp dụng mục tiêu [${profile.goal || 'Cân bằng'}] & loại dị ứng...`), 700),
+      setTimeout(() => {
+        if (weatherMood === 'rain') setStatusMessage('🌧️ Đang chọn các món nước ấm nóng hổi...');
+        else if (weatherMood === 'hot') setStatusMessage('☀️ Đang ưu tiên món thanh mát hạ nhiệt...');
+        else if (weatherMood === 'quick') setStatusMessage('⚡ Đang tìm món ăn nhanh gọn < 15 phút...');
+        else if (budgetTier === 'budget') setStatusMessage('💰 Đang tìm món ngon bổ rẻ cứu cánh ví tiền...');
+        else setStatusMessage(`⚡ Áp dụng mục tiêu [${profile.goal || 'Cân bằng'}] & vóc dáng...`);
+      }, 700),
       setTimeout(() => setStatusMessage('🥗 Cân bằng dinh dưỡng 5 bữa gần nhất...'), 1500),
       setTimeout(() => setStatusMessage('🎯 Đang chốt món tối ưu nhất cho bạn...'), 2100)
     ];
@@ -167,6 +197,29 @@ export default function HomePage({ onOpenProfile }) {
     }
   };
 
+  // Feature 3: 1-Click Order Link Generators
+  const getShopeeFoodLink = (foodName) => {
+    return `https://shopeefood.vn/tim-kiem?q=${encodeURIComponent(foodName)}`;
+  };
+
+  const getGrabFoodLink = (foodName) => {
+    return `https://food.grab.com/vn/vi/restaurants?search=${encodeURIComponent(foodName)}`;
+  };
+
+  const handleShareStory = (food) => {
+    const text = `Hôm nay vũ trụ bảo mình ăn "${food.emoji} ${food.name}" qua app Nay Ăn Gì! Dinh dưỡng chuẩn vóc dáng, không còn phải đau đầu chọn món nữa.`;
+    if (navigator.share) {
+      navigator.share({
+        title: 'Nay Ăn Gì Hôm Nay?',
+        text: text,
+        url: window.location.href
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('Đã copy nội dung chia sẻ vào clipboard! Bạn có thể dán vào Zalo/Messenger.');
+    }
+  };
+
   const getNutritionBadgeClass = (nutrition) => {
     switch (nutrition) {
       case 'Thịt đỏ': return 'badge-nutrition badge-red-meat';
@@ -175,6 +228,14 @@ export default function HomePage({ onOpenProfile }) {
       case 'Rau củ': return 'badge-nutrition badge-veg';
       case 'Tinh bột': return 'badge-nutrition badge-carb';
       default: return 'badge-nutrition badge-white-meat';
+    }
+  };
+
+  const getPriceTierLabel = (tier) => {
+    switch (tier) {
+      case 'budget': return { label: 'Bình dân < 45k', color: '#10b981' };
+      case 'treat': return { label: 'Thưởng nóng > 75k', color: '#ec4899' };
+      default: return { label: 'Tiêu chuẩn 45k - 75k', color: '#38bdf8' };
     }
   };
 
@@ -189,7 +250,7 @@ export default function HomePage({ onOpenProfile }) {
             <span className="brand-badge">AI LOGIC</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Gợi ý thông minh dựa theo lịch sử ăn, thể trạng BMI & mục tiêu vóc dáng
+            Gợi ý thông minh dựa theo lịch sử, BMI, hầu bao & thời tiết hôm nay
           </p>
         </div>
 
@@ -211,7 +272,7 @@ export default function HomePage({ onOpenProfile }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           
           {/* Meal Selector Tabs */}
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '16px' }}>
+          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '12px' }}>
             <div className="meal-selector">
               {[
                 { key: 'Sáng', label: '🌅 Bữa Sáng' },
@@ -236,12 +297,99 @@ export default function HomePage({ onOpenProfile }) {
             </div>
           </div>
 
+          {/* Quick Context Filter Pills: Weather/Mood & Budget & Group Dining */}
+          <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
+            
+            {/* Weather & Mood Selector */}
+            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', scrollbarWidth: 'none' }}>
+              {[
+                { id: 'normal', label: '🌤️ Bình thường', icon: null },
+                { id: 'rain', label: '🌧️ Mưa / Lạnh', icon: CloudRain },
+                { id: 'hot', label: '☀️ Nắng nóng', icon: Sun },
+                { id: 'quick', label: '⚡ Ăn vội <15p', icon: Zap }
+              ].map(w => (
+                <button
+                  key={w.id}
+                  onClick={() => setWeatherMood(w.id)}
+                  className={`glass-pill ${weatherMood === w.id ? 'active' : ''}`}
+                  style={{
+                    padding: '5px 10px',
+                    fontSize: '0.76rem',
+                    whiteSpace: 'nowrap',
+                    cursor: 'pointer',
+                    background: weatherMood === w.id ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.03)',
+                    borderColor: weatherMood === w.id ? '#ff9100' : 'rgba(255, 255, 255, 0.08)',
+                    color: weatherMood === w.id ? '#ffa726' : 'var(--text-muted)'
+                  }}
+                >
+                  {w.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Budget & Group Buttons Row */}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              
+              {/* Budget Tier Pill */}
+              <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
+                {[
+                  { id: 'ALL', label: 'Mọi giá' },
+                  { id: 'budget', label: '💰 Ví mỏng (<45k)' },
+                  { id: 'treat', label: '🥩 Xoã (>75k)' }
+                ].map(b => (
+                  <button
+                    key={b.id}
+                    onClick={() => setBudgetTier(b.id)}
+                    className={`glass-pill ${budgetTier === b.id ? 'active' : ''}`}
+                    style={{
+                      flex: 1,
+                      padding: '5px 8px',
+                      fontSize: '0.74rem',
+                      whiteSpace: 'nowrap',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      background: budgetTier === b.id ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.03)',
+                      borderColor: budgetTier === b.id ? '#10b981' : 'rgba(255, 255, 255, 0.08)',
+                      color: budgetTier === b.id ? '#34d399' : 'var(--text-muted)'
+                    }}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Group Dining Trigger */}
+              <button
+                onClick={() => setGroupModalOpen(true)}
+                className={`glass-pill ${isGroupActive ? 'active' : ''}`}
+                style={{
+                  padding: '5px 10px',
+                  fontSize: '0.76rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  cursor: 'pointer',
+                  background: isGroupActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
+                  borderColor: isGroupActive ? '#38bdf8' : 'rgba(255, 255, 255, 0.1)',
+                  color: isGroupActive ? '#38bdf8' : 'var(--text-secondary)'
+                }}
+                title="Chọn đồng nghiệp cùng đi ăn"
+              >
+                <Users size={14} />
+                <span>{isGroupActive ? `Nhóm (${activeMembers.length})` : 'Đi cùng ai?'}</span>
+              </button>
+            </div>
+
+          </div>
+
           {/* Quick Notice Pill for Mobile */}
           <div style={{ width: '100%', maxWidth: '480px', marginBottom: '14px' }}>
-            {allergies.length > 0 && (
+            {(allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) && (
               <div className="glass-panel" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#ffb74d' }}>
                 <ShieldAlert size={16} />
-                <span>Đang né dị ứng: <strong>{allergies.join(', ')}</strong></span>
+                <span>
+                  Đang né dị ứng: <strong>{Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).join(', ')}</strong>
+                </span>
               </div>
             )}
           </div>
@@ -280,7 +428,7 @@ export default function HomePage({ onOpenProfile }) {
                           {item.nutrition}
                         </span>
                         <span>•</span>
-                        <span>{item.categories.join('/')}</span>
+                        <span>{getPriceTierLabel(item.priceTier).label}</span>
                         {((item.allergies || item.allergens || []).length > 0) && (
                           <>
                             <span>•</span>
@@ -301,7 +449,7 @@ export default function HomePage({ onOpenProfile }) {
             </div>
           </div>
 
-          {/* Result Card with Reason Hook */}
+          {/* Result Card with Reason Hook & 1-Click Order Links */}
           {result && !isSpinning && (
             <div className="pop-in" style={{ width: '100%', maxWidth: '480px' }}>
               {result.food ? (
@@ -313,22 +461,88 @@ export default function HomePage({ onOpenProfile }) {
                     
                     <div className="reason-card-title">
                       <span className="reason-card-emoji">{result.food.emoji}</span>
-                      <div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="reason-card-foodname">{result.food.name}</div>
-                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
                           <span className={getNutritionBadgeClass(result.food.nutrition)}>
                             {result.food.nutrition}
                           </span>
-                          <span className="glass-pill" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>
-                            Phù hợp: {result.food.categories.join(', ')}
+                          <span className="glass-pill" style={{ padding: '2px 8px', fontSize: '0.75rem', color: getPriceTierLabel(result.food.priceTier).color }}>
+                            {getPriceTierLabel(result.food.priceTier).label}
                           </span>
                         </div>
                       </div>
+
+                      <button
+                        onClick={() => handleShareStory(result.food)}
+                        className="btn-icon"
+                        title="Chia sẻ tấm thẻ món ăn này"
+                        style={{ padding: '8px' }}
+                      >
+                        <Share2 size={18} color="#38bdf8" />
+                      </button>
                     </div>
 
                     <div className="reason-card-text">
                       {result.reason}
                     </div>
+
+                    {/* 🛵 FEATURE 3: CẦU NỐI ĐẶT ĐỒ ĂN 1-CLICK */}
+                    <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>
+                        🛵 ĐẶT MÓN NHANH TRÊN APP GIAO HÀNG:
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <a 
+                          href={getShopeeFoodLink(result.food.name)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                            background: 'rgba(238, 77, 45, 0.15)',
+                            border: '1px solid rgba(238, 77, 45, 0.4)',
+                            color: '#ff643d',
+                            padding: '8px 10px',
+                            borderRadius: '10px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            textDecoration: 'none',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          <span>ShopeeFood</span>
+                          <ExternalLink size={13} />
+                        </a>
+
+                        <a 
+                          href={getGrabFoodLink(result.food.name)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                            background: 'rgba(0, 177, 79, 0.15)',
+                            border: '1px solid rgba(0, 177, 79, 0.4)',
+                            color: '#00b14f',
+                            padding: '8px 10px',
+                            borderRadius: '10px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            textDecoration: 'none',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          <span>GrabFood</span>
+                          <ExternalLink size={13} />
+                        </a>
+                      </div>
+                    </div>
+
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
@@ -454,6 +668,29 @@ export default function HomePage({ onOpenProfile }) {
             </p>
           </div>
 
+          {/* Group Dining Summary Widget (Desktop Only Widget) */}
+          <div className="glass-panel" style={{ borderLeft: '4px solid #38bdf8' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Users size={18} color="#38bdf8" />
+                <h4 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Chế Độ Ăn Nhóm</h4>
+              </div>
+              <button 
+                onClick={() => setGroupModalOpen(true)}
+                className="glass-pill"
+                style={{ padding: '3px 10px', fontSize: '0.74rem', cursor: 'pointer' }}
+              >
+                Cài đặt nhóm
+              </button>
+            </div>
+            
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+              {isGroupActive 
+                ? `Đang bật chế độ nhóm cùng ${activeMembers.length} người. Thuật toán tự động né các món gây dị ứng cho bất kỳ thành viên nào.`
+                : 'Bạn đang chọn món cho cá nhân. Bấm "Cài đặt nhóm" nếu hôm nay đi ăn cùng đồng nghiệp phòng ban!'}
+            </p>
+          </div>
+
           {/* Nutrition Balancing Status */}
           <div className="glass-panel">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
@@ -478,8 +715,10 @@ export default function HomePage({ onOpenProfile }) {
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Dị ứng đang lọc cứng:</span>
-                <span style={{ color: allergies.length > 0 ? '#ff7a18' : 'var(--text-dim)', fontWeight: 600 }}>
-                  {allergies.length > 0 ? `${allergies.length} loại (${allergies.join(', ')})` : 'Không có'}
+                <span style={{ color: (allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) ? '#ff7a18' : 'var(--text-dim)', fontWeight: 600 }}>
+                  {Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).length > 0 
+                    ? `${Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).join(', ')}` 
+                    : 'Không có'}
                 </span>
               </div>
             </div>
@@ -525,6 +764,16 @@ export default function HomePage({ onOpenProfile }) {
         </div>
 
       </div>
+
+      {/* Group Dining Modal */}
+      <GroupModal 
+        isOpen={groupModalOpen}
+        onClose={() => setGroupModalOpen(false)}
+        groupMembers={groupMembers}
+        toggleGroupMember={toggleGroupMember}
+        addGroupMember={addGroupMember}
+        removeGroupMember={removeGroupMember}
+      />
 
     </div>
   );

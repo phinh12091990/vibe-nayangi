@@ -32,15 +32,27 @@ export function calculateBMI(weight, height) {
   return { bmi: val, status: 'Thừa cân / Cần kiểm soát', color: '#ef4444' };
 }
 
+const DEFAULT_GROUP = [
+  { id: 'g1', name: 'Tôi', allergies: [], active: true },
+  { id: 'g2', name: 'Linh (Né tôm/mực)', allergies: ['Tôm', 'Mực'], active: false },
+  { id: 'g3', name: 'Huy (Ăn thanh đạm/né bò)', allergies: ['Bò'], active: false }
+];
+
 export function useStorage() {
   const [foods, setFoods] = useState(() => {
     const safeFoods = getSafeItem('foods', seedData);
     const arr = Array.isArray(safeFoods) ? safeFoods : seedData;
-    return arr.map(f => ({
-      ...f,
-      allergies: Array.isArray(f.allergies) ? f.allergies : (Array.isArray(f.allergens) ? f.allergens : []),
-      allergens: Array.isArray(f.allergens) ? f.allergens : (Array.isArray(f.allergies) ? f.allergies : [])
-    }));
+    return arr.map(f => {
+      // Find default seed for priceTier & mood if missing in saved storage
+      const matchSeed = seedData.find(s => s.id === f.id || s.name === f.name);
+      return {
+        ...f,
+        priceTier: f.priceTier || (matchSeed ? matchSeed.priceTier : 'standard'),
+        mood: Array.isArray(f.mood) ? f.mood : (matchSeed ? matchSeed.mood : ['hot']),
+        allergies: Array.isArray(f.allergies) ? f.allergies : (Array.isArray(f.allergens) ? f.allergens : []),
+        allergens: Array.isArray(f.allergens) ? f.allergens : (Array.isArray(f.allergies) ? f.allergies : [])
+      };
+    });
   });
 
   const [history, setHistory] = useState(() => {
@@ -58,16 +70,24 @@ export function useStorage() {
     return { ...DEFAULT_PROFILE, ...safe };
   });
 
+  const [groupMembers, setGroupMembers] = useState(() => {
+    const safe = getSafeItem('group_members', DEFAULT_GROUP);
+    return Array.isArray(safe) ? safe : DEFAULT_GROUP;
+  });
+
   useEffect(() => localStorage.setItem('foods', JSON.stringify(foods)), [foods]);
   useEffect(() => localStorage.setItem('history', JSON.stringify(history)), [history]);
   useEffect(() => localStorage.setItem('allergies', JSON.stringify(allergies)), [allergies]);
   useEffect(() => localStorage.setItem('user_profile', JSON.stringify(profile)), [profile]);
+  useEffect(() => localStorage.setItem('group_members', JSON.stringify(groupMembers)), [groupMembers]);
 
   const addFood = (food) => {
     const newFood = {
       ...food,
       id: Date.now().toString(),
       hidden: false,
+      priceTier: food.priceTier || 'standard',
+      mood: food.mood || ['hot'],
       allergies: food.allergies || [],
       allergens: food.allergies || [],
       categories: food.categories || ['Trưa', 'Tối'],
@@ -120,6 +140,24 @@ export function useStorage() {
     setProfile(prev => ({ ...prev, ...data }));
   };
 
+  const toggleGroupMember = (id) => {
+    setGroupMembers(prev => prev.map(m => m.id === id ? { ...m, active: !m.active } : m));
+  };
+
+  const addGroupMember = (name, memberAllergies = []) => {
+    const newMember = {
+      id: Date.now().toString(),
+      name,
+      allergies: memberAllergies,
+      active: true
+    };
+    setGroupMembers(prev => [...prev, newMember]);
+  };
+
+  const removeGroupMember = (id) => {
+    setGroupMembers(prev => prev.filter(m => m.id !== id));
+  };
+
   return { 
     foods, 
     setFoods, 
@@ -135,6 +173,11 @@ export function useStorage() {
     allergies, 
     toggleAllergy,
     profile,
-    updateProfile
+    updateProfile,
+    groupMembers,
+    setGroupMembers,
+    toggleGroupMember,
+    addGroupMember,
+    removeGroupMember
   };
 }

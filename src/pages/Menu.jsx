@@ -16,6 +16,7 @@ export default function MenuPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMeal, setSelectedMeal] = useState('ALL');
   const [selectedNutrition, setSelectedNutrition] = useState('ALL');
+  const [selectedPriceTier, setSelectedPriceTier] = useState('ALL');
   const [hideInactive, setHideInactive] = useState(false);
 
   // View Mode: 'compact' (siêu gọn ~48px) | 'grid' (lưới 2 cột mini) | 'cards' (thẻ lớn)
@@ -37,6 +38,7 @@ export default function MenuPage() {
     name: '',
     emoji: '🍜',
     nutrition: 'Thịt đỏ',
+    priceTier: 'standard',
     categories: ['Trưa', 'Tối'],
     allergies: []
   });
@@ -74,7 +76,7 @@ export default function MenuPage() {
   };
 
   // Reset limit when filters change during render
-  const filterKey = `${searchTerm}_${selectedMeal}_${selectedNutrition}_${hideInactive}`;
+  const filterKey = `${searchTerm}_${selectedMeal}_${selectedNutrition}_${selectedPriceTier}_${hideInactive}`;
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
   if (prevFilterKey !== filterKey) {
     setPrevFilterKey(filterKey);
@@ -95,6 +97,7 @@ export default function MenuPage() {
       if (hideInactive && food.hidden) return false;
       if (selectedMeal !== 'ALL' && !food.categories.includes(selectedMeal)) return false;
       if (selectedNutrition !== 'ALL' && food.nutrition !== selectedNutrition) return false;
+      if (selectedPriceTier !== 'ALL' && food.priceTier !== selectedPriceTier) return false;
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase();
         const matchesName = food.name.toLowerCase().includes(query);
@@ -104,7 +107,7 @@ export default function MenuPage() {
       }
       return true;
     });
-  }, [foods, searchTerm, selectedMeal, selectedNutrition, hideInactive]);
+  }, [foods, searchTerm, selectedMeal, selectedNutrition, selectedPriceTier, hideInactive]);
 
   const activeCount = foods.filter(f => !f.hidden).length;
   const displayedFoods = filteredFoods.slice(0, visibleLimit);
@@ -115,6 +118,7 @@ export default function MenuPage() {
       name: '',
       emoji: '🍜',
       nutrition: 'Thịt đỏ',
+      priceTier: 'standard',
       categories: ['Trưa', 'Tối'],
       allergies: []
     });
@@ -127,6 +131,7 @@ export default function MenuPage() {
       name: food.name,
       emoji: food.emoji || '🍜',
       nutrition: food.nutrition || 'Thịt đỏ',
+      priceTier: food.priceTier || 'standard',
       categories: [...food.categories],
       allergies: [...(food.allergies || food.allergens || [])]
     });
@@ -340,6 +345,33 @@ export default function MenuPage() {
           ))}
         </div>
 
+        {/* Price Tier Filters */}
+        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', alignItems: 'center', scrollbarWidth: 'none' }}>
+          {[
+            { id: 'ALL', label: 'Tất cả mức giá' },
+            { id: 'budget', label: '💰 Bình dân (<45k)' },
+            { id: 'standard', label: '🍛 Tiêu chuẩn (45k-75k)' },
+            { id: 'treat', label: '🥩 Thưởng nóng (>75k)' }
+          ].map(p => (
+            <button
+              key={p.id}
+              onClick={() => setSelectedPriceTier(p.id)}
+              className="glass-pill"
+              style={{
+                fontSize: '0.76rem',
+                padding: '3px 9px',
+                background: selectedPriceTier === p.id ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255,255,255,0.03)',
+                color: selectedPriceTier === p.id ? '#10b981' : 'var(--text-muted)',
+                border: selectedPriceTier === p.id ? '1px solid rgba(16, 185, 129, 0.45)' : '1px solid rgba(255,255,255,0.06)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
         {/* Nutrition Category Filters & Status Toggle */}
         <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', alignItems: 'center', scrollbarWidth: 'none' }}>
           {['ALL', ...NUTRITION_GROUPS].map(n => (
@@ -412,6 +444,9 @@ export default function MenuPage() {
                       <div className="compact-food-meta">
                         <span className={getNutritionBadgeClass(food.nutrition)} style={{ fontSize: '0.68rem', padding: '1px 6px', whiteSpace: 'nowrap', flexShrink: 0 }}>
                           {food.nutrition}
+                        </span>
+                        <span style={{ fontSize: '0.68rem', color: food.priceTier === 'budget' ? '#10b981' : food.priceTier === 'treat' ? '#ec4899' : '#38bdf8', fontWeight: 600 }}>
+                          {food.priceTier === 'budget' ? '💰<45k' : food.priceTier === 'treat' ? '🥩>75k' : '🍛45-75k'}
                         </span>
                         <span>{food.categories.join('/')}</span>
                         {allergens.length > 0 && (
@@ -722,20 +757,35 @@ export default function MenuPage() {
                 />
               </div>
 
-              {/* Nutrition Group */}
-              <div className="form-group">
-                <label className="form-label">Nhóm chất dinh dưỡng chính</label>
-                <select 
-                  className="form-select"
-                  value={formData.nutrition}
-                  onChange={e => setFormData({ ...formData, nutrition: e.target.value })}
-                >
-                  {NUTRITION_GROUPS.map(n => (
-                    <option key={n} value={n} style={{ background: '#1b1f33', color: '#ffffff' }}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
+              {/* Price Tier & Nutrition in 2 columns */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="form-group">
+                  <label className="form-label">Phân khúc giá</label>
+                  <select 
+                    className="form-select"
+                    value={formData.priceTier || 'standard'}
+                    onChange={e => setFormData({ ...formData, priceTier: e.target.value })}
+                  >
+                    <option value="budget" style={{ background: '#1b1f33', color: '#ffffff' }}>💰 Bình dân (&lt;45k)</option>
+                    <option value="standard" style={{ background: '#1b1f33', color: '#ffffff' }}>🍛 Tiêu chuẩn (45k-75k)</option>
+                    <option value="treat" style={{ background: '#1b1f33', color: '#ffffff' }}>🥩 Thưởng nóng (&gt;75k)</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Nhóm chất chính</label>
+                  <select 
+                    className="form-select"
+                    value={formData.nutrition}
+                    onChange={e => setFormData({ ...formData, nutrition: e.target.value })}
+                  >
+                    {NUTRITION_GROUPS.map(n => (
+                      <option key={n} value={n} style={{ background: '#1b1f33', color: '#ffffff' }}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Meal Types Selection */}

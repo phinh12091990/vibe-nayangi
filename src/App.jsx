@@ -19,12 +19,18 @@ function AppLayout() {
       <aside className="desktop-sidebar">
         {/* Brand */}
         <div className="sidebar-logo">
-          <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #ff5238, #ff9100)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255, 82, 56, 0.4)' }}>
+          <div style={{ width: '42px', height: '42px', minWidth: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #ff5238, #ff9100)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255, 82, 56, 0.4)' }}>
             <span style={{ fontSize: '1.5rem' }}>🍲</span>
           </div>
-          <div>
-            <h1 className="brand-title" style={{ fontSize: '1.4rem' }}>Nay Ăn Gì</h1>
-            <span className="brand-badge">AI ASSISTANT</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, overflow: 'hidden' }}>
+            <div className="brand-title" style={{ fontSize: '1.35rem', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
+              Nay Ăn Gì
+            </div>
+            <div>
+              <span className="brand-badge" style={{ fontSize: '0.65rem', padding: '2px 8px', letterSpacing: '0.04em' }}>
+                AI ASSISTANT
+              </span>
+            </div>
           </div>
         </div>
 

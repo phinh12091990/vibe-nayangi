@@ -1,4 +1,4 @@
-export function spin(foods, history, allergies, currentMealType) {
+export function spin(foods, history, allergies, currentMealType, profile = null) {
   // 1. Lọc cứng (Hard Filters)
   let available = foods.filter(f => !f.hidden);
   available = available.filter(f => f.categories.includes(currentMealType));
@@ -21,6 +21,17 @@ export function spin(foods, history, allergies, currentMealType) {
   const missingFish = !recentNutrition.includes('Cá');
   const missingVeggie = !recentNutrition.includes('Rau củ');
 
+  // Check BMI if profile exists
+  let isOverweight = false;
+  let bmiVal = null;
+  if (profile && profile.weight && profile.height) {
+    const hM = profile.height / 100;
+    if (hM > 0) {
+      bmiVal = Number((profile.weight / (hM * hM)).toFixed(1));
+      isOverweight = bmiVal >= 23; // Asian standard
+    }
+  }
+
   let totalWeight = 0;
   const weightedList = available.map(food => {
     let weight = 10; // Điểm cơ bản
@@ -28,37 +39,70 @@ export function spin(foods, history, allergies, currentMealType) {
 
     // Chống ngán
     if (food.id === lastFoodId) {
-      weight = 0; // Vừa ăn xong, không ra lại
+      weight = 0; // Vừa ăn xong bữa trước, không ra lại
     } else if (recentFoodIds.includes(food.id)) {
-      weight -= 5;
+      weight -= 6;
     } else {
-      weight += 5;
+      weight += 6;
     }
 
-    // Bổ sung dinh dưỡng
+    // Ưu tiên theo Mục tiêu Sức khỏe & Thể trạng (Body Profile)
+    if (profile && profile.goal) {
+      if (profile.goal === 'Giảm cân') {
+        if (food.nutrition === 'Rau củ') {
+          weight += 20;
+          reasons.push("món này dồi dào chất xơ, ít calo, rất chuẩn cho mục tiêu giảm mỡ của bạn");
+        } else if (food.nutrition === 'Thịt trắng') {
+          weight += 12;
+          reasons.push("đạm thịt trắng nạc giúp no lâu mà không lo tích mỡ thừa");
+        } else if (food.nutrition === 'Tinh bột') {
+          weight = Math.max(2, weight - 8);
+        }
+      } else if (profile.goal === 'Tăng cơ') {
+        if (food.nutrition === 'Thịt đỏ' || food.nutrition === 'Thịt trắng' || food.name.includes('trứng')) {
+          weight += 18;
+          reasons.push("cung cấp nguồn protein chất lượng cao hỗ trợ phát triển cơ bắp");
+        }
+      } else if (profile.goal === 'Thanh lọc') {
+        if (food.nutrition === 'Rau củ' || food.nutrition === 'Cá') {
+          weight += 18;
+          reasons.push("món ăn nhẹ bụng thanh đạm, giúp cơ thể thải độc và phục hồi");
+        }
+      }
+    }
+
+    // Ưu tiên theo BMI nếu đang thừa cân
+    if (isOverweight && (food.nutrition === 'Rau củ' || food.nutrition === 'Cá')) {
+      weight += 10;
+      if (reasons.length === 0) {
+        reasons.push(`chỉ số thể trạng BMI (${bmiVal}) gợi ý bạn nên ưu tiên món thanh nhẹ, ít dầu mỡ`);
+      }
+    }
+
+    // Bổ sung dinh dưỡng thiếu hụt 5 bữa gần nhất
     if (missingFish && food.nutrition === 'Cá') {
       weight += 15;
       reasons.push("bạn chưa ăn cá hoặc hải sản trong 5 bữa gần đây");
     }
     if (missingVeggie && food.nutrition === 'Rau củ') {
       weight += 15;
-      reasons.push("đã lâu bạn chưa có món rau nào vào bụng");
+      reasons.push("đã lâu bạn chưa có món rau xanh nào vào bụng");
     }
 
-    // Thời tiết giả lập (Giả sử 10% cơ hội trời mưa)
-    const isRaining = Math.random() > 0.9;
-    if (isRaining && ['Bún bò Huế', 'Phở bò', 'Phở gà', 'Lẩu Thái', 'Bánh canh cua'].includes(food.name)) {
+    // Thời tiết ngẫu nhiên mô phỏng
+    const isRaining = Math.random() > 0.88;
+    if (isRaining && ['Bún bò Huế', 'Phở bò', 'Phở gà', 'Lẩu Thái', 'Bánh canh cua', 'Hủ tiếu mực ống'].includes(food.name)) {
       weight += 10;
-      reasons.push("không khí hôm nay rất hợp để ăn một món nước ấm nóng");
+      reasons.push("không khí hôm nay rất hợp để thưởng thức một tô món nước ấm nóng");
     }
 
     if (weight < 0) weight = 0;
 
     if (reasons.length === 0) {
       if (recentFoodIds.includes(food.id)) {
-         reasons.push("đây là lựa chọn an toàn dù bạn mới ăn cách đây không lâu");
+        reasons.push("đây là lựa chọn an toàn dù bạn mới ăn cách đây không lâu");
       } else {
-         reasons.push(`đã khá lâu rồi bạn chưa đổi vị với món này`);
+        reasons.push("đã khá lâu rồi bạn chưa đổi vị với món này");
       }
     }
 
@@ -67,11 +111,11 @@ export function spin(foods, history, allergies, currentMealType) {
   });
 
   if (totalWeight === 0) {
-      weightedList.forEach(f => f.weight = 1);
-      totalWeight = weightedList.length;
+    weightedList.forEach(f => f.weight = 1);
+    totalWeight = weightedList.length;
   }
 
-  // 3. Quay số dựa trên trọng số
+  // 3. Quay số theo trọng số tích lũy
   let random = Math.random() * totalWeight;
   let selected = null;
   for (const item of weightedList) {

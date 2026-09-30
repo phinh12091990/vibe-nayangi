@@ -1,32 +1,36 @@
 import { useState, useEffect, useRef } from 'react';
-import { useStorage } from '../hooks/useStorage';
+import { useStorage, calculateBMI } from '../hooks/useStorage';
 import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
-import { Dna, RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle } from 'lucide-react';
+import { triggerConfetti } from '../utils/confetti';
+import { 
+  RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
+  Flame, ShieldAlert, Award, Activity, Clock
+} from 'lucide-react';
 
 const ITEM_HEIGHT = 90;
-const VIEWPORT_HEIGHT = 210;
+const VIEWPORT_HEIGHT = 220;
 const TARGET_INDEX = 24;
 
-// Helper to center item at index i in the 210px viewport
 const getTranslateForIndex = (index) => {
-  const centerOffset = (VIEWPORT_HEIGHT - ITEM_HEIGHT) / 2; // 60px
+  const centerOffset = (VIEWPORT_HEIGHT - ITEM_HEIGHT) / 2; // 65px
   return -(index * ITEM_HEIGHT - centerOffset);
 };
 
-export default function HomePage() {
-  const { foods, history, allergies, addHistory } = useStorage();
+export default function HomePage({ onOpenProfile }) {
+  const { foods, history, allergies, addHistory, profile } = useStorage();
   const [mealType, setMealType] = useState(() => {
     const hour = new Date().getHours();
-    if (hour < 10) return 'Sáng';
-    if (hour < 15) return 'Trưa';
+    if (hour >= 5 && hour < 11) return 'Sáng';
+    if (hour >= 11 && hour < 16) return 'Trưa';
     return 'Tối';
   });
+
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState(null);
   const [accepted, setAccepted] = useState(false);
   const [muted, setMuted] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('🎲 Bấm nút bên dưới để bắt đầu quay món');
+  const [statusMessage, setStatusMessage] = useState('🎲 Bấm nút bên dưới để chọn món ngẫu nhiên thông minh');
 
   // Reel states
   const [reelItems, setReelItems] = useState(() => (foods.length > 0 ? foods.slice(0, 5) : []));
@@ -35,7 +39,6 @@ export default function HomePage() {
 
   const timerRefs = useRef([]);
 
-  // Clear any scheduled timeouts on unmount
   const clearAllTimers = () => {
     timerRefs.current.forEach(t => clearTimeout(t));
     timerRefs.current = [];
@@ -45,23 +48,34 @@ export default function HomePage() {
     return () => clearAllTimers();
   }, []);
 
-  // Sync mute state
   useEffect(() => {
     soundFx.setMuted(muted);
   }, [muted]);
+
+  const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
+
+  // Quick stats for recommendations
+  const recentHistory = history.slice(-5);
+  const missingVeggie = !recentHistory.some(h => {
+    const f = foods.find(food => food.id === h.foodId);
+    return f && f.nutrition === 'Rau củ';
+  });
+  const missingFish = !recentHistory.some(h => {
+    const f = foods.find(food => food.id === h.foodId);
+    return f && f.nutrition === 'Cá';
+  });
 
   const handleSpin = () => {
     if (isSpinning) return;
     clearAllTimers();
     setAccepted(false);
 
-    // 1. Run the recommendation logic
     let picked;
     try {
-      picked = spin(foods, history, allergies, mealType);
+      picked = spin(foods, history, allergies, mealType, profile);
     } catch (err) {
       console.error("Spin calculation error:", err);
-      setResult({ food: null, reason: "Đã xảy ra lỗi tính toán dữ liệu. Hãy kiểm tra lại sổ món!" });
+      setResult({ food: null, reason: "Đã xảy ra lỗi tính toán. Hãy kiểm tra lại sổ món!" });
       return;
     }
 
@@ -76,17 +90,14 @@ export default function HomePage() {
     const { food, reason } = picked;
     setResult(null);
     setIsSpinning(true);
-    setStatusMessage('🔍 Đang quét toàn bộ món ăn trong thực đơn...');
+    setStatusMessage('🔍 Đang lọc món theo thể trạng & bữa ăn...');
 
-    // 2. Build the running reel sequence
-    // Pool of candidate foods matching the current meal type
     const availablePool = foods.filter(f => !f.hidden && f.categories.includes(mealType));
     const pool = availablePool.length > 2 ? availablePool : foods;
 
     const newReel = [];
     let lastId = null;
 
-    // Fill 24 random cycling items before the winner
     for (let i = 0; i < TARGET_INDEX; i++) {
       const candidates = pool.filter(p => p.id !== lastId);
       const pick = candidates[Math.floor(Math.random() * candidates.length)] || pool[0];
@@ -94,10 +105,8 @@ export default function HomePage() {
       lastId = pick.id;
     }
 
-    // Target item at TARGET_INDEX
     newReel.push(food);
 
-    // Add 2 buffer items below
     for (let i = 0; i < 2; i++) {
       const pick = pool[Math.floor(Math.random() * pool.length)];
       newReel.push(pick);
@@ -105,26 +114,26 @@ export default function HomePage() {
 
     setReelItems(newReel);
 
-    // Step A: Snap to top immediately without transition
+    // Reset reel position
     setTransitionStyle('none');
     setOffsetY(getTranslateForIndex(0));
 
-    // Step B: Start rolling with smooth deceleration
+    // Animate reel
     const startTimeout = setTimeout(() => {
       setTransitionStyle('transform 2.5s cubic-bezier(0.12, 0.85, 0.25, 1)');
       setOffsetY(getTranslateForIndex(TARGET_INDEX));
     }, 40);
     timerRefs.current.push(startTimeout);
 
-    // Dynamic AI status updates during spin
+    // AI Status progression
     const statusTimers = [
-      setTimeout(() => setStatusMessage('⚡ Đang loại món dị ứng & món gây ngán...'), 700),
-      setTimeout(() => setStatusMessage('🥗 Đang tính toán cân bằng dinh dưỡng...'), 1500),
-      setTimeout(() => setStatusMessage('🎯 Đang chốt món phù hợp nhất...'), 2100)
+      setTimeout(() => setStatusMessage(`⚡ Áp dụng mục tiêu [${profile.goal || 'Cân bằng'}] & loại dị ứng...`), 700),
+      setTimeout(() => setStatusMessage('🥗 Cân bằng dinh dưỡng 5 bữa gần nhất...'), 1500),
+      setTimeout(() => setStatusMessage('🎯 Đang chốt món tối ưu nhất cho bạn...'), 2100)
     ];
     timerRefs.current.push(...statusTimers);
 
-    // Audio & Haptic tick sequence
+    // Audio ticks
     const tickDelays = [
       60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 670, 740, 810, 890,
       980, 1080, 1190, 1310, 1440, 1580, 1730, 1900, 2100, 2320
@@ -138,11 +147,11 @@ export default function HomePage() {
       timerRefs.current.push(t);
     });
 
-    // Landing sequence at 2.5s
+    // Complete spin
     const endTimeout = setTimeout(() => {
       setIsSpinning(false);
       setResult({ food, reason });
-      setStatusMessage('✨ ĐÃ TÌM THẤY MÓN CHÂN ÁI!');
+      setStatusMessage('✨ ĐÃ TÌM THẤY MÓN PHÙ HỢP!');
       soundFx.playWin();
       try { if (navigator.vibrate) navigator.vibrate([80, 40, 120]); } catch {}
     }, 2550);
@@ -153,197 +162,369 @@ export default function HomePage() {
     if (result && result.food) {
       addHistory(result.food.id, mealType);
       setAccepted(true);
-      try { if (navigator.vibrate) navigator.vibrate(50); } catch {}
+      triggerConfetti();
+      try { if (navigator.vibrate) navigator.vibrate(60); } catch {}
+    }
+  };
+
+  const getNutritionBadgeClass = (nutrition) => {
+    switch (nutrition) {
+      case 'Thịt đỏ': return 'badge-nutrition badge-red-meat';
+      case 'Thịt trắng': return 'badge-nutrition badge-white-meat';
+      case 'Cá': return 'badge-nutrition badge-fish';
+      case 'Rau củ': return 'badge-nutrition badge-veg';
+      case 'Tinh bột': return 'badge-nutrition badge-carb';
+      default: return 'badge-nutrition badge-white-meat';
     }
   };
 
   return (
-    <div className="page-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className="page-container">
       
-      {/* Header bar */}
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div>
-          <h1>Nay Ăn Gì</h1>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Trợ lý bữa ăn thông minh</p>
+      {/* Top Header Bar */}
+      <div className="app-header" style={{ width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h2 style={{ fontSize: '1.7rem', fontWeight: 800 }}>Quay Chọn Món</h2>
+            <span className="brand-badge">AI LOGIC</span>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            Gợi ý thông minh dựa theo lịch sử ăn, thể trạng BMI & mục tiêu vóc dáng
+          </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button 
+            className="btn-icon"
             onClick={() => setMuted(!muted)}
-            style={{ 
-              background: 'var(--glass-bg)', 
-              border: '1px solid var(--glass-border)', 
-              borderRadius: '50%', 
-              width: '36px', 
-              height: '36px', 
-              color: muted ? 'var(--text-muted)' : 'var(--secondary)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              cursor: 'pointer'
-            }}
             title={muted ? "Bật âm thanh" : "Tắt âm thanh"}
           >
-            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            {muted ? <VolumeX size={19} color="var(--text-muted)" /> : <Volume2 size={19} color="#ff9100" />}
           </button>
-
-          <div className="glass-panel" style={{ padding: '6px 12px', borderRadius: '20px' }}>
-            <select 
-              value={mealType} 
-              onChange={e => {
-                setMealType(e.target.value);
-                setResult(null);
-                setAccepted(false);
-              }}
-              disabled={isSpinning}
-              style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer' }}
-            >
-              <option style={{ color: 'black' }} value="Sáng">🌅 Sáng</option>
-              <option style={{ color: 'black' }} value="Trưa">☀️ Trưa</option>
-              <option style={{ color: 'black' }} value="Tối">🌙 Tối</option>
-            </select>
-          </div>
         </div>
       </div>
 
-      {/* Main Roulette / Running Food Reel */}
-      <div className="reel-wrapper">
-        <div className={`reel-box ${result && result.food && !isSpinning ? 'winner-glow' : ''}`}>
+      {/* DUAL COLUMN RESPONSIVE GRID (DESKTOP & MOBILE) */}
+      <div className="grid-desktop-2col">
+        
+        {/* ================= LEFT COLUMN: SLOT REEL & CONTROLS ================= */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           
-          {/* Center target indicator frame */}
-          <div className="reel-selector-frame">
-            <span className="reel-marker">▶</span>
-            <span className="reel-marker">◀</span>
+          {/* Meal Selector Tabs */}
+          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '16px' }}>
+            <div className="meal-selector">
+              {[
+                { key: 'Sáng', label: '🌅 Bữa Sáng' },
+                { key: 'Trưa', label: '☀️ Bữa Trưa' },
+                { key: 'Tối', label: '🌙 Bữa Tối' }
+              ].map(m => (
+                <button
+                  key={m.key}
+                  className={`meal-pill ${mealType === m.key ? 'active' : ''}`}
+                  onClick={() => {
+                    if (!isSpinning) {
+                      setMealType(m.key);
+                      setResult(null);
+                      setAccepted(false);
+                    }
+                  }}
+                  disabled={isSpinning}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Top & bottom gradient fading mask */}
-          <div className="reel-gradient-mask" />
+          {/* Quick Notice Pill for Mobile */}
+          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '14px' }}>
+            {allergies.length > 0 && (
+              <div className="glass-panel" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#ffb74d' }}>
+                <ShieldAlert size={16} />
+                <span>Đang né dị ứng: <strong>{allergies.join(', ')}</strong></span>
+              </div>
+            )}
+          </div>
 
-          {/* The moving reel track */}
-          <div 
-            className="reel-track"
-            style={{
-              transform: `translateY(${offsetY}px)`,
-              transition: transitionStyle
-            }}
-          >
-            {reelItems.map((item, idx) => (
+          {/* Slot Machine Reel */}
+          <div className="reel-wrapper">
+            <div className={`reel-box ${result && result.food && !isSpinning ? 'winner-glow' : ''}`}>
+              
+              <div className="reel-selector-frame">
+                <span className="reel-marker">▶</span>
+                <span className="reel-marker">◀</span>
+              </div>
+
+              <div className="reel-gradient-mask" />
+
               <div 
-                key={`${item.id}-${idx}`} 
-                className="reel-item"
+                className="reel-track"
                 style={{
-                  filter: isSpinning ? 'blur(0.4px)' : 'none'
+                  transform: `translateY(${offsetY}px)`,
+                  transition: transitionStyle
                 }}
               >
-                <div className="reel-item-emoji">{item.emoji}</div>
-                <div className="reel-item-info">
-                  <div className="reel-item-name">{item.name}</div>
-                  <div className="reel-item-meta">
-                    {item.nutrition} • {item.categories.join('/')}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-        {/* Live Status indicator */}
-        <div className="reel-status-ticker">
-          <span className={isSpinning ? "pulse" : ""}>{statusMessage}</span>
-        </div>
-      </div>
-
-      {/* Result details with the killer Reason */}
-      {result && !isSpinning && (
-        <div className="pop-in" style={{ width: '100%', maxWidth: '420px' }}>
-          {result.food ? (
-            <>
-              {/* Reasoning Card */}
-              <div className="reason-card">
-                <div className="reason-card-badge">
-                  <Sparkles size={14} /> Lý do chọn món này
-                </div>
-                <div className="reason-card-text">
-                  {result.reason}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
-                {accepted ? (
+                {reelItems.map((item, idx) => (
                   <div 
-                    className="glass-panel" 
-                    style={{ 
-                      padding: '14px', 
-                      textAlign: 'center', 
-                      color: '#81c784', 
-                      fontWeight: 700, 
-                      fontSize: '1rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
+                    key={`${item.id}-${idx}`} 
+                    className="reel-item"
+                    style={{
+                      filter: isSpinning ? 'blur(0.3px)' : 'none'
                     }}
                   >
-                    <Check size={20} /> Đã lưu vào lịch sử hôm nay!
+                    <div className="reel-item-emoji">{item.emoji}</div>
+                    <div className="reel-item-info">
+                      <div className="reel-item-name">{item.name}</div>
+                      <div className="reel-item-meta">
+                        <span className={getNutritionBadgeClass(item.nutrition)}>
+                          {item.nutrition}
+                        </span>
+                        <span>•</span>
+                        <span>{item.categories.join('/')}</span>
+                        {((item.allergies || item.allergens || []).length > 0) && (
+                          <>
+                            <span>•</span>
+                            <span style={{ color: '#f87171' }}>⚠️ {(item.allergies || item.allergens).join(', ')}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  <button className="btn" onClick={handleAccept} style={{ width: '100%' }}>
-                    <Check size={20} /> CHỐT MÓN NÀY
-                  </button>
-                )}
-
-                <button 
-                  className="btn btn-secondary" 
-                  onClick={handleSpin}
-                  style={{ width: '100%' }}
-                >
-                  <RefreshCw size={18} /> Đổi món khác (Quay tiếp)
-                </button>
+                ))}
               </div>
-            </>
-          ) : (
-            <div className="glass-panel" style={{ textAlign: 'center', padding: '24px', marginTop: '16px' }}>
-              <AlertTriangle size={40} color="#ff9800" style={{ marginBottom: '12px' }} />
-              <p style={{ fontSize: '1rem', color: '#ffb74d', marginBottom: '16px' }}>
-                {result.reason}
-              </p>
-              <button className="btn btn-secondary" onClick={handleSpin} style={{ width: '100%' }}>
-                <RefreshCw size={18} /> Thử lại
+
+            </div>
+
+            {/* Live Status indicator */}
+            <div className="reel-status-ticker">
+              <span className={isSpinning ? "pulse" : ""}>{statusMessage}</span>
+            </div>
+          </div>
+
+          {/* Result Card with Reason Hook */}
+          {result && !isSpinning && (
+            <div className="pop-in" style={{ width: '100%', maxWidth: '480px' }}>
+              {result.food ? (
+                <>
+                  <div className="reason-card">
+                    <div className="reason-card-badge">
+                      <Sparkles size={14} /> Lý Do AI Chọn Món Này
+                    </div>
+                    
+                    <div className="reason-card-title">
+                      <span className="reason-card-emoji">{result.food.emoji}</span>
+                      <div>
+                        <div className="reason-card-foodname">{result.food.name}</div>
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                          <span className={getNutritionBadgeClass(result.food.nutrition)}>
+                            {result.food.nutrition}
+                          </span>
+                          <span className="glass-pill" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>
+                            Phù hợp: {result.food.categories.join(', ')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="reason-card-text">
+                      {result.reason}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+                    {accepted ? (
+                      <div 
+                        className="glass-panel" 
+                        style={{ 
+                          padding: '16px', 
+                          textAlign: 'center', 
+                          color: '#4ade80', 
+                          fontWeight: 800, 
+                          fontSize: '1.05rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '10px',
+                          background: 'rgba(34, 197, 94, 0.15)',
+                          borderColor: 'rgba(34, 197, 94, 0.4)'
+                        }}
+                      >
+                        <Award size={22} /> Đã chốt & lưu vào Nhật ký hôm nay!
+                      </div>
+                    ) : (
+                      <button className="btn btn-primary" onClick={handleAccept} style={{ width: '100%', fontSize: '1.1rem', padding: '16px' }}>
+                        <Check size={22} /> CHỐT MÓN NÀY
+                      </button>
+                    )}
+
+                    <button 
+                      className="btn btn-secondary" 
+                      onClick={handleSpin}
+                      style={{ width: '100%' }}
+                    >
+                      <RefreshCw size={18} /> Đổi món khác (Quay tiếp)
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="glass-panel" style={{ textAlign: 'center', padding: '28px', marginTop: '16px' }}>
+                  <AlertTriangle size={44} color="#ff9100" style={{ marginBottom: '14px' }} />
+                  <p style={{ fontSize: '1rem', color: '#ffb74d', marginBottom: '18px', lineHeight: 1.6 }}>
+                    {result.reason}
+                  </p>
+                  <button className="btn btn-secondary" onClick={handleSpin} style={{ width: '100%' }}>
+                    <RefreshCw size={18} /> Thử lại
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Spin trigger button */}
+          {!result && (
+            <div style={{ width: '100%', maxWidth: '480px', marginTop: '20px' }}>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleSpin}
+                disabled={isSpinning}
+                style={{ 
+                  width: '100%', 
+                  padding: '18px 24px', 
+                  fontSize: '1.2rem',
+                  opacity: isSpinning ? 0.75 : 1,
+                  cursor: isSpinning ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isSpinning ? (
+                  <>
+                    <RefreshCw className="spin-anim" size={24} /> Đang tính toán món ngon...
+                  </>
+                ) : (
+                  <>
+                    <Flame size={24} /> QUAY MÓN NGAY
+                  </>
+                )}
               </button>
             </div>
           )}
-        </div>
-      )}
 
-      {/* Spin trigger button when no result is active */}
-      {!result && (
-        <div style={{ width: '100%', maxWidth: '420px', marginTop: '20px' }}>
-          <button 
-            className="btn" 
-            onClick={handleSpin}
-            disabled={isSpinning}
-            style={{ 
-              width: '100%', 
-              padding: '18px', 
-              fontSize: '1.15rem',
-              opacity: isSpinning ? 0.7 : 1,
-              cursor: isSpinning ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {isSpinning ? (
-              <>
-                <RefreshCw className="spin-anim" size={22} /> Đang quay món...
-              </>
-            ) : (
-              <>
-                <Dna size={22} /> QUAY MÓN & TÌM LÝ DO
-              </>
-            )}
-          </button>
         </div>
-      )}
+
+        {/* ================= RIGHT COLUMN: HEALTH & INSIGHTS WIDGET (Expands on Desktop) ================= */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+          
+          {/* User Body Profile Widget */}
+          <div className="glass-panel" style={{ borderLeft: '4px solid #ff7a18' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <div>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.04em' }}>
+                  Hồ Sơ Cá Nhân Hóa
+                </span>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginTop: '2px' }}>
+                  {profile.name || 'Bạn'} • {profile.gender}
+                </h3>
+              </div>
+              <button 
+                className="glass-pill" 
+                style={{ cursor: 'pointer', padding: '5px 12px', fontSize: '0.78rem' }}
+                onClick={onOpenProfile}
+              >
+                Sửa thể trạng
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 'var(--radius-sm)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Chỉ số BMI</span>
+                <div style={{ fontSize: '1.3rem', fontWeight: 800, color: bmiInfo.color }}>
+                  {bmiInfo.bmi} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>({bmiInfo.status})</span>
+                </div>
+              </div>
+
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 'var(--radius-sm)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Mục tiêu dinh dưỡng</span>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffa000', marginTop: '3px' }}>
+                  {profile.goal || 'Cân bằng'}
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              💡 <em>Thuật toán quay số đang ưu tiên món ăn hỗ trợ vóc dáng & năng lượng dựa trên cân nặng {profile.weight}kg, chiều cao {profile.height}cm của bạn.</em>
+            </p>
+          </div>
+
+          {/* Nutrition Balancing Status */}
+          <div className="glass-panel">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <Activity size={18} color="#00e676" />
+              <h4 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Trạng Thái Cân Bằng 5 Bữa Gần Nhất</h4>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Bổ sung rau xanh:</span>
+                <span style={{ color: missingVeggie ? '#ef4444' : '#10b981', fontWeight: 700 }}>
+                  {missingVeggie ? '⚠️ Đang thiếu rau củ' : '✓ Đã đủ rau củ'}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Bổ sung cá / hải sản:</span>
+                <span style={{ color: missingFish ? '#00b4d8' : '#10b981', fontWeight: 700 }}>
+                  {missingFish ? '⚡ Đang ưu tiên nạp cá' : '✓ Đã nạp hải sản'}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Dị ứng đang lọc cứng:</span>
+                <span style={{ color: allergies.length > 0 ? '#ff7a18' : 'var(--text-dim)', fontWeight: 600 }}>
+                  {allergies.length > 0 ? `${allergies.length} loại (${allergies.join(', ')})` : 'Không có'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent History Feed Snapshot */}
+          <div className="glass-panel">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={18} color="#ff9100" />
+                <h4 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Bữa Ăn Gần Đây</h4>
+              </div>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{history.length} bữa</span>
+            </div>
+
+            {history.length === 0 ? (
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                Chưa có lịch sử. Khi bạn bấm "Chốt món này", kết quả sẽ tự động lưu vào đây.
+              </p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {history.slice(-3).reverse().map((h, idx) => {
+                  const food = foods.find(f => f.id === h.foodId);
+                  if (!food) return null;
+                  return (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.02)', padding: '6px 10px', borderRadius: '8px' }}>
+                      <span style={{ fontSize: '1.4rem' }}>{food.emoji}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {food.name}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Bữa {h.mealType} • {food.nutrition}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
   );

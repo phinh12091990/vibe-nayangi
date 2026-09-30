@@ -7,8 +7,8 @@ import GroupModal from '../components/GroupModal';
 import { 
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
   Flame, ShieldAlert, Award, Activity, Clock, 
-  CloudRain, Sun, Zap, Users, ExternalLink, Share2, MapPin,
-  Smartphone, Keyboard
+  Users, ExternalLink, Share2, MapPin,
+  Smartphone, Keyboard, ChevronRight, ChevronLeft
 } from 'lucide-react';
 
 const getDimensions = () => {
@@ -191,6 +191,7 @@ export default function HomePage({ onOpenProfile }) {
       setResult({ food, reason });
       setStatusMessage('✨ ĐÃ TÌM THẤY MÓN PHÙ HỢP!');
       soundFx.playWin();
+      triggerConfetti();
       try { if (navigator.vibrate) navigator.vibrate([80, 40, 120]); } catch {}
     }, 2550);
     timerRefs.current.push(endTimeout);
@@ -356,6 +357,46 @@ export default function HomePage({ onOpenProfile }) {
     }
   };
 
+  const getNutritionTheme = (nutrition) => {
+    switch (nutrition) {
+      case 'Thịt đỏ':
+        return {
+          bg: 'linear-gradient(135deg, rgba(255, 71, 87, 0.25), rgba(255, 71, 87, 0.08))',
+          border: 'rgba(255, 71, 87, 0.45)',
+          glow: 'rgba(255, 71, 87, 0.25)',
+          color: '#ff6b81'
+        };
+      case 'Cá':
+        return {
+          bg: 'linear-gradient(135deg, rgba(0, 180, 216, 0.25), rgba(0, 180, 216, 0.08))',
+          border: 'rgba(0, 180, 216, 0.45)',
+          glow: 'rgba(0, 180, 216, 0.25)',
+          color: '#00b4d8'
+        };
+      case 'Rau củ':
+        return {
+          bg: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.08))',
+          border: 'rgba(16, 185, 129, 0.45)',
+          glow: 'rgba(16, 185, 129, 0.25)',
+          color: '#10b981'
+        };
+      case 'Thịt trắng':
+        return {
+          bg: 'linear-gradient(135deg, rgba(255, 165, 2, 0.25), rgba(255, 165, 2, 0.08))',
+          border: 'rgba(255, 165, 2, 0.45)',
+          glow: 'rgba(255, 165, 2, 0.25)',
+          color: '#ffa502'
+        };
+      default:
+        return {
+          bg: 'linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(234, 179, 8, 0.08))',
+          border: 'rgba(234, 179, 8, 0.45)',
+          glow: 'rgba(234, 179, 8, 0.25)',
+          color: '#eab308'
+        };
+    }
+  };
+
   return (
     <div className="page-container">
       
@@ -417,27 +458,32 @@ export default function HomePage({ onOpenProfile }) {
           {/* Quick Context Filter Pills: Weather/Mood & Budget & Group Dining */}
           <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px', boxSizing: 'border-box', minWidth: 0 }}>
             
-            {/* Weather & Mood Selector (Smooth horizontal scroll on mobile) */}
-            <div className="scroll-row">
+            {/* Weather & Mood Selector (Grid 4 cột hiển thị trọn vẹn 100% không bị tràn) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', width: '100%', boxSizing: 'border-box' }}>
               {[
-                { id: 'normal', label: '🌤️ Bình thường', icon: null },
-                { id: 'rain', label: '🌧️ Mưa / Lạnh', icon: CloudRain },
-                { id: 'hot', label: '☀️ Nắng nóng', icon: Sun },
-                { id: 'quick', label: '⚡ Ăn vội <15p', icon: Zap }
+                { id: 'normal', label: '🌤️ Chuẩn', fullLabel: '🌤️ Bình thường' },
+                { id: 'rain', label: '🌧️ Mưa lạnh', fullLabel: '🌧️ Mưa / Lạnh' },
+                { id: 'hot', label: '☀️ Nắng nóng', fullLabel: '☀️ Nắng nóng' },
+                { id: 'quick', label: '⚡ Ăn vội', fullLabel: '⚡ Ăn vội <15p' }
               ].map(w => (
                 <button
                   key={w.id}
                   onClick={() => setWeatherMood(w.id)}
                   className={`glass-pill ${weatherMood === w.id ? 'active' : ''}`}
+                  title={w.fullLabel}
                   style={{
-                    padding: '5px 10px',
-                    fontSize: '0.76rem',
+                    padding: '5px 2px',
+                    fontSize: '0.73rem',
+                    fontWeight: 600,
                     whiteSpace: 'nowrap',
                     cursor: 'pointer',
-                    flexShrink: 0,
+                    justifyContent: 'center',
+                    width: '100%',
+                    textAlign: 'center',
                     background: weatherMood === w.id ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.03)',
                     borderColor: weatherMood === w.id ? '#ff9100' : 'rgba(255, 255, 255, 0.08)',
-                    color: weatherMood === w.id ? '#ffa726' : 'var(--text-muted)'
+                    color: weatherMood === w.id ? '#ffa726' : 'var(--text-muted)',
+                    boxShadow: weatherMood === w.id ? '0 2px 8px rgba(255, 145, 0, 0.25)' : 'none'
                   }}
                 >
                   {w.label}
@@ -518,8 +564,12 @@ export default function HomePage({ onOpenProfile }) {
             <div className={`reel-box ${result && result.food && !isSpinning ? 'winner-glow' : ''}`}>
               
               <div className="reel-selector-frame">
-                <span className="reel-marker">▶</span>
-                <span className="reel-marker">◀</span>
+                <div className="reel-laser-pointer left">
+                  <ChevronRight size={17} strokeWidth={3.5} />
+                </div>
+                <div className="reel-laser-pointer right">
+                  <ChevronLeft size={17} strokeWidth={3.5} />
+                </div>
               </div>
 
               <div className="reel-gradient-mask" />
@@ -531,40 +581,57 @@ export default function HomePage({ onOpenProfile }) {
                   transition: transitionStyle
                 }}
               >
-                {reelItems.map((item, idx) => (
-                  <div 
-                    key={`${item.id}-${idx}`} 
-                    className="reel-item"
-                    style={{
-                      filter: isSpinning ? 'blur(0.3px)' : 'none'
-                    }}
-                  >
-                    <div className="reel-item-emoji">{item.emoji}</div>
-                    <div className="reel-item-info">
-                      <div className="reel-item-name">{item.name}</div>
-                      <div className="reel-item-meta">
-                        <span className={getNutritionBadgeClass(item.nutrition)}>
-                          {item.nutrition}
-                        </span>
-                        <span>•</span>
-                        <span>{getPriceTierLabel(item.priceTier).label}</span>
-                        {((item.allergies || item.allergens || []).length > 0) && (
-                          <>
-                            <span>•</span>
-                            <span style={{ color: '#f87171' }}>⚠️ {(item.allergies || item.allergens).join(', ')}</span>
-                          </>
-                        )}
+                {reelItems.map((item, idx) => {
+                  const nutriTheme = getNutritionTheme(item.nutrition);
+                  const priceInfo = getPriceTierLabel(item.priceTier);
+                  const allergens = item.allergies || item.allergens || [];
+                  return (
+                    <div 
+                      key={`${item.id}-${idx}`} 
+                      className="reel-item"
+                      style={{
+                        filter: isSpinning ? 'blur(0.35px)' : 'none'
+                      }}
+                    >
+                      <div 
+                        className="reel-item-emoji"
+                        style={{
+                          background: nutriTheme.bg,
+                          borderColor: nutriTheme.border,
+                          boxShadow: `0 4px 14px ${nutriTheme.glow}`
+                        }}
+                      >
+                        {item.emoji}
+                      </div>
+                      <div className="reel-item-info">
+                        <div className="reel-item-name">{item.name}</div>
+                        <div className="reel-item-meta">
+                          <span className={getNutritionBadgeClass(item.nutrition)}>
+                            {item.nutrition}
+                          </span>
+                          <span className="price-tag-badge" style={{ color: priceInfo.color, borderColor: `${priceInfo.color}50`, background: `${priceInfo.color}15` }}>
+                            {priceInfo.label}
+                          </span>
+                          {allergens.length > 0 && (
+                            <span className="allergen-tag-badge">
+                              ⚠️ {allergens.join(', ')}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
             </div>
 
             {/* Live Status indicator */}
             <div className="reel-status-ticker">
-              <span className={isSpinning ? "pulse" : ""} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', maxWidth: '100%' }}>{statusMessage}</span>
+              <span className={isSpinning ? "pulse" : ""} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', maxWidth: '100%' }}>
+                {isSpinning && <Sparkles size={14} className="spin-anim" color="#ff9100" />}
+                {statusMessage}
+              </span>
             </div>
           </div>
 
@@ -574,12 +641,29 @@ export default function HomePage({ onOpenProfile }) {
               {result.food ? (
                 <>
                   <div className="reason-card">
-                    <div className="reason-card-badge">
-                      <Sparkles size={14} /> Lý Do AI Chọn Món Này
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <div className="reason-card-badge">
+                        <Sparkles size={14} /> LỰA CHỌN TỐI ƯU CỦA AI
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: '#4ade80', fontWeight: 700, background: 'rgba(34, 197, 94, 0.15)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
+                        ✓ Khớp 100% Tiêu Chí
+                      </span>
                     </div>
                     
                     <div className="reason-card-title">
-                      <span className="reason-card-emoji">{result.food.emoji}</span>
+                      <div 
+                        className="reel-item-emoji" 
+                        style={{ 
+                          width: '52px', 
+                          height: '52px', 
+                          fontSize: '2.4rem',
+                          background: getNutritionTheme(result.food.nutrition).bg,
+                          borderColor: getNutritionTheme(result.food.nutrition).border,
+                          boxShadow: `0 6px 18px ${getNutritionTheme(result.food.nutrition).glow}`
+                        }}
+                      >
+                        {result.food.emoji}
+                      </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="reason-card-foodname">{result.food.name}</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
@@ -600,6 +684,19 @@ export default function HomePage({ onOpenProfile }) {
                       >
                         <Share2 size={18} color="#38bdf8" />
                       </button>
+                    </div>
+
+                    {/* AI Factor Breakdown Badges */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '8px 0 10px 0' }}>
+                      <span style={{ fontSize: '0.72rem', color: '#ffb74d', background: 'rgba(255, 145, 0, 0.12)', padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(255, 145, 0, 0.25)', fontWeight: 600 }}>
+                        🎯 Bữa {mealType}
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.12)', padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)', fontWeight: 600 }}>
+                        ⚖️ BMI {bmiInfo.bmi} ({bmiInfo.status})
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: '#4ade80', background: 'rgba(74, 222, 128, 0.12)', padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(74, 222, 128, 0.25)', fontWeight: 600 }}>
+                        💡 Mục tiêu: {profile.goal || 'Cân bằng'}
+                      </span>
                     </div>
 
                     <div className="reason-card-text">

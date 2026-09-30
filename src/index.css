@@ -743,6 +743,47 @@ h1, h2, h3, h4 {
   }
 }
 
+.reel-laser-pointer {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff5238, #ff9100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(255, 145, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.4);
+  animation: pulseMarker 0.8s infinite alternate ease-in-out;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .reel-laser-pointer {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.price-tag-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+.allergen-tag-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
 .reel-marker {
   color: #ffa000;
   font-size: 1.1rem;
@@ -752,8 +793,14 @@ h1, h2, h3, h4 {
 }
 
 @keyframes pulseMarker {
-  0% { transform: scale(0.9); opacity: 0.8; }
+  0% { transform: scale(0.92); opacity: 0.85; }
   100% { transform: scale(1.15); opacity: 1; }
+}
+
+@keyframes popWinner {
+  0% { transform: scale(0.97); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
 .reel-gradient-mask {

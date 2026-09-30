@@ -311,13 +311,16 @@ h1, h2, h3, h4 {
 
 /* Nutrition tag pills */
 .badge-nutrition {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.25;
 }
 .badge-red-meat {
   background: rgba(255, 71, 87, 0.15);

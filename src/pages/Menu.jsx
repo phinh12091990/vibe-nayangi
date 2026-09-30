@@ -406,16 +406,18 @@ export default function MenuPage() {
                     <div className="compact-food-emoji">{food.emoji}</div>
                     
                     <div className="compact-food-info">
-                      <div className="compact-food-title-row">
-                        <span className="compact-food-name">{food.name}</span>
-                        <span className={getNutritionBadgeClass(food.nutrition)} style={{ fontSize: '0.68rem', padding: '1px 6px' }}>
-                          {food.nutrition}
-                        </span>
+                      <div className="compact-food-name" title={food.name}>
+                        {food.name}
                       </div>
                       <div className="compact-food-meta">
+                        <span className={getNutritionBadgeClass(food.nutrition)} style={{ fontSize: '0.68rem', padding: '1px 6px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                          {food.nutrition}
+                        </span>
                         <span>{food.categories.join('/')}</span>
                         {allergens.length > 0 && (
-                          <span style={{ color: '#f87171' }}>• ⚠️ {allergens.join(', ')}</span>
+                          <span style={{ color: '#f87171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }} title={allergens.join(', ')}>
+                            • ⚠️ {allergens.join(', ')}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -617,20 +619,20 @@ export default function MenuPage() {
 
           {/* Pagination / Load More Button */}
           {filteredFoods.length > visibleLimit && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginTop: '18px', paddingBottom: '32px' }}>
               <button
-                className="btn btn-secondary"
-                style={{ padding: '10px 20px', fontSize: '0.9rem' }}
+                className="btn btn-primary"
+                style={{ width: '100%', maxWidth: '320px', padding: '12px 20px', fontSize: '0.92rem' }}
                 onClick={() => setVisibleLimit(prev => prev + 20)}
               >
                 Xem thêm 20 món (còn {filteredFoods.length - visibleLimit})
               </button>
               <button
                 className="glass-pill"
-                style={{ cursor: 'pointer', padding: '10px 16px', fontSize: '0.85rem' }}
+                style={{ cursor: 'pointer', padding: '8px 16px', fontSize: '0.82rem' }}
                 onClick={() => setVisibleLimit(filteredFoods.length)}
               >
-                Hiện tất cả ({filteredFoods.length})
+                Hiển thị tất cả ({filteredFoods.length} món)
               </button>
             </div>
           )}

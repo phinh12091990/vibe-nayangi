@@ -11,13 +11,20 @@ import {
   Smartphone, Keyboard
 } from 'lucide-react';
 
-const ITEM_HEIGHT = 90;
-const VIEWPORT_HEIGHT = 220;
+const getDimensions = () => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  return {
+    itemHeight: isMobile ? 74 : 90,
+    viewportHeight: isMobile ? 154 : 220
+  };
+};
+
 const TARGET_INDEX = 24;
 
 const getTranslateForIndex = (index) => {
-  const centerOffset = (VIEWPORT_HEIGHT - ITEM_HEIGHT) / 2; // 65px
-  return -(index * ITEM_HEIGHT - centerOffset);
+  const { itemHeight, viewportHeight } = getDimensions();
+  const centerOffset = (viewportHeight - itemHeight) / 2; // 40px on mobile, 65px on desktop
+  return -(index * itemHeight - centerOffset);
 };
 
 export default function HomePage({ onOpenProfile }) {

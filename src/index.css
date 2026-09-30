@@ -547,7 +547,7 @@ h1, h2, h3, h4 {
 
 .reel-box {
   position: relative;
-  height: 220px;
+  height: 154px;
   background: linear-gradient(180deg, rgba(17, 21, 38, 0.9) 0%, rgba(13, 16, 28, 0.95) 100%);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -561,6 +561,12 @@ h1, h2, h3, h4 {
   transition: box-shadow 0.3s ease;
   width: 100%;
   box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .reel-box {
+    height: 220px;
+  }
 }
 
 .reel-box.winner-glow {
@@ -587,10 +593,10 @@ h1, h2, h3, h4 {
 }
 
 .reel-item {
-  height: 90px;
+  height: 74px;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 14px;
   gap: 12px;
   box-sizing: border-box;
   user-select: none;
@@ -598,17 +604,18 @@ h1, h2, h3, h4 {
   width: 100%;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .reel-item {
+    height: 90px;
     padding: 0 24px;
     gap: 18px;
   }
 }
 
 .reel-item-emoji {
-  font-size: 2.8rem;
-  min-width: 54px;
-  height: 54px;
+  font-size: 2.2rem;
+  min-width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -619,7 +626,7 @@ h1, h2, h3, h4 {
   flex-shrink: 0;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .reel-item-emoji {
     font-size: 3.4rem;
     min-width: 64px;
@@ -637,19 +644,20 @@ h1, h2, h3, h4 {
 }
 
 .reel-item-name {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-main);
   line-height: 1.25;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .reel-item-name {
     font-size: 1.35rem;
+    margin-bottom: 4px;
   }
 }
 
@@ -657,14 +665,14 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .reel-item-meta {
     gap: 8px;
     font-size: 0.85rem;
@@ -673,10 +681,10 @@ h1, h2, h3, h4 {
 
 .reel-selector-frame {
   position: absolute;
-  top: 65px;
+  top: 40px;
   left: 8px;
   right: 8px;
-  height: 90px;
+  height: 74px;
   border: 2px solid #ff7a18;
   border-radius: var(--radius-md);
   background: linear-gradient(90deg, rgba(255, 82, 56, 0.15) 0%, rgba(255, 145, 0, 0.05) 50%, rgba(255, 82, 56, 0.15) 100%);
@@ -692,10 +700,12 @@ h1, h2, h3, h4 {
   box-sizing: border-box;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   .reel-selector-frame {
+    top: 65px;
     left: 10px;
     right: 10px;
+    height: 90px;
     padding: 0 12px;
   }
 }
@@ -752,12 +762,20 @@ h1, h2, h3, h4 {
   background: linear-gradient(135deg, rgba(30, 26, 46, 0.85) 0%, rgba(20, 25, 45, 0.85) 100%);
   border: 1px solid rgba(255, 145, 0, 0.35);
   border-radius: var(--radius-lg);
-  padding: 20px;
-  margin-top: 18px;
+  padding: 14px 16px;
+  margin-top: 10px;
   text-align: left;
   box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 145, 0, 0.15);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .reason-card {
+    padding: 20px;
+    margin-top: 18px;
+  }
 }
 
 .reason-card::before {
@@ -773,45 +791,73 @@ h1, h2, h3, h4 {
 .reason-card-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
+  gap: 5px;
+  font-size: 0.74rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #ffb74d;
   background: rgba(255, 145, 0, 0.18);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   border: 1px solid rgba(255, 145, 0, 0.25);
+}
+
+@media (min-width: 640px) {
+  .reason-card-badge {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+  }
 }
 
 .reason-card-title {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .reason-card-emoji {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
+}
+
+@media (min-width: 640px) {
+  .reason-card-emoji {
+    font-size: 2.2rem;
+  }
 }
 
 .reason-card-foodname {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #ffffff;
 }
 
+@media (min-width: 640px) {
+  .reason-card-foodname {
+    font-size: 1.5rem;
+  }
+}
+
 .reason-card-text {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   font-weight: 500;
   color: #f1f5f9;
-  line-height: 1.6;
+  line-height: 1.45;
   background: rgba(0, 0, 0, 0.2);
-  padding: 12px 16px;
+  padding: 8px 12px;
   border-radius: var(--radius-md);
   border-left: 3px solid #ff9100;
+}
+
+@media (min-width: 640px) {
+  .reason-card-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    padding: 12px 16px;
+  }
 }
 
 /* Bottom Navigation Bar for Mobile */

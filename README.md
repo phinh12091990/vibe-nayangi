@@ -29,6 +29,9 @@
 - **Vòng quay Slot Machine mượt mà:** Sử dụng chuyển động CSS Bezier tối ưu tốc độ 60FPS kèm âm thanh Web Audio và rung phản hồi (Haptic).
 - **Trọng số thông minh (Weighted Random):** Tự động hạ điểm các món vừa ăn gần đây (chống ngán), tăng điểm nhóm chất thiếu hụt (rau xanh, cá, thịt trắng).
 - **Pháo hoa Confetti:** Chúc mừng khi người dùng bấm "Chốt món này" và tự động lưu vào Nhật ký dinh dưỡng.
+- ⌨️ **Phím tắt cực nhạy (Keyboard Shortcuts):** Nhấn phím `Space` để Quay số tức thì, nhấn `Enter` để Chốt món nhanh không cần rê chuột.
+- 📱 **Vũ trụ bảo ăn (Lucky Shake):** Lắc nhẹ điện thoại để kích hoạt vòng quay tự động thông qua con quay hồi chuyển (DeviceMotion).
+- 📲 **Hỗ trợ cài đặt PWA (Progressive Web App):** Hỗ trợ `manifest.json` và Service Worker, cho phép "Thêm vào màn hình chính" (Add to Home Screen) chạy mượt mà như ứng dụng App Store gốc.
 
 ### 🏋️ 2. Hồ Sơ Thể Trạng & Chỉ Số BMI (Body Profile)
 - Nhập chiều cao, cân nặng, giới tính và mục tiêu vóc dáng (*Giảm cân, Tăng cơ, Thanh lọc, Cân bằng*).

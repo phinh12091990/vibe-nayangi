@@ -7,6 +7,8 @@
     <meta name="theme-color" content="#0b0d17" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Nay Ăn Gì" />
+    <link rel="manifest" href="/manifest.json" />
     <title>Nay Ăn Gì - Trợ Lý Bữa Ăn Thông Minh</title>
     <meta name="description" content="Trợ lý chọn món ăn thông minh cho dân văn phòng với bộ luật chống ngán, cân bằng dinh dưỡng và loại trừ dị ứng." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,5 +17,12 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

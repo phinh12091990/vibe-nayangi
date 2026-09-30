@@ -7,7 +7,8 @@ import GroupModal from '../components/GroupModal';
 import { 
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
   Flame, ShieldAlert, Award, Activity, Clock, 
-  CloudRain, Sun, Zap, Users, ExternalLink, Share2, MapPin
+  CloudRain, Sun, Zap, Users, ExternalLink, Share2, MapPin,
+  Smartphone, Keyboard
 } from 'lucide-react';
 
 const ITEM_HEIGHT = 90;
@@ -196,6 +197,87 @@ export default function HomePage({ onOpenProfile }) {
       try { if (navigator.vibrate) navigator.vibrate(60); } catch {}
     }
   };
+
+  // Keep latest refs for events
+  const spinRef = useRef(handleSpin);
+  const acceptRef = useRef(handleAccept);
+  const isSpinningRef = useRef(isSpinning);
+  const resultRef = useRef(result);
+  const acceptedRef = useRef(accepted);
+
+  useEffect(() => {
+    spinRef.current = handleSpin;
+    acceptRef.current = handleAccept;
+    isSpinningRef.current = isSpinning;
+    resultRef.current = result;
+    acceptedRef.current = accepted;
+  });
+
+  // 1. KEYBOARD SHORTCUTS: Space to Spin / Enter to Accept
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Don't trigger if user is typing in an input/textarea
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (!isSpinningRef.current) {
+          spinRef.current();
+        }
+      } else if (e.code === 'Enter') {
+        if (resultRef.current && resultRef.current.food && !acceptedRef.current) {
+          e.preventDefault();
+          acceptRef.current();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // 2. LUCKY SHAKE: Shake phone to Spin
+  useEffect(() => {
+    let lastX = null;
+    let lastY = null;
+    let lastZ = null;
+    let lastShakeTime = 0;
+    const SHAKE_THRESHOLD = 16; // acceleration delta
+
+    const handleDeviceMotion = (event) => {
+      const current = event.accelerationIncludingGravity;
+      if (!current) return;
+
+      const now = Date.now();
+      if ((now - lastShakeTime) < 1800) return; // Cooldown 1.8s
+
+      if (lastX !== null && lastY !== null && lastZ !== null) {
+        const deltaX = Math.abs(current.x - lastX);
+        const deltaY = Math.abs(current.y - lastY);
+        const deltaZ = Math.abs(current.z - lastZ);
+
+        if ((deltaX + deltaY + deltaZ) > SHAKE_THRESHOLD) {
+          lastShakeTime = now;
+          if (!isSpinningRef.current) {
+            spinRef.current();
+          }
+        }
+      }
+
+      lastX = current.x;
+      lastY = current.y;
+      lastZ = current.z;
+    };
+
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', handleDeviceMotion);
+    }
+    return () => {
+      if (window.DeviceMotionEvent) {
+        window.removeEventListener('devicemotion', handleDeviceMotion);
+      }
+    };
+  }, []);
 
   // Feature 3: 1-Click Order Link Generators
   const getShopeeFoodLink = (foodName) => {
@@ -604,8 +686,12 @@ export default function HomePage({ onOpenProfile }) {
                         <Award size={22} /> Đã chốt & lưu vào Nhật ký hôm nay!
                       </div>
                     ) : (
-                      <button className="btn btn-primary" onClick={handleAccept} style={{ width: '100%', fontSize: '1.1rem', padding: '16px' }}>
-                        <Check size={22} /> CHỐT MÓN NÀY
+                      <button className="btn btn-primary" onClick={handleAccept} style={{ width: '100%', fontSize: '1.05rem', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <Check size={22} /> 
+                        <span>CHỐT MÓN NÀY</span>
+                        <span style={{ fontSize: '0.72rem', opacity: 0.85, padding: '2px 8px', background: 'rgba(0,0,0,0.25)', borderRadius: '6px' }}>
+                          [Enter]
+                        </span>
                       </button>
                     )}
 
@@ -644,7 +730,8 @@ export default function HomePage({ onOpenProfile }) {
                   padding: '18px 24px', 
                   fontSize: '1.2rem',
                   opacity: isSpinning ? 0.75 : 1,
-                  cursor: isSpinning ? 'not-allowed' : 'pointer'
+                  cursor: isSpinning ? 'not-allowed' : 'pointer',
+                  position: 'relative'
                 }}
               >
                 {isSpinning ? (
@@ -652,9 +739,20 @@ export default function HomePage({ onOpenProfile }) {
                     <RefreshCw className="spin-anim" size={24} /> Đang tính toán món ngon...
                   </>
                 ) : (
-                  <>
-                    <Flame size={24} /> QUAY MÓN NGAY
-                  </>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Flame size={24} /> QUAY MÓN NGAY
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.72rem', opacity: 0.9, fontWeight: 500 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Keyboard size={13} /> Phím <strong>Space</strong>
+                      </span>
+                      <span>•</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Smartphone size={13} /> Lắc điện thoại
+                      </span>
+                    </div>
+                  </div>
                 )}
               </button>
             </div>

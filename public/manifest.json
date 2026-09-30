@@ -1,0 +1,19 @@
+{
+  "name": "Nay Ăn Gì - AI Food Decision",
+  "short_name": "Nay Ăn Gì",
+  "description": "Trợ lý chọn món ăn thông minh cho dân văn phòng với bộ luật chống ngán, cân bằng dinh dưỡng và lọc dị ứng.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0d17",
+  "theme_color": "#ff5238",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64 128x128 192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "health"]
+}

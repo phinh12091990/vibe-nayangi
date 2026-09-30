@@ -209,9 +209,12 @@ body {
 .main-content-wrapper {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
@@ -224,15 +227,19 @@ body {
 /* Two-column Grid on Desktop */
 .grid-desktop-2col {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
   .grid-desktop-2col {
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     align-items: start;
+    gap: 24px;
   }
 }
 
@@ -291,9 +298,19 @@ h1, h2, h3, h4 {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 16px 18px;
   box-shadow: var(--shadow-sm);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .glass-panel {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+  }
 }
 
 .glass-panel:hover {
@@ -328,7 +345,10 @@ h1, h2, h3, h4 {
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+  flex-wrap: nowrap;
 }
 
 .scroll-row::-webkit-scrollbar {
@@ -453,11 +473,14 @@ h1, h2, h3, h4 {
 /* Page Container */
 .page-container {
   flex: 1;
-  padding: 16px 14px calc(110px + env(safe-area-inset-bottom, 20px)) 14px;
+  padding: 12px 12px calc(80px + env(safe-area-inset-bottom, 16px)) 12px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 @media (min-width: 1024px) {
@@ -469,7 +492,7 @@ h1, h2, h3, h4 {
 
 @media (min-width: 640px) and (max-width: 1023px) {
   .page-container {
-    padding: 20px 20px calc(110px + env(safe-area-inset-bottom, 20px)) 20px;
+    padding: 18px 18px calc(90px + env(safe-area-inset-bottom, 20px)) 18px;
   }
 }
 
@@ -478,11 +501,20 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
 }
 
 /* Segmented control for meals */
@@ -540,6 +572,7 @@ h1, h2, h3, h4 {
 .reel-wrapper {
   width: 100%;
   max-width: 480px;
+  min-width: 0;
   margin: 0 auto;
   position: relative;
   box-sizing: border-box;
@@ -741,19 +774,23 @@ h1, h2, h3, h4 {
 }
 
 .reel-status-ticker {
-  min-height: 36px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #ffb74d;
-  margin: 16px 0 8px;
+  margin: 8px 0 6px;
   text-align: center;
-  padding: 6px 16px;
+  padding: 4px 12px;
   background: rgba(255, 145, 0, 0.08);
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 145, 0, 0.15);
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Reason Card */
@@ -868,8 +905,8 @@ h1, h2, h3, h4 {
   transform: translateX(-50%);
   width: 100%;
   max-width: 600px;
-  height: 72px;
-  background: rgba(14, 18, 34, 0.92);
+  height: 62px;
+  background: rgba(14, 18, 34, 0.94);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -877,8 +914,9 @@ h1, h2, h3, h4 {
   justify-content: space-around;
   align-items: center;
   z-index: 100;
-  padding: 0 16px;
+  padding: 0 12px;
   padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
 }
 
 .nav-item {
@@ -886,12 +924,12 @@ h1, h2, h3, h4 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 3px;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  padding: 8px 18px;
+  padding: 6px 14px;
   border-radius: var(--radius-md);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;

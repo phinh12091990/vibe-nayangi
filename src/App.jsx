@@ -101,17 +101,17 @@ function AppLayout() {
       <div className="main-content-wrapper">
         
         {/* Mobile-only Top Brand Header */}
-        <header className="mobile-only-header" style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <header className="mobile-only-header" style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '1.6rem' }}>🍲</span>
+            <span style={{ fontSize: '1.4rem' }}>🍲</span>
             <div>
-              <h1 className="brand-title" style={{ fontSize: '1.25rem' }}>Nay Ăn Gì</h1>
+              <h1 className="brand-title" style={{ fontSize: '1.15rem' }}>Nay Ăn Gì</h1>
             </div>
           </div>
 
           <button 
             className="glass-pill"
-            style={{ padding: '6px 12px', fontSize: '0.8rem', cursor: 'pointer' }}
+            style={{ padding: '4px 10px', fontSize: '0.78rem', cursor: 'pointer' }}
             onClick={() => setProfileModalOpen(true)}
           >
             <User size={14} color="#ff9100" />

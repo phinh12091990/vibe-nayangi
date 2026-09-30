@@ -363,10 +363,10 @@ export default function HomePage({ onOpenProfile }) {
       <div className="app-header" style={{ width: '100%', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1, paddingRight: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <h2 style={{ fontSize: 'clamp(1.35rem, 5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>Quay Chọn Món</h2>
+            <h2 style={{ fontSize: 'clamp(1.25rem, 4.5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>Quay Chọn Món</h2>
             <span className="brand-badge">AI LOGIC</span>
           </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 0 0', lineHeight: 1.35 }}>
+          <p className="app-header-desc" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0', lineHeight: 1.3 }}>
             Gợi ý thông minh dựa theo lịch sử, BMI, hầu bao & thời tiết
           </p>
         </div>
@@ -386,10 +386,10 @@ export default function HomePage({ onOpenProfile }) {
       <div className="grid-desktop-2col">
         
         {/* ================= LEFT COLUMN: SLOT REEL & CONTROLS ================= */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
           
           {/* Meal Selector Tabs */}
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '12px', boxSizing: 'border-box' }}>
+          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
             <div className="meal-selector">
               {[
                 { key: 'Sáng', label: '🌅 Sáng' },
@@ -415,7 +415,7 @@ export default function HomePage({ onOpenProfile }) {
           </div>
 
           {/* Quick Context Filter Pills: Weather/Mood & Budget & Group Dining */}
-          <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px', boxSizing: 'border-box' }}>
+          <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px', boxSizing: 'border-box', minWidth: 0 }}>
             
             {/* Weather & Mood Selector (Smooth horizontal scroll on mobile) */}
             <div className="scroll-row">
@@ -502,7 +502,7 @@ export default function HomePage({ onOpenProfile }) {
           </div>
 
           {/* Quick Notice Pill for Mobile */}
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '14px' }}>
+          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
             {(allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) && (
               <div className="glass-panel" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#ffb74d' }}>
                 <ShieldAlert size={16} />
@@ -564,7 +564,7 @@ export default function HomePage({ onOpenProfile }) {
 
             {/* Live Status indicator */}
             <div className="reel-status-ticker">
-              <span className={isSpinning ? "pulse" : ""}>{statusMessage}</span>
+              <span className={isSpinning ? "pulse" : ""} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', maxWidth: '100%' }}>{statusMessage}</span>
             </div>
           </div>
 
@@ -764,7 +764,7 @@ export default function HomePage({ onOpenProfile }) {
 
           {/* Spin trigger button */}
           {!result && (
-            <div style={{ width: '100%', maxWidth: '480px', marginTop: '12px', boxSizing: 'border-box' }}>
+            <div style={{ width: '100%', maxWidth: '480px', marginTop: '8px', boxSizing: 'border-box', minWidth: 0 }}>
               <button 
                 className="btn btn-primary" 
                 onClick={() => {
@@ -776,8 +776,8 @@ export default function HomePage({ onOpenProfile }) {
                 disabled={isSpinning}
                 style={{ 
                   width: '100%', 
-                  padding: '12px 18px', 
-                  fontSize: '1.05rem',
+                  padding: '10px 16px', 
+                  fontSize: '1rem',
                   opacity: isSpinning ? 0.75 : 1,
                   cursor: isSpinning ? 'not-allowed' : 'pointer',
                   position: 'relative'
@@ -785,14 +785,14 @@ export default function HomePage({ onOpenProfile }) {
               >
                 {isSpinning ? (
                   <>
-                    <RefreshCw className="spin-anim" size={20} /> Đang tính toán món ngon...
+                    <RefreshCw className="spin-anim" size={18} /> Đang tính toán món ngon...
                   </>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Flame size={20} /> QUAY MÓN NGAY
+                      <Flame size={19} /> QUAY MÓN NGAY
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.7rem', opacity: 0.9, fontWeight: 500 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', opacity: 0.9, fontWeight: 500 }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         <Keyboard size={12} /> Phím <strong>Space</strong>
                       </span>
@@ -807,20 +807,24 @@ export default function HomePage({ onOpenProfile }) {
 
               {/* iOS Permission Banner if not granted yet */}
               {typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function' && !shakePermissionGranted && (
-                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                <div style={{ marginTop: '8px', textAlign: 'center' }}>
                   <button
                     onClick={requestShakePermission}
                     className="glass-pill"
                     style={{
-                      fontSize: '0.74rem',
-                      padding: '5px 12px',
+                      fontSize: '0.72rem',
+                      padding: '4px 10px',
                       color: '#ff9100',
                       borderColor: 'rgba(255, 145, 0, 0.3)',
                       background: 'rgba(255, 145, 0, 0.12)',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      maxWidth: '100%',
+                      whiteSpace: 'normal',
+                      textAlign: 'center',
+                      lineHeight: 1.35
                     }}
                   >
-                    <Smartphone size={13} /> Nhấn vào đây để bật cảm biến Lắc trên iPhone (iOS)
+                    <Smartphone size={13} style={{ flexShrink: 0 }} /> Nhấn vào đây để bật cảm biến Lắc trên iPhone (iOS)
                   </button>
                 </div>
               )}
@@ -830,60 +834,60 @@ export default function HomePage({ onOpenProfile }) {
         </div>
 
         {/* ================= RIGHT COLUMN: HEALTH & INSIGHTS WIDGET (Expands on Desktop) ================= */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
           
           {/* User Body Profile Widget */}
           <div className="glass-panel" style={{ borderLeft: '4px solid #ff7a18' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.04em' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.04em' }}>
                   Hồ Sơ Cá Nhân Hóa
                 </span>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginTop: '2px' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {profile.name || 'Bạn'} • {profile.gender}
                 </h3>
               </div>
               <button 
                 className="glass-pill" 
-                style={{ cursor: 'pointer', padding: '5px 12px', fontSize: '0.78rem' }}
+                style={{ cursor: 'pointer', padding: '4px 10px', fontSize: '0.75rem', flexShrink: 0 }}
                 onClick={onOpenProfile}
               >
                 Sửa thể trạng
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 'var(--radius-sm)' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Chỉ số BMI</span>
-                <div style={{ fontSize: '1.3rem', fontWeight: 800, color: bmiInfo.color }}>
-                  {bmiInfo.bmi} <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>({bmiInfo.status})</span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Chỉ số BMI</span>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: bmiInfo.color }}>
+                  {bmiInfo.bmi} <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>({bmiInfo.status})</span>
                 </div>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 'var(--radius-sm)' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Mục tiêu dinh dưỡng</span>
-                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffa000', marginTop: '3px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Mục tiêu dinh dưỡng</span>
+                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffa000', marginTop: '2px' }}>
                   {profile.goal || 'Cân bằng'}
                 </div>
               </div>
             </div>
 
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
               💡 <em>Thuật toán quay số đang ưu tiên món ăn hỗ trợ vóc dáng & năng lượng dựa trên cân nặng {profile.weight}kg, chiều cao {profile.height}cm của bạn.</em>
             </p>
           </div>
 
           {/* Group Dining Summary Widget (Desktop Only Widget) */}
           <div className="glass-panel" style={{ borderLeft: '4px solid #38bdf8' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Users size={18} color="#38bdf8" />
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Chế Độ Ăn Nhóm</h4>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                <Users size={18} color="#38bdf8" style={{ flexShrink: 0 }} />
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap' }}>Chế Độ Ăn Nhóm</h4>
               </div>
               <button 
                 onClick={() => setGroupModalOpen(true)}
                 className="glass-pill"
-                style={{ padding: '3px 10px', fontSize: '0.74rem', cursor: 'pointer' }}
+                style={{ padding: '3px 10px', fontSize: '0.74rem', cursor: 'pointer', flexShrink: 0 }}
               >
                 Cài đặt nhóm
               </button>
@@ -898,29 +902,29 @@ export default function HomePage({ onOpenProfile }) {
 
           {/* Nutrition Balancing Status */}
           <div className="glass-panel">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <Activity size={18} color="#00e676" />
-              <h4 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Trạng Thái Cân Bằng 5 Bữa Gần Nhất</h4>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <Activity size={18} color="#00e676" style={{ flexShrink: 0 }} />
+              <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Trạng Thái Cân Bằng 5 Bữa Gần Nhất</h4>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Bổ sung rau xanh:</span>
-                <span style={{ color: missingVeggie ? '#ef4444' : '#10b981', fontWeight: 700 }}>
+                <span style={{ color: missingVeggie ? '#ef4444' : '#10b981', fontWeight: 700, textAlign: 'right' }}>
                   {missingVeggie ? '⚠️ Đang thiếu rau củ' : '✓ Đã đủ rau củ'}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Bổ sung cá / hải sản:</span>
-                <span style={{ color: missingFish ? '#00b4d8' : '#10b981', fontWeight: 700 }}>
+                <span style={{ color: missingFish ? '#00b4d8' : '#10b981', fontWeight: 700, textAlign: 'right' }}>
                   {missingFish ? '⚡ Đang ưu tiên nạp cá' : '✓ Đã nạp hải sản'}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Dị ứng đang lọc cứng:</span>
-                <span style={{ color: (allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) ? '#ff7a18' : 'var(--text-dim)', fontWeight: 600 }}>
+                <span style={{ color: (allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) ? '#ff7a18' : 'var(--text-dim)', fontWeight: 600, textAlign: 'right' }}>
                   {Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).length > 0 
                     ? `${Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).join(', ')}` 
                     : 'Không có'}

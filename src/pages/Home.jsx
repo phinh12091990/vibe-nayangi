@@ -389,12 +389,12 @@ export default function HomePage({ onOpenProfile }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           
           {/* Meal Selector Tabs */}
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '12px' }}>
+          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '12px', boxSizing: 'border-box' }}>
             <div className="meal-selector">
               {[
-                { key: 'Sáng', label: '🌅 Bữa Sáng' },
-                { key: 'Trưa', label: '☀️ Bữa Trưa' },
-                { key: 'Tối', label: '🌙 Bữa Tối' }
+                { key: 'Sáng', label: '🌅 Sáng' },
+                { key: 'Trưa', label: '☀️ Trưa' },
+                { key: 'Tối', label: '🌙 Tối' }
               ].map(m => (
                 <button
                   key={m.key}
@@ -408,7 +408,7 @@ export default function HomePage({ onOpenProfile }) {
                   }}
                   disabled={isSpinning}
                 >
-                  {m.label}
+                  <span>{m.label}</span>
                 </button>
               ))}
             </div>
@@ -764,7 +764,7 @@ export default function HomePage({ onOpenProfile }) {
 
           {/* Spin trigger button */}
           {!result && (
-            <div style={{ width: '100%', maxWidth: '480px', marginTop: '20px' }}>
+            <div style={{ width: '100%', maxWidth: '480px', marginTop: '12px', boxSizing: 'border-box' }}>
               <button 
                 className="btn btn-primary" 
                 onClick={() => {
@@ -776,8 +776,8 @@ export default function HomePage({ onOpenProfile }) {
                 disabled={isSpinning}
                 style={{ 
                   width: '100%', 
-                  padding: '18px 24px', 
-                  fontSize: '1.2rem',
+                  padding: '12px 18px', 
+                  fontSize: '1.05rem',
                   opacity: isSpinning ? 0.75 : 1,
                   cursor: isSpinning ? 'not-allowed' : 'pointer',
                   position: 'relative'
@@ -785,20 +785,20 @@ export default function HomePage({ onOpenProfile }) {
               >
                 {isSpinning ? (
                   <>
-                    <RefreshCw className="spin-anim" size={24} /> Đang tính toán món ngon...
+                    <RefreshCw className="spin-anim" size={20} /> Đang tính toán món ngon...
                   </>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Flame size={24} /> QUAY MÓN NGAY
+                      <Flame size={20} /> QUAY MÓN NGAY
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.72rem', opacity: 0.9, fontWeight: 500 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.7rem', opacity: 0.9, fontWeight: 500 }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Keyboard size={13} /> Phím <strong>Space</strong>
+                        <Keyboard size={12} /> Phím <strong>Space</strong>
                       </span>
                       <span>•</span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Smartphone size={13} /> Lắc điện thoại
+                        <Smartphone size={12} /> Lắc điện thoại
                       </span>
                     </div>
                   </div>

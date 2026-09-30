@@ -97,7 +97,56 @@ Thuật toán chọn món `spin(foods, history, allergies, mealType, profile)` s
 
 ---
 
-## 7. Kế hoạch điều chỉnh & Lộ trình thực hiện (Action Plan)
+### 6.5. Các tính năng Đột phá Mở rộng (Next-Level Vibe Proposals)
+Để giải quyết triệt để và thực tế hơn nữa bài toán "Nay ăn gì?" của dân văn phòng:
+
+1. 💰 **Chế độ Lọc theo Hầu bao / Ngân sách (Budget Mode):**
+   - Phân khúc chi phí cho mỗi món: `Bình dân` (< 45.000đ), `Tiêu chuẩn` (45.000đ - 75.000đ), `Thưởng nóng / Xoã` (> 75.000đ).
+   - Tùy chọn "Cuối tháng kẹt tiền": Tự động ưu tiên các món ngon - bổ - rẻ (Cơm tấm sườn, bánh mì chảo, bún riêu, xôi mặn...).
+
+2. 🌦️ **Chọn nhanh theo Thời tiết & Tâm trạng (Weather & Mood Spin):**
+   - **Trời mưa / Lạnh:** Tự động tăng 50% điểm ưu tiên cho món nước nóng hổi (Phở bò, Bún bò Huế, Cháo ếch, Lẩu cá).
+   - **Trời nắng nóng:** Ưu tiên món thanh mát (Bún chả, Gỏi cuốn, Canh chua, Bún thịt nướng).
+   - **Cần ăn vội (< 15 phút):** Gợi ý món chế biến nhanh, ăn nhanh (Bánh mì, Cơm suất, Xôi).
+
+3. 👥 **Chế độ "Ăn cùng đồng nghiệp" (Group Dining Mode):**
+   - Cho phép chọn danh sách đồng nghiệp đi cùng hoặc tích hợp dị ứng chéo (Ví dụ: "Hôm nay đi cùng Lan (dị ứng hải sản) và Hùng (ăn chay)").
+   - Thuật toán tự tìm mẫu số chung an toàn và hài lòng cho cả nhóm.
+
+4. 🛵 **Cầu nối Đặt đồ ăn 1-Click (1-Click Delivery Link):**
+   - Sau khi vòng quay chốt món (ví dụ: *Phở Bò Tái Lăn*), hiển thị nút nhanh:
+     - `🛵 Tìm trên ShopeeFood` (Link thẳng search query: `https://shopeefood.vn/`)
+     - `🚗 Tìm trên GrabFood`
+   - Tiết kiệm bước mở app tìm kiếm thủ công cho người dùng.
+
+5. 📸 **Tấm thẻ Chia sẻ Mạng Xã Hội (Viral Social Share Card):**
+   - Xuất hình ảnh đẹp mắt dạng Story/Instagram: *"Vũ trụ hôm nay bảo [Tên Bạn] phải ăn Bún Đậu Mắm Tôm vì 3 ngày liền thiếu rau và cần nạp vitamin vui vẻ!"* kèm chỉ số BMI hài hước.
+
+---
+
+## 7. Báo cáo Rà soát & Tối ưu Trải nghiệm (UI/UX & Feature Audit)
+
+### 7.1. Đánh giá Giao diện Desktop (Màn hình lớn >= 1024px)
+- **Ưu điểm đã đạt được:**
+  - Bố cục Sidebar bên trái giúp chuyển tab tức thì, không che khuất nội dung.
+  - Tích hợp Mini-Profile BMI trực quan ngay dưới Logo giúp người dùng luôn nhận biết thể trạng.
+  - Tận dụng không gian bên phải hiển thị Dual-Column: Cột chính quay món / Cột phụ thống kê dinh dưỡng & lịch sử.
+- **Tối ưu đề xuất:**
+  - Bổ sung phím tắt: Nhấn phím `Space` để quay số tức thì; phím `Enter` để chốt món.
+  - Thêm bộ lọc khoảng giá trực tiếp trên thanh công cụ.
+
+### 7.2. Đánh giá Giao diện Điện thoại (Mobile Screen < 1024px)
+- **Ưu điểm đã đạt được:**
+  - Chuyển từ Card dọc cồng kềnh sang dạng Compact Row (dòng ngang thu gọn) giúp hiển thị được 6-7 món cùng lúc mà không phải cuộn mỏi tay.
+  - Thanh tìm kiếm và bộ lọc ghim nổi (Sticky) trên đầu màn hình, không bị trôi khi cuộn danh sách.
+  - Nút thao tác to bản, dễ bấm bằng ngón tay cái (Thumb-friendly zone).
+- **Tối ưu đề xuất:**
+  - Rung phản hồi (Haptic Feedback) khi quay số và khi chốt món để tăng cảm giác chân thực.
+  - Nút Scroll to Top mượt mà khi người dùng cuộn sâu qua danh sách thực đơn dài.
+
+---
+
+## 8. Kế hoạch điều chỉnh & Lộ trình thực hiện (Action Plan)
 
 | Giai đoạn | Nội dung công việc | Kết quả đầu ra |
 |---|---|---|
@@ -105,4 +154,6 @@ Thuật toán chọn món `spin(foods, history, allergies, mealType, profile)` s
 | **Phase 2** | Nâng cấp Logic Engine | Tích hợp mục tiêu vóc dáng & BMI vào công thức tính trọng số chọn món |
 | **Phase 3** | Xây dựng Giao diện Đa Nền tảng (Desktop & Mobile) | Layout co giãn 2 phiên bản: Sidebar + Dual Column Dashboard trên Desktop (>= 1024px) và Bottom Nav trên Mobile (< 1024px) |
 | **Phase 4** | Xây dựng Form Hồ Sơ Sức Khỏe (Profile Page/Modal) | Người dùng dễ dàng nhập/sửa chiều cao, cân nặng, xem phân loại BMI và chọn mục tiêu |
-| **Phase 5** | Tích hợp & Kiểm thử toàn diện | Kiểm tra responsive trên cả 2 màn hình, test logic quay và build bundle kiểm định |
+| **Phase 5** | Tối ưu UI/UX & Tinh gọn Sổ món | Compact List trên mobile, sticky search, căn chỉnh text không bị tràn |
+| **Phase 6** | Cầu nối Thực tế & Trải nghiệm Nâng cao | Tích hợp nút 1-click tìm quán trên App Giao Đồ Ăn, bộ lọc tâm trạng/thời tiết (Mưa/Nóng/Ăn vội) |
+| **Phase 7** | Đóng gói, Tài liệu & Đẩy Git | Hoàn thiện PRD, kiểm thử oxlint/vite build 100% sạch, đồng bộ repo GitHub |

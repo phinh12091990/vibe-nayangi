@@ -331,18 +331,18 @@ export default function HomePage({ onOpenProfile }) {
     <div className="page-container">
       
       {/* Top Header Bar */}
-      <div className="app-header" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h2 style={{ fontSize: '1.7rem', fontWeight: 800 }}>Quay Chọn Món</h2>
+      <div className="app-header" style={{ width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1, paddingRight: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <h2 style={{ fontSize: 'clamp(1.35rem, 5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>Quay Chọn Món</h2>
             <span className="brand-badge">AI LOGIC</span>
           </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Gợi ý thông minh dựa theo lịch sử, BMI, hầu bao & thời tiết hôm nay
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '4px 0 0 0', lineHeight: 1.35 }}>
+            Gợi ý thông minh dựa theo lịch sử, BMI, hầu bao & thời tiết
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           <button 
             className="btn-icon"
             onClick={() => setMuted(!muted)}
@@ -386,10 +386,10 @@ export default function HomePage({ onOpenProfile }) {
           </div>
 
           {/* Quick Context Filter Pills: Weather/Mood & Budget & Group Dining */}
-          <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
+          <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px', boxSizing: 'border-box' }}>
             
-            {/* Weather & Mood Selector */}
-            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', scrollbarWidth: 'none' }}>
+            {/* Weather & Mood Selector (Smooth horizontal scroll on mobile) */}
+            <div className="scroll-row">
               {[
                 { id: 'normal', label: '🌤️ Bình thường', icon: null },
                 { id: 'rain', label: '🌧️ Mưa / Lạnh', icon: CloudRain },
@@ -405,6 +405,7 @@ export default function HomePage({ onOpenProfile }) {
                     fontSize: '0.76rem',
                     whiteSpace: 'nowrap',
                     cursor: 'pointer',
+                    flexShrink: 0,
                     background: weatherMood === w.id ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.03)',
                     borderColor: weatherMood === w.id ? '#ff9100' : 'rgba(255, 255, 255, 0.08)',
                     color: weatherMood === w.id ? '#ffa726' : 'var(--text-muted)'
@@ -415,11 +416,11 @@ export default function HomePage({ onOpenProfile }) {
               ))}
             </div>
 
-            {/* Budget & Group Buttons Row */}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {/* Budget & Group Buttons Row (Scrollable or fluid wrap) */}
+            <div className="scroll-row" style={{ alignItems: 'center', gap: '6px' }}>
               
-              {/* Budget Tier Pill */}
-              <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
+              {/* Budget Tier Pills */}
+              <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                 {[
                   { id: 'ALL', label: 'Mọi giá' },
                   { id: 'budget', label: '💰 Ví mỏng (<45k)' },
@@ -430,7 +431,6 @@ export default function HomePage({ onOpenProfile }) {
                     onClick={() => setBudgetTier(b.id)}
                     className={`glass-pill ${budgetTier === b.id ? 'active' : ''}`}
                     style={{
-                      flex: 1,
                       padding: '5px 8px',
                       fontSize: '0.74rem',
                       whiteSpace: 'nowrap',
@@ -452,18 +452,20 @@ export default function HomePage({ onOpenProfile }) {
                 className={`glass-pill ${isGroupActive ? 'active' : ''}`}
                 style={{
                   padding: '5px 10px',
-                  fontSize: '0.76rem',
+                  fontSize: '0.74rem',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '5px',
                   cursor: 'pointer',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
                   background: isGroupActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
                   borderColor: isGroupActive ? '#38bdf8' : 'rgba(255, 255, 255, 0.1)',
                   color: isGroupActive ? '#38bdf8' : 'var(--text-secondary)'
                 }}
                 title="Chọn đồng nghiệp cùng đi ăn"
               >
-                <Users size={14} />
+                <Users size={13} />
                 <span>{isGroupActive ? `Nhóm (${activeMembers.length})` : 'Đi cùng ai?'}</span>
               </button>
             </div>

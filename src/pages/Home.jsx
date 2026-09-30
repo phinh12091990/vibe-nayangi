@@ -14,8 +14,8 @@ import {
 const getDimensions = () => {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
   return {
-    itemHeight: isMobile ? 74 : 90,
-    viewportHeight: isMobile ? 154 : 220
+    itemHeight: isMobile ? 82 : 96,
+    viewportHeight: isMobile ? 174 : 230
   };
 };
 
@@ -23,7 +23,7 @@ const TARGET_INDEX = 24;
 
 const getTranslateForIndex = (index) => {
   const { itemHeight, viewportHeight } = getDimensions();
-  const centerOffset = (viewportHeight - itemHeight) / 2; // 40px on mobile, 65px on desktop
+  const centerOffset = (viewportHeight - itemHeight) / 2; // 46px on mobile, 67px on desktop
   return -(index * itemHeight - centerOffset);
 };
 

@@ -131,7 +131,7 @@ function AppLayout() {
       <nav className="bottom-nav">
         <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           <Sparkles size={22} />
-          <span>Quay số</span>
+          <span>Quay món</span>
         </NavLink>
         <NavLink to="/menu" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           <Utensils size={22} />

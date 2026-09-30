@@ -313,7 +313,7 @@ export default function HistoryPage({ onOpenProfile }) {
             <div className="glass-panel" style={{ textAlign: 'center', padding: '36px 20px' }}>
               <Utensils size={40} color="var(--text-muted)" style={{ margin: '0 auto 10px', opacity: 0.5 }} />
               <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                Bạn chưa chốt món nào. Hãy ra màn hình <strong>Quay số</strong> để chọn món ngon cho bữa hôm nay nhé!
+                Bạn chưa chốt món nào. Hãy ra màn hình <strong>Quay món</strong> để chọn món ngon cho bữa hôm nay nhé!
               </p>
             </div>
           ) : (

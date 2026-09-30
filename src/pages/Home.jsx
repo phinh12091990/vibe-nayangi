@@ -7,7 +7,7 @@ import GroupModal from '../components/GroupModal';
 import { 
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
   Flame, ShieldAlert, Award, Activity, Clock, 
-  CloudRain, Sun, Zap, Users, ExternalLink, Share2
+  CloudRain, Sun, Zap, Users, ExternalLink, Share2, MapPin
 } from 'lucide-react';
 
 const ITEM_HEIGHT = 90;
@@ -199,11 +199,17 @@ export default function HomePage({ onOpenProfile }) {
 
   // Feature 3: 1-Click Order Link Generators
   const getShopeeFoodLink = (foodName) => {
-    return `https://shopeefood.vn/tim-kiem?q=${encodeURIComponent(foodName)}`;
+    // ShopeeFood web requires address selection and does not load results via query string directly on root.
+    // Foody.vn (ShopeeFood's listing partner) directly renders all restaurants in TP.HCM serving the dish:
+    return `https://www.foody.vn/ho-chi-minh/dia-diem?q=${encodeURIComponent(foodName)}`;
   };
 
   const getGrabFoodLink = (foodName) => {
     return `https://food.grab.com/vn/vi/restaurants?search=${encodeURIComponent(foodName)}`;
+  };
+
+  const getGoogleMapsLink = (foodName) => {
+    return `https://www.google.com/maps/search/quán+${encodeURIComponent(foodName)}+gần+đây`;
   };
 
   const handleShareStory = (food) => {
@@ -489,14 +495,19 @@ export default function HomePage({ onOpenProfile }) {
 
                     {/* 🛵 FEATURE 3: CẦU NỐI ĐẶT ĐỒ ĂN 1-CLICK */}
                     <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>
-                        🛵 ĐẶT MÓN NHANH TRÊN APP GIAO HÀNG:
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                          🛵 ĐẶT MÓN & TÌM QUÁN ĂN NGAY:
+                        </span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Tự động tìm kiếm</span>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                         <a 
                           href={getShopeeFoodLink(result.food.name)}
                           target="_blank"
                           rel="noopener noreferrer"
+                          title="Tìm quán bán món này trên hệ thống ShopeeFood / Foody"
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -521,6 +532,7 @@ export default function HomePage({ onOpenProfile }) {
                           href={getGrabFoodLink(result.food.name)}
                           target="_blank"
                           rel="noopener noreferrer"
+                          title="Tìm quán trên GrabFood"
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -541,6 +553,32 @@ export default function HomePage({ onOpenProfile }) {
                           <ExternalLink size={13} />
                         </a>
                       </div>
+
+                      {/* Google Maps direct search */}
+                      <a 
+                        href={getGoogleMapsLink(result.food.name)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          background: 'rgba(66, 133, 244, 0.12)',
+                          border: '1px solid rgba(66, 133, 244, 0.35)',
+                          color: '#60a5fa',
+                          padding: '8px 10px',
+                          borderRadius: '10px',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          textDecoration: 'none',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <MapPin size={14} color="#60a5fa" />
+                        <span>Xem Quán Gần Tôi (Google Maps)</span>
+                        <ExternalLink size={13} />
+                      </a>
                     </div>
 
                   </div>

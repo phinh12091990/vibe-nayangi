@@ -237,24 +237,50 @@ export default function HomePage({ onOpenProfile }) {
   }, []);
 
   // 2. LUCKY SHAKE: Shake phone to Spin
+  const [shakePermissionGranted, setShakePermissionGranted] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    // On Android / desktop or older iOS, requestPermission does not exist and motion is enabled by default
+    return typeof DeviceMotionEvent === 'undefined' || typeof DeviceMotionEvent.requestPermission !== 'function';
+  });
+
+  const requestShakePermission = async () => {
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      try {
+        const response = await DeviceMotionEvent.requestPermission();
+        if (response === 'granted') {
+          setShakePermissionGranted(true);
+          try { if (navigator.vibrate) navigator.vibrate(50); } catch {}
+          return true;
+        }
+      } catch (err) {
+        console.warn('DeviceMotionEvent permission denied/failed:', err);
+      }
+      return false;
+    } else {
+      setShakePermissionGranted(true);
+      return true;
+    }
+  };
+
   useEffect(() => {
     let lastX = null;
     let lastY = null;
     let lastZ = null;
     let lastShakeTime = 0;
-    const SHAKE_THRESHOLD = 16; // acceleration delta
+    // Lower threshold so regular natural hand shakes trigger easily
+    const SHAKE_THRESHOLD = 12;
 
     const handleDeviceMotion = (event) => {
-      const current = event.accelerationIncludingGravity;
+      const current = event.accelerationIncludingGravity || event.acceleration;
       if (!current) return;
 
       const now = Date.now();
       if ((now - lastShakeTime) < 1800) return; // Cooldown 1.8s
 
       if (lastX !== null && lastY !== null && lastZ !== null) {
-        const deltaX = Math.abs(current.x - lastX);
-        const deltaY = Math.abs(current.y - lastY);
-        const deltaZ = Math.abs(current.z - lastZ);
+        const deltaX = Math.abs((current.x || 0) - lastX);
+        const deltaY = Math.abs((current.y || 0) - lastY);
+        const deltaZ = Math.abs((current.z || 0) - lastZ);
 
         if ((deltaX + deltaY + deltaZ) > SHAKE_THRESHOLD) {
           lastShakeTime = now;
@@ -264,18 +290,14 @@ export default function HomePage({ onOpenProfile }) {
         }
       }
 
-      lastX = current.x;
-      lastY = current.y;
-      lastZ = current.z;
+      lastX = current.x || 0;
+      lastY = current.y || 0;
+      lastZ = current.z || 0;
     };
 
-    if (window.DeviceMotionEvent) {
-      window.addEventListener('devicemotion', handleDeviceMotion);
-    }
+    window.addEventListener('devicemotion', handleDeviceMotion);
     return () => {
-      if (window.DeviceMotionEvent) {
-        window.removeEventListener('devicemotion', handleDeviceMotion);
-      }
+      window.removeEventListener('devicemotion', handleDeviceMotion);
     };
   }, []);
 
@@ -725,7 +747,12 @@ export default function HomePage({ onOpenProfile }) {
             <div style={{ width: '100%', maxWidth: '480px', marginTop: '20px' }}>
               <button 
                 className="btn btn-primary" 
-                onClick={handleSpin}
+                onClick={() => {
+                  if (!shakePermissionGranted && typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                    requestShakePermission();
+                  }
+                  handleSpin();
+                }}
                 disabled={isSpinning}
                 style={{ 
                   width: '100%', 
@@ -757,6 +784,26 @@ export default function HomePage({ onOpenProfile }) {
                   </div>
                 )}
               </button>
+
+              {/* iOS Permission Banner if not granted yet */}
+              {typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function' && !shakePermissionGranted && (
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                  <button
+                    onClick={requestShakePermission}
+                    className="glass-pill"
+                    style={{
+                      fontSize: '0.74rem',
+                      padding: '5px 12px',
+                      color: '#ff9100',
+                      borderColor: 'rgba(255, 145, 0, 0.3)',
+                      background: 'rgba(255, 145, 0, 0.12)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Smartphone size={13} /> Nhấn vào đây để bật cảm biến Lắc trên iPhone (iOS)
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

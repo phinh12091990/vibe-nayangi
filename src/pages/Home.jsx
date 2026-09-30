@@ -696,31 +696,44 @@ export default function HomePage({ onOpenProfile }) {
 
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px', width: '100%' }}>
                     {accepted ? (
                       <div 
                         className="glass-panel" 
                         style={{ 
-                          padding: '16px', 
+                          flex: 1,
+                          padding: '12px', 
                           textAlign: 'center', 
                           color: '#4ade80', 
                           fontWeight: 800, 
-                          fontSize: '1.05rem',
+                          fontSize: '0.95rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '10px',
+                          gap: '8px',
                           background: 'rgba(34, 197, 94, 0.15)',
                           borderColor: 'rgba(34, 197, 94, 0.4)'
                         }}
                       >
-                        <Award size={22} /> Đã chốt & lưu vào Nhật ký hôm nay!
+                        <Award size={20} /> Đã chốt & lưu vào Nhật ký!
                       </div>
                     ) : (
-                      <button className="btn btn-primary" onClick={handleAccept} style={{ width: '100%', fontSize: '1.05rem', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                        <Check size={22} /> 
-                        <span>CHỐT MÓN NÀY</span>
-                        <span style={{ fontSize: '0.72rem', opacity: 0.85, padding: '2px 8px', background: 'rgba(0,0,0,0.25)', borderRadius: '6px' }}>
+                      <button 
+                        className="btn btn-primary" 
+                        onClick={handleAccept} 
+                        style={{ 
+                          flex: 1.2, 
+                          fontSize: '0.95rem', 
+                          padding: '12px 14px', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          gap: '6px' 
+                        }}
+                      >
+                        <Check size={18} /> 
+                        <span>CHỐT MÓN</span>
+                        <span style={{ fontSize: '0.68rem', opacity: 0.8, padding: '2px 6px', background: 'rgba(0,0,0,0.25)', borderRadius: '4px' }}>
                           [Enter]
                         </span>
                       </button>
@@ -729,9 +742,9 @@ export default function HomePage({ onOpenProfile }) {
                     <button 
                       className="btn btn-secondary" 
                       onClick={handleSpin}
-                      style={{ width: '100%' }}
+                      style={{ flex: 1, padding: '12px 10px', fontSize: '0.9rem' }}
                     >
-                      <RefreshCw size={18} /> Đổi món khác (Quay tiếp)
+                      <RefreshCw size={16} /> Quay lại
                     </button>
                   </div>
                 </>

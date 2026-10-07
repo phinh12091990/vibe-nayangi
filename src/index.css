@@ -880,6 +880,12 @@ h1, h2, h3, h4 {
   box-sizing: border-box;
 }
 
+@media (min-width: 1024px) {
+  .reel-wrapper {
+    max-width: 650px;
+  }
+}
+
 .reel-crown-header {
   display: flex;
   align-items: center;
@@ -891,6 +897,13 @@ h1, h2, h3, h4 {
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-xs);
   box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .reel-crown-header {
+    padding: 10px 20px;
+    margin-bottom: 12px;
+  }
 }
 
 .reel-live-tag {
@@ -922,6 +935,20 @@ h1, h2, h3, h4 {
   box-sizing: border-box;
 }
 
+@media (min-width: 640px) {
+  .reel-box {
+    height: 250px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reel-box {
+    height: 290px;
+    border-radius: 24px;
+    border-width: 2.5px;
+  }
+}
+
 .reel-box.winner-glow {
   border-color: var(--primary);
   box-shadow: 0 16px 45px var(--primary-glow), 0 0 20px rgba(187, 242, 70, 0.4);
@@ -936,10 +963,10 @@ h1, h2, h3, h4 {
 }
 
 .reel-item {
-  height: 82px;
+  height: 84px;
   display: flex;
   align-items: center;
-  padding: 0 18px;
+  padding: 0 16px;
   gap: 14px;
   box-sizing: border-box;
   user-select: none;
@@ -949,9 +976,17 @@ h1, h2, h3, h4 {
 
 @media (min-width: 640px) {
   .reel-item {
-    height: 96px;
-    padding: 0 24px;
+    height: 98px;
+    padding: 0 20px;
     gap: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reel-item {
+    height: 106px;
+    padding: 0 24px;
+    gap: 20px;
   }
 }
 
@@ -1007,6 +1042,13 @@ h1, h2, h3, h4 {
   }
 }
 
+@media (min-width: 1024px) {
+  .reel-item-name {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+}
+
 .reel-item-meta {
   display: flex;
   align-items: center;
@@ -1019,10 +1061,17 @@ h1, h2, h3, h4 {
   text-overflow: ellipsis;
 }
 
+@media (min-width: 1024px) {
+  .reel-item-meta {
+    gap: 8px;
+    font-size: 0.86rem;
+  }
+}
+
 /* Nutrigo Viewfinder Frame */
 .reel-selector-frame {
   position: absolute;
-  top: 48px;
+  top: 50px;
   left: 8px;
   right: 8px;
   height: 84px;
@@ -1037,10 +1086,21 @@ h1, h2, h3, h4 {
 
 @media (min-width: 640px) {
   .reel-selector-frame {
-    top: 67px;
+    top: 76px;
     left: 12px;
     right: 12px;
     height: 98px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reel-selector-frame {
+    top: 92px;
+    left: 14px;
+    right: 14px;
+    height: 106px;
+    border-radius: 18px;
+    border-width: 2.5px;
   }
 }
 

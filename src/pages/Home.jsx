@@ -72,10 +72,24 @@ const getAiMealTip = (currentMeal, goal, bmi) => {
 };
 
 const getDimensions = () => {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 640;
+  
+  if (isDesktop) {
+    return {
+      itemHeight: 106,
+      viewportHeight: 290
+    };
+  }
+  if (isTablet) {
+    return {
+      itemHeight: 98,
+      viewportHeight: 250
+    };
+  }
   return {
-    itemHeight: isMobile ? 82 : 96,
-    viewportHeight: isMobile ? 174 : 230
+    itemHeight: 84,
+    viewportHeight: 184
   };
 };
 
@@ -83,7 +97,7 @@ const TARGET_INDEX = 24;
 
 const getTranslateForIndex = (index) => {
   const { itemHeight, viewportHeight } = getDimensions();
-  const centerOffset = (viewportHeight - itemHeight) / 2; // 46px on mobile, 67px on desktop
+  const centerOffset = (viewportHeight - itemHeight) / 2;
   return -(index * itemHeight - centerOffset);
 };
 
@@ -311,7 +325,18 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    
+    const handleResize = () => {
+      if (!isSpinningRef.current) {
+        setOffsetY(getTranslateForIndex(resultRef.current && resultRef.current.food ? TARGET_INDEX : 1));
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   // 2. LUCKY SHAKE: Shake phone to Spin
@@ -566,7 +591,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
           
           {/* Meal Selector Tabs */}
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
+          <div style={{ width: '100%', maxWidth: '650px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
             <div className="meal-selector">
               {[
                 { key: 'Sáng', label: '🌅 Sáng' },
@@ -592,7 +617,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           </div>
 
           {/* Quick Context Filter Pills: Weather/Mood & Budget & Group Dining */}
-          <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px', boxSizing: 'border-box', minWidth: 0 }}>
+          <div style={{ width: '100%', maxWidth: '650px', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px', boxSizing: 'border-box', minWidth: 0 }}>
             
             {/* Weather & Mood Selector (Grid 4 cột hiển thị trọn vẹn 100% không bị tràn) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', width: '100%', boxSizing: 'border-box' }}>
@@ -684,7 +709,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           </div>
 
           {/* Quick Notice Pill for Mobile */}
-          <div style={{ width: '100%', maxWidth: '480px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
+          <div style={{ width: '100%', maxWidth: '650px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
             {(allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) && (
               <div className="glass-panel" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#ffb74d' }}>
                 <ShieldAlert size={16} />
@@ -737,7 +762,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                         filter: isSpinning ? 'blur(0.35px)' : 'none'
                       }}
                     >
-                      <FoodMedia food={item} size="md" showBadge />
+                      <FoodMedia food={item} size="md" showBadge style={{ width: 'clamp(54px, 6.5vw, 70px)', height: 'clamp(54px, 6.5vw, 70px)', minWidth: 'clamp(54px, 6.5vw, 70px)' }} />
                       <div className="reel-item-info">
                         <div className="reel-item-name">{item.name}</div>
                         <div className="reel-item-meta">
@@ -772,7 +797,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
 
           {/* Result Card with Reason Hook & 1-Click Order Links */}
           {result && !isSpinning && (
-            <div className="pop-in" style={{ width: '100%', maxWidth: '480px' }}>
+            <div className="pop-in" style={{ width: '100%', maxWidth: '650px' }}>
               {result.food ? (
                 <>
                   <div className="reason-card">
@@ -984,7 +1009,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
 
           {/* Spin trigger button */}
           {!result && (
-            <div style={{ width: '100%', maxWidth: '480px', marginTop: '8px', boxSizing: 'border-box', minWidth: 0 }}>
+            <div style={{ width: '100%', maxWidth: '650px', marginTop: '10px', boxSizing: 'border-box', minWidth: 0 }}>
               <button 
                 className="btn btn-primary" 
                 onClick={() => {
@@ -996,8 +1021,8 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                 disabled={isSpinning}
                 style={{ 
                   width: '100%', 
-                  padding: '10px 16px', 
-                  fontSize: '1rem',
+                  padding: '13px 20px', 
+                  fontSize: '1.05rem',
                   opacity: isSpinning ? 0.75 : 1,
                   cursor: isSpinning ? 'not-allowed' : 'pointer',
                   position: 'relative'

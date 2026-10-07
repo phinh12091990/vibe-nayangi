@@ -66,16 +66,43 @@ const DEFAULT_GROUP = [
   { id: 'g3', name: 'Huy (Ăn thanh đạm/né bò)', allergies: ['Bò'], active: false }
 ];
 
+const ADMIN_ACCOUNT = {
+  id: 'acc_admin',
+  name: 'Quản Trị Viên',
+  username: 'admin',
+  email: 'admin@nayangi.vn',
+  password: 'admin',
+  role: 'admin',
+  avatar: '👑',
+  age: 30,
+  gender: 'Nam',
+  height: 172,
+  weight: 68,
+  activity: 'Văn phòng (Ít vận động)',
+  goal: 'Cân bằng',
+  allergies: [],
+  createdAt: 1710000000000
+};
+
 function useStorageManager() {
   // 1. ACCOUNTS & USER PROFILE (Enforce registration before entering the app)
   const [accounts, setAccounts] = useState(() => {
     const saved = getSafeItem('nayangi_accounts', null);
+    let userAccounts = [];
     if (Array.isArray(saved)) {
-      // Filter out stale mock acc_default so users must register their own profile
-      const userAccounts = saved.filter(a => a && a.id && a.id !== 'acc_default');
-      return userAccounts;
+      // Filter out stale mock acc_default
+      userAccounts = saved.filter(a => a && a.id && a.id !== 'acc_default');
     }
-    return [];
+    // Always guarantee admin account exists
+    const hasAdmin = userAccounts.some(a => a.id === 'acc_admin' || a.username === 'admin');
+    if (!hasAdmin) {
+      userAccounts = [ADMIN_ACCOUNT, ...userAccounts];
+    } else {
+      userAccounts = userAccounts.map(a => 
+        (a.id === 'acc_admin' || a.username === 'admin') ? { ...ADMIN_ACCOUNT, ...a, role: 'admin' } : a
+      );
+    }
+    return userAccounts;
   });
 
   const [currentAccountId, setCurrentAccountId] = useState(() => {
@@ -86,6 +113,7 @@ function useStorageManager() {
 
   const currentAccount = accounts.find(a => a.id === currentAccountId) || null;
   const isLoggedIn = Boolean(currentAccount);
+  const isAdmin = Boolean(currentAccount && (currentAccount.role === 'admin' || currentAccount.username === 'admin'));
 
   const profile = currentAccount ? {
     id: currentAccount.id,
@@ -93,7 +121,8 @@ function useStorageManager() {
     username: currentAccount.username || 'user',
     email: currentAccount.email || '',
     password: currentAccount.password || '',
-    avatar: currentAccount.avatar || '🧑‍💻',
+    role: isAdmin ? 'admin' : (currentAccount.role || 'user'),
+    avatar: currentAccount.avatar || (isAdmin ? '👑' : '🧑‍💻'),
     age: currentAccount.age || 26,
     gender: currentAccount.gender || 'Nam',
     height: Number(currentAccount.height) || 168,
@@ -106,6 +135,7 @@ function useStorageManager() {
     name: 'Khách',
     username: 'guest',
     avatar: '👤',
+    role: 'user',
     age: 25,
     gender: 'Nam',
     height: 168,
@@ -241,6 +271,7 @@ function useStorageManager() {
       username: accountData.username ? accountData.username.trim().toLowerCase().replace(/\s+/g, '_') : `user_${Date.now().toString().slice(-4)}`,
       email: accountData.email ? accountData.email.trim() : '',
       password: accountData.password || '',
+      role: 'user', // New registrations are always standard users
       avatar: accountData.avatar || (accountData.gender === 'Nữ' ? '👩‍💻' : '🧑‍💻'),
       age: Number(accountData.age) || 26,
       gender: accountData.gender || 'Nam',
@@ -268,6 +299,8 @@ function useStorageManager() {
 
   const deleteAccount = (accountId) => {
     if (accounts.length <= 1) return false;
+    // Don't allow deleting master admin account
+    if (accountId === 'acc_admin') return false;
     const remaining = accounts.filter(a => a.id !== accountId);
     setAccounts(remaining);
     if (currentAccountId === accountId) {
@@ -286,6 +319,28 @@ function useStorageManager() {
       return true;
     }
     return false;
+  };
+
+  const loginWithCredentials = (usernameOrEmail, password = '') => {
+    const term = (usernameOrEmail || '').trim().toLowerCase();
+    const found = accounts.find(a => 
+      (a.username || '').toLowerCase() === term || 
+      (a.name || '').toLowerCase() === term ||
+      (a.email || '').toLowerCase() === term
+    );
+    if (!found) {
+      return { success: false, message: 'Tài khoản không tồn tại trong hệ thống.' };
+    }
+    if (found.password && password && found.password !== password) {
+      return { success: false, message: 'Mật khẩu không chính xác.' };
+    }
+    if (found.password && !password && found.role === 'admin') {
+      return { success: false, message: 'Tài khoản Quản Trị Viên yêu cầu nhập mật khẩu (mặc định: admin).' };
+    }
+
+    setCurrentAccountId(found.id);
+    setAllergies(Array.isArray(found.allergies) ? found.allergies : []);
+    return { success: true, account: found };
   };
 
   const logout = () => {
@@ -348,7 +403,9 @@ function useStorageManager() {
     currentAccountId,
     currentAccount,
     isLoggedIn,
+    isAdmin,
     login,
+    loginWithCredentials,
     logout,
     createAccount,
     createDemoAccount,

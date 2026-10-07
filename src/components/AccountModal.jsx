@@ -27,11 +27,11 @@ const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Tr�
 
 export default function AccountModal({ isOpen, onClose, initialTab = 'create' }) {
   const { 
-    accounts, currentAccountId, currentAccount, profile, 
+    accounts, currentAccountId, currentAccount, profile, isAdmin,
     createAccount, switchAccount, updateAccount, deleteAccount 
   } = useStorage();
 
-  const [activeTab, setActiveTab] = useState(initialTab); // 'create' | 'edit' | 'switch'
+  const [activeTab, setActiveTab] = useState(!isAdmin ? 'edit' : initialTab); // 'create' | 'edit' | 'switch'
   const [showPassword, setShowPassword] = useState(false);
   const [customAllergy, setCustomAllergy] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -68,7 +68,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
   // Reset or sync when modal opens or initialTab changes
   useEffect(() => {
     if (isOpen) {
-      setActiveTab(initialTab);
+      setActiveTab(!isAdmin ? 'edit' : initialTab);
       setSuccessMsg('');
       setEditForm({
         name: profile.name || '',
@@ -83,7 +83,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
         allergies: Array.isArray(profile.allergies) ? [...profile.allergies] : []
       });
     }
-  }, [isOpen, initialTab, profile]);
+  }, [isOpen, initialTab, profile, isAdmin]);
 
   if (!isOpen) return null;
 
@@ -237,68 +237,79 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
           </button>
         </div>
 
-        {/* Tab Switcher Pills */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '14px', flexShrink: 0 }}>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('create'); setSuccessMsg(''); }}
-            className={`glass-pill ${activeTab === 'create' ? 'active' : ''}`}
-            style={{
-              padding: '8px 6px',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              justifyContent: 'center',
-              textAlign: 'center',
-              cursor: 'pointer',
-              background: activeTab === 'create' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-              borderColor: activeTab === 'create' ? '#ff9100' : 'rgba(255, 255, 255, 0.08)',
-              color: activeTab === 'create' ? '#ffa726' : 'var(--text-muted)'
-            }}
-          >
-            <UserPlus size={14} />
-            <span>Tạo tài khoản</span>
-          </button>
+        {/* Tab Switcher Pills: Only Admin can access switch and create tabs */}
+        {isAdmin ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '14px', flexShrink: 0 }}>
+            <button
+              type="button"
+              onClick={() => { setActiveTab('switch'); setSuccessMsg(''); }}
+              className={`glass-pill ${activeTab === 'switch' ? 'active' : ''}`}
+              style={{
+                padding: '8px 6px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                justifyContent: 'center',
+                textAlign: 'center',
+                cursor: 'pointer',
+                background: activeTab === 'switch' ? 'rgba(255, 193, 7, 0.22)' : 'rgba(255, 255, 255, 0.04)',
+                borderColor: activeTab === 'switch' ? '#ffc107' : 'rgba(255, 255, 255, 0.08)',
+                color: activeTab === 'switch' ? '#ffc107' : 'var(--text-muted)'
+              }}
+            >
+              <Users size={14} />
+              <span>👑 Quản trị TV ({accounts.length})</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => { setActiveTab('edit'); setSuccessMsg(''); }}
-            className={`glass-pill ${activeTab === 'edit' ? 'active' : ''}`}
-            style={{
-              padding: '8px 6px',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              justifyContent: 'center',
-              textAlign: 'center',
-              cursor: 'pointer',
-              background: activeTab === 'edit' ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-              borderColor: activeTab === 'edit' ? '#10b981' : 'rgba(255, 255, 255, 0.08)',
-              color: activeTab === 'edit' ? '#34d399' : 'var(--text-muted)'
-            }}
-          >
-            <UserCheck size={14} />
-            <span>Sửa thể trạng</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => { setActiveTab('edit'); setSuccessMsg(''); }}
+              className={`glass-pill ${activeTab === 'edit' ? 'active' : ''}`}
+              style={{
+                padding: '8px 6px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                justifyContent: 'center',
+                textAlign: 'center',
+                cursor: 'pointer',
+                background: activeTab === 'edit' ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255, 255, 255, 0.04)',
+                borderColor: activeTab === 'edit' ? '#10b981' : 'rgba(255, 255, 255, 0.08)',
+                color: activeTab === 'edit' ? '#34d399' : 'var(--text-muted)'
+              }}
+            >
+              <UserCheck size={14} />
+              <span>Sửa thể trạng</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => { setActiveTab('switch'); setSuccessMsg(''); }}
-            className={`glass-pill ${activeTab === 'switch' ? 'active' : ''}`}
-            style={{
-              padding: '8px 6px',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              justifyContent: 'center',
-              textAlign: 'center',
-              cursor: 'pointer',
-              background: activeTab === 'switch' ? 'rgba(56, 189, 248, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-              borderColor: activeTab === 'switch' ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)',
-              color: activeTab === 'switch' ? '#38bdf8' : 'var(--text-muted)'
-            }}
-          >
-            <Users size={14} />
-            <span>Đổi tài khoản ({accounts.length})</span>
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => { setActiveTab('create'); setSuccessMsg(''); }}
+              className={`glass-pill ${activeTab === 'create' ? 'active' : ''}`}
+              style={{
+                padding: '8px 6px',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                justifyContent: 'center',
+                textAlign: 'center',
+                cursor: 'pointer',
+                background: activeTab === 'create' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
+                borderColor: activeTab === 'create' ? '#ff9100' : 'rgba(255, 255, 255, 0.08)',
+                color: activeTab === 'create' ? '#ffa726' : 'var(--text-muted)'
+              }}
+            >
+              <UserPlus size={14} />
+              <span>+ Thêm TV mới</span>
+            </button>
+          </div>
+        ) : (
+          <div style={{ padding: '8px 12px', background: 'rgba(255, 145, 0, 0.08)', border: '1px solid rgba(255, 145, 0, 0.2)', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.82rem', color: '#ffb74d', fontWeight: 700 }}>
+              🔒 Hồ Sơ Cá Nhân Riêng Tư (Chỉ bạn có quyền truy cập)
+            </span>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)' }}>
+              @{profile.username}
+            </span>
+          </div>
+        )}
 
         {/* Success Alert Banner */}
         {successMsg && (

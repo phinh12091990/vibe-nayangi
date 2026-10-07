@@ -29,7 +29,7 @@ const getTranslateForIndex = (index) => {
 
 export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
   const { 
-    foods, history, allergies, addHistory, profile, 
+    foods, history, allergies, addHistory, profile, isAdmin,
     groupMembers, toggleGroupMember, addGroupMember, removeGroupMember 
   } = useStorage();
 
@@ -957,31 +957,40 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   className="glass-pill" 
                   style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem' }}
                   onClick={onOpenProfile}
-                  title="Chỉnh sửa chiều cao, cân nặng, dị ứng"
+                  title="Chỉnh sửa chiều cao, cân nặng, dị ứng của tôi"
                 >
                   Sửa thể trạng
                 </button>
-                <button 
-                  className="glass-pill" 
-                  style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
-                  onClick={onOpenCreateAccount}
-                  title="Tạo tài khoản mới & Khai báo thể trạng"
-                >
-                  <UserPlus size={12} />
-                  <span>+ Tạo TK</span>
-                </button>
+                {isAdmin && (
+                  <button 
+                    className="glass-pill" 
+                    style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
+                    onClick={onOpenCreateAccount}
+                    title="👑 Tạo tài khoản mới & Khai báo thể trạng"
+                  >
+                    <UserPlus size={12} />
+                    <span>+ Tạo TK</span>
+                  </button>
+                )}
               </div>
             </div>
 
             {/* User Identity Info */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <div style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', background: 'linear-gradient(135deg, rgba(255, 122, 24, 0.25), rgba(255, 82, 56, 0.15))', border: '1px solid rgba(255, 145, 0, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', boxShadow: '0 4px 14px rgba(255, 122, 24, 0.2)' }}>
-                {profile.avatar || '🧑‍💻'}
+              <div style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', background: isAdmin ? 'rgba(255, 193, 7, 0.2)' : 'linear-gradient(135deg, rgba(255, 122, 24, 0.25), rgba(255, 82, 56, 0.15))', border: isAdmin ? '1px solid #ffc107' : '1px solid rgba(255, 145, 0, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', boxShadow: '0 4px 14px rgba(255, 122, 24, 0.2)' }}>
+                {profile.avatar || (isAdmin ? '👑' : '🧑‍💻')}
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#ffffff' }}>
-                  {profile.name || 'Bạn'}
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#ffffff' }}>
+                    {profile.name || 'Bạn'}
+                  </h3>
+                  {isAdmin && (
+                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ffc107', background: 'rgba(255, 193, 7, 0.18)', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(255, 193, 7, 0.3)' }}>
+                      ADMIN
+                    </span>
+                  )}
+                </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.74rem', color: 'var(--text-dim)', flexWrap: 'wrap' }}>
                   <span>@{profile.username || 'user'}</span>
                   <span>•</span>

@@ -11,7 +11,7 @@ import { StorageProvider, useStorage, calculateBMI } from './hooks/useStorage';
 function AppLayout() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState('create');
-  const { profile, isLoggedIn, logout } = useStorage();
+  const { profile, isLoggedIn, isAdmin, logout } = useStorage();
 
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
 
@@ -79,26 +79,36 @@ function AppLayout() {
         <div className="sidebar-profile-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-              <div style={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '10px', background: 'rgba(255, 145, 0, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
-                {profile.avatar || '🧑‍💻'}
+              <div style={{ width: '38px', height: '38px', minWidth: '38px', borderRadius: '10px', background: isAdmin ? 'rgba(255, 193, 7, 0.2)' : 'rgba(255, 145, 0, 0.18)', border: isAdmin ? '1px solid #ffc107' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+                {profile.avatar || (isAdmin ? '👑' : '🧑‍💻')}
               </div>
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {profile.name || 'Hồ Sơ Của Bạn'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {profile.name || 'Hồ Sơ Của Bạn'}
+                  </div>
+                  {isAdmin && (
+                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ffc107', background: 'rgba(255, 193, 7, 0.18)', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(255, 193, 7, 0.3)' }}>
+                      ADMIN
+                    </span>
+                  )}
                 </div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  @{profile.username || 'danvanphong'}
+                  @{profile.username || 'user'}
                 </div>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-              <button 
-                onClick={openSwitchAccount}
-                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
-                title="Đổi tài khoản khác"
-              >
-                <Users size={16} />
-              </button>
+              {/* Only Admin can view and switch between all user accounts */}
+              {isAdmin && (
+                <button 
+                  onClick={openSwitchAccount}
+                  style={{ background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.3)', borderRadius: '6px', color: '#ffc107', cursor: 'pointer', padding: '4px' }}
+                  title="👑 Quản trị tất cả tài khoản thành viên"
+                >
+                  <Users size={15} />
+                </button>
+              )}
               <button 
                 onClick={logout}
                 style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', padding: '4px' }}
@@ -123,23 +133,25 @@ function AppLayout() {
             </span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginTop: '6px' }}>
+          <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
             <button 
               className="btn btn-secondary"
-              style={{ padding: '7px 6px', fontSize: '0.75rem', justifyContent: 'center' }}
+              style={{ flex: 1, padding: '7px 8px', fontSize: '0.75rem', justifyContent: 'center' }}
               onClick={openEditProfile}
-              title="Chỉnh sửa thể trạng hiện tại"
+              title="Chỉnh sửa hồ sơ thể trạng của tôi"
             >
               <Activity size={13} /> Sửa thể trạng
             </button>
-            <button 
-              className="btn btn-primary"
-              style={{ padding: '7px 6px', fontSize: '0.75rem', justifyContent: 'center' }}
-              onClick={openCreateAccount}
-              title="Tạo tài khoản mới & Khai báo thể trạng"
-            >
-              <UserPlus size={13} /> Tạo TK mới
-            </button>
+            {isAdmin && (
+              <button 
+                className="btn btn-primary"
+                style={{ flex: 1, padding: '7px 8px', fontSize: '0.75rem', justifyContent: 'center' }}
+                onClick={openCreateAccount}
+                title="Tạo tài khoản mới & Khai báo thể trạng"
+              >
+                <UserPlus size={13} /> + Thêm TK
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -157,15 +169,17 @@ function AppLayout() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <button 
-              className="glass-pill"
-              style={{ padding: '4px 8px', fontSize: '0.75rem', cursor: 'pointer', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
-              onClick={openCreateAccount}
-              title="Tạo tài khoản mới & khai báo thể trạng"
-            >
-              <UserPlus size={13} />
-              <span>Tạo TK</span>
-            </button>
+            {isAdmin && (
+              <button 
+                className="glass-pill"
+                style={{ padding: '4px 8px', fontSize: '0.75rem', cursor: 'pointer', background: 'rgba(255,193,7,0.14)', borderColor: '#ffc107', color: '#ffc107' }}
+                onClick={openSwitchAccount}
+                title="👑 Quản trị tất cả tài khoản"
+              >
+                <Users size={13} />
+                <span>Quản trị</span>
+              </button>
+            )}
 
             <button 
               className="glass-pill"

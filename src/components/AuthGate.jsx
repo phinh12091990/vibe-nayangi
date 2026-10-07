@@ -223,9 +223,8 @@ function AuthLandscape({ theme, lang }) {
 }
 
 export default function AuthGate() {
-  const { accounts, createAccount, loginWithCredentials, theme, toggleTheme } = useStorage();
+  const { accounts, createAccount, loginWithCredentials, theme, toggleTheme, lang, setLang } = useStorage();
   const [tab, setTab] = useState('login'); // Default is 'login' per user request
-  const [lang, setLang] = useState('vi'); // 'vi' | 'en'
 
   // Login Form States
   const [loginUsername, setLoginUsername] = useState('');

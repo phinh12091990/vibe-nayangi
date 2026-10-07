@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI, calculateTDEE } from '../hooks/useStorage';
+import { translations } from '../utils/i18n';
 import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
@@ -14,7 +15,7 @@ import {
   PieChart
 } from 'lucide-react';
 
-const formatRecentTime = (timestamp) => {
+const formatRecentTime = (timestamp, lang = 'vi') => {
   if (!timestamp) return '';
   const date = new Date(timestamp);
   const now = new Date();
@@ -23,9 +24,9 @@ const formatRecentTime = (timestamp) => {
   yesterday.setDate(yesterday.getDate() - 1);
   const isYesterday = date.toDateString() === yesterday.toDateString();
 
-  const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-  if (isToday) return `Hôm nay, ${timeStr}`;
-  if (isYesterday) return `Hôm qua, ${timeStr}`;
+  const timeStr = date.toLocaleTimeString(lang === 'vi' ? 'vi-VN' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+  if (isToday) return lang === 'vi' ? `Hôm nay, ${timeStr}` : `Today, ${timeStr}`;
+  if (isYesterday) return lang === 'vi' ? `Hôm qua, ${timeStr}` : `Yesterday, ${timeStr}`;
   return `${date.getDate()}/${date.getMonth() + 1}, ${timeStr}`;
 };
 
@@ -55,7 +56,16 @@ const getMacroBreakdown = (tdee, goal) => {
   };
 };
 
-const getAiMealTip = (currentMeal, goal, bmi) => {
+const getAiMealTip = (currentMeal, goal, bmi, lang = 'vi') => {
+  if (lang === 'en') {
+    if (currentMeal === 'Sáng') return 'Breakfast should focus on lean protein and complex carbs for sustained metabolic energy.';
+    if (currentMeal === 'Trưa') {
+      if (bmi >= 23) return 'Lunch provides ~40% daily calories. Prioritize green veggies and light soups to manage body fat.';
+      return 'Lunch is your primary energy engine (~40% TDEE). Hydrate well with fresh veggie soups!';
+    }
+    if (currentMeal === 'Tối') return 'Dinner should be lighter (~35% calories), reducing fast carbs to let digestion rest for deep sleep.';
+    return 'Enjoy diverse meals to ensure complete daily micronutrient balance.';
+  }
   if (currentMeal === 'Sáng') {
     return 'Bữa sáng nên tập trung đạm sạch và tinh bột tiêu hóa chậm để kích hoạt trao đổi chất & duy trì năng lượng bền bỉ.';
   }
@@ -105,8 +115,11 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
   const navigate = useNavigate();
   const { 
     foods, history, allergies, addHistory, profile, isAdmin,
-    groupMembers, toggleGroupMember, addGroupMember, removeGroupMember 
+    groupMembers, toggleGroupMember, addGroupMember, removeGroupMember,
+    lang = 'vi'
   } = useStorage();
+
+  const t = translations[lang] || translations.vi;
 
   const [mealType, setMealType] = useState(() => {
     const hour = new Date().getHours();
@@ -543,12 +556,14 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             ⚡
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nhu Cầu Calo</div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              {lang === 'vi' ? 'Nhu Cầu Calo' : 'Calorie Needs'}
+            </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.1 }}>
               {tdeeVal} <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>kcal</span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#059669', fontWeight: 700 }}>
-              TDEE ước tính/ngày
+              {lang === 'vi' ? 'TDEE ước tính/ngày' : 'Est. Daily TDEE'}
             </div>
           </div>
         </div>
@@ -558,12 +573,14 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             💧
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nước & Vận Động</div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              {lang === 'vi' ? 'Nước & Vận Động' : 'Water & Fitness'}
+            </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.1 }}>
-              2.0 <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>lít</span>
+              2.0 <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>{lang === 'vi' ? 'lít' : 'liters'}</span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#0284c7', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {profile.activity ? profile.activity.split('(')[0] : 'Văn phòng'}
+              {profile.activity ? (lang === 'vi' ? profile.activity.split('(')[0] : 'Office') : 'Office'}
             </div>
           </div>
         </div>
@@ -573,7 +590,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             🎯
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Chỉ Số Thể Trạng</div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              {lang === 'vi' ? 'Chỉ Số Thể Trạng' : 'Health Status'}
+            </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: bmiInfo.color, lineHeight: 1.1 }}>
               BMI {bmiInfo.bmi}
             </div>
@@ -594,9 +613,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           <div style={{ width: '100%', maxWidth: '650px', marginBottom: '8px', boxSizing: 'border-box', minWidth: 0 }}>
             <div className="meal-selector">
               {[
-                { key: 'Sáng', label: '🌅 Sáng' },
-                { key: 'Trưa', label: '☀️ Trưa' },
-                { key: 'Tối', label: '🌙 Tối' }
+                { key: 'Sáng', label: lang === 'vi' ? '🌅 Sáng' : '🌅 Breakfast' },
+                { key: 'Trưa', label: lang === 'vi' ? '☀️ Trưa' : '☀️ Lunch' },
+                { key: 'Tối', label: lang === 'vi' ? '🌙 Tối' : '🌙 Dinner' }
               ].map(m => (
                 <button
                   key={m.key}
@@ -1030,20 +1049,20 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               >
                 {isSpinning ? (
                   <>
-                    <RefreshCw className="spin-anim" size={18} /> Đang tính toán món ngon...
+                    <RefreshCw className="spin-anim" size={18} /> {t.btnSpinning}
                   </>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Flame size={19} /> QUAY MÓN NGAY
+                      <Flame size={19} /> {t.btnSpin}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', opacity: 0.9, fontWeight: 500 }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Keyboard size={12} /> Phím <strong>Space</strong>
+                        <Keyboard size={12} /> {lang === 'vi' ? 'Phím' : 'Key'} <strong>Space</strong>
                       </span>
                       <span>•</span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Smartphone size={12} /> Lắc điện thoại
+                        <Smartphone size={12} /> {lang === 'vi' ? 'Lắc điện thoại' : 'Shake phone'}
                       </span>
                     </div>
                   </div>

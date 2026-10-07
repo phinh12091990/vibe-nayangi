@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI } from '../hooks/useStorage';
+import { translations } from '../utils/i18n';
 import FoodMedia from '../components/FoodMedia';
 import { 
   ShieldAlert, Activity, AlertTriangle, CheckCircle2, 
@@ -11,7 +12,8 @@ const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Tr�
 
 export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
   const navigate = useNavigate();
-  const { history, foods, allergies, toggleAllergy, deleteHistoryItem, clearHistory, profile } = useStorage();
+  const { history, foods, allergies, toggleAllergy, deleteHistoryItem, clearHistory, profile, lang = 'vi' } = useStorage();
+  const t = translations[lang] || translations.vi;
   const [customAllergyInput, setCustomAllergyInput] = useState('');
 
   const displayHistory = useMemo(() => [...history].reverse(), [history]);
@@ -328,7 +330,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Clock size={19} color="#ff9100" />
-              Nhật Ký Các Bữa Ăn ({history.length})
+              {lang === 'vi' ? `Nhật Ký Các Bữa Ăn (${history.length})` : `Meal History Log (${history.length})`}
             </h3>
           </div>
 
@@ -339,10 +341,12 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
               </div>
               <div>
                 <h4 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 6px 0', color: 'var(--text-main)' }}>
-                  Chưa có bữa ăn nào được ghi lại
+                  {t.emptyHistory}
                 </h4>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '360px', margin: '0 auto', lineHeight: 1.5 }}>
-                  Hãy ra màn hình <strong>Quay Món</strong> để nhận gợi ý chuẩn dinh dưỡng và chốt món đầu tiên của bạn hôm nay!
+                  {lang === 'vi' 
+                    ? 'Hãy ra màn hình Quay Món để nhận gợi ý chuẩn dinh dưỡng và chốt món đầu tiên của bạn hôm nay!' 
+                    : 'Head over to the Spin screen to receive smart meal suggestions and log your first dish today!'}
                 </p>
               </div>
               <button 
@@ -350,7 +354,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                 className="btn btn-primary" 
                 style={{ padding: '10px 22px', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
               >
-                <Sparkles size={16} /> Quay chọn món ngay
+                <Sparkles size={16} /> {lang === 'vi' ? 'Quay chọn món ngay' : 'Spin a meal now'}
               </button>
             </div>
           ) : (

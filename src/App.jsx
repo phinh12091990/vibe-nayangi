@@ -8,12 +8,14 @@ import AccountModal from './components/AccountModal';
 import AuthGate from './components/AuthGate';
 import BrandLogo from './components/BrandLogo';
 import { StorageProvider, useStorage, calculateBMI } from './hooks/useStorage';
+import { translations } from './utils/i18n';
 
 function AppLayout() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState('create');
-  const { profile, isLoggedIn, isAdmin, logout, theme, toggleTheme } = useStorage();
+  const { profile, isLoggedIn, isAdmin, logout, theme, toggleTheme, lang, setLang } = useStorage();
 
+  const t = translations[lang] || translations.vi;
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
 
   const openCreateAccount = () => {
@@ -46,38 +48,55 @@ function AppLayout() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div className="brand-title" style={{ fontSize: '1.25rem', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
-                Nay Ăn Gì
+                {t.appName}
               </div>
               <span className="brand-badge" style={{ fontSize: '0.6rem', padding: '2px 7px', letterSpacing: '0.04em' }}>
-                TRỢ LÝ BỮA ĂN • AI
+                {t.appSubtitle}
               </span>
             </div>
             <div style={{ fontSize: '0.71rem', color: 'var(--text-muted)', lineHeight: 1.25, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              Dinh dưỡng & Thực đơn chuẩn vóc dáng
+              {t.appDesc}
             </div>
           </div>
         </div>
 
-        {/* Theme Switcher Pill in Sidebar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', background: 'var(--bg-surface-secondary)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-color)' }}>
-          <span style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
-            Giao diện
-          </span>
+        {/* Language & Theme Switcher Bar in Sidebar */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: 'var(--bg-surface-secondary)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-color)', gap: '6px' }}>
+          {/* Language Switch Pills */}
+          <div className="auth-lang-pills">
+            <button
+              type="button"
+              className={`auth-lang-pill ${lang === 'vi' ? 'active' : ''}`}
+              onClick={() => setLang('vi')}
+              title="Tiếng Việt"
+            >
+              🇻🇳 VI
+            </button>
+            <button
+              type="button"
+              className={`auth-lang-pill ${lang === 'en' ? 'active' : ''}`}
+              onClick={() => setLang('en')}
+              title="English"
+            >
+              🇬🇧 EN
+            </button>
+          </div>
+
           <button 
             type="button"
             onClick={toggleTheme}
             className="theme-switch-pill"
-            title="Chuyển chế độ Sáng / Tối"
+            title={lang === 'vi' ? 'Chuyển chế độ Sáng / Tối' : 'Toggle Light / Dark mode'}
           >
             {theme === 'light' ? (
               <>
                 <Sun size={13} color="#ea580c" />
-                <span>☀️ Sáng</span>
+                <span>{t.themeLight}</span>
               </>
             ) : (
               <>
                 <Moon size={13} color="#bbf246" />
-                <span>🌙 Tối</span>
+                <span>{t.themeDark}</span>
               </>
             )}
           </button>
@@ -86,19 +105,19 @@ function AppLayout() {
         {/* Navigation Menu */}
         <nav className="sidebar-nav-list">
           <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', margin: '6px 0 4px 10px' }}>
-            Menu Điều Hướng
+            {t.navMenu}
           </div>
           <NavLink to="/" className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}>
             <Sparkles size={19} />
-            <span>Quay Món Thông Minh</span>
+            <span>{t.navSpin}</span>
           </NavLink>
           <NavLink to="/menu" className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}>
             <Utensils size={19} />
-            <span>Sổ Món Thực Đơn</span>
+            <span>{t.navMenuPage}</span>
           </NavLink>
           <NavLink to="/history" className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}>
             <HistoryIcon size={19} />
-            <span>Nhật Ký & Thống Kê</span>
+            <span>{t.navHistory}</span>
           </NavLink>
         </nav>
 
@@ -106,13 +125,13 @@ function AppLayout() {
         <div className="sidebar-promo-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.4rem' }}>🥗</span>
-            <span className="sidebar-promo-badge">TRỢ LÝ AI</span>
+            <span className="sidebar-promo-badge">{t.aiAssistant}</span>
           </div>
           <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.3 }}>
-            Chăm Sóc Dinh Dưỡng Chuẩn Cá Nhân Hóa
+            {t.promoTitle}
           </div>
           <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
-            Tối ưu calo và TDEE khoa học cho từng bữa ăn mỗi ngày.
+            {t.promoDesc}
           </div>
         </div>
 
@@ -177,11 +196,11 @@ function AppLayout() {
           {/* Quick Metrics mini tags */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', padding: '8px 10px', background: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', fontSize: '0.74rem' }}>
             <div>
-              <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>Thể trạng (BMI)</div>
+              <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>{t.bodyBMI}</div>
               <div style={{ color: bmiInfo.color, fontWeight: 800 }}>{bmiInfo.bmi} ({bmiInfo.status.split(' ')[0]})</div>
             </div>
             <div>
-              <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>Mục tiêu</div>
+              <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>{t.targetGoal}</div>
               <div style={{ color: '#ea580c', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile.goal || 'Cân bằng'}</div>
             </div>
           </div>
@@ -192,18 +211,18 @@ function AppLayout() {
               className="btn btn-secondary"
               style={{ flex: 1, padding: '7px 8px', fontSize: '0.76rem', justifyContent: 'center' }}
               onClick={openEditProfile}
-              title="Chỉnh sửa hồ sơ thể trạng của tôi"
+              title={t.editProfile}
             >
-              <Activity size={13} /> Sửa thể trạng
+              <Activity size={13} /> {t.editProfile}
             </button>
             {isAdmin && (
               <button 
                 className="btn btn-primary"
                 style={{ flex: 1, padding: '7px 8px', fontSize: '0.76rem', justifyContent: 'center' }}
                 onClick={openCreateAccount}
-                title="Tạo tài khoản mới & Khai báo thể trạng"
+                title={t.addAccount}
               >
-                <UserPlus size={13} /> + Thêm TK
+                <UserPlus size={13} /> {t.addAccount}
               </button>
             )}
           </div>
@@ -229,12 +248,23 @@ function AppLayout() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+            {/* Quick Mobile Language Switcher */}
+            <button
+              type="button"
+              className="glass-pill"
+              style={{ padding: '4px 7px', fontSize: '0.7rem', fontWeight: 800, cursor: 'pointer' }}
+              onClick={() => setLang(lang === 'vi' ? 'en' : 'vi')}
+              title={lang === 'vi' ? 'Chuyển sang English' : 'Switch to Vietnamese'}
+            >
+              {lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN'}
+            </button>
+
             {isAdmin && (
               <button 
                 className="glass-pill"
                 style={{ padding: '5px 7px', fontSize: '0.72rem', cursor: 'pointer', background: 'rgba(255,193,7,0.14)', borderColor: '#ffc107', color: '#ffc107' }}
                 onClick={openSwitchAccount}
-                title="👑 Quản trị tất cả tài khoản"
+                title={t.manageAccounts}
               >
                 <Users size={13} />
               </button>
@@ -244,7 +274,7 @@ function AppLayout() {
               className="glass-pill"
               style={{ padding: '4px 8px', fontSize: '0.74rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px' }}
               onClick={openEditProfile}
-              title="Xem hồ sơ thể trạng"
+              title={t.userProfile}
             >
               <span style={{ fontSize: '0.95rem' }}>{profile.avatar || '🧑‍💻'}</span>
               <span style={{ color: bmiInfo.color, fontWeight: 700 }}>{bmiInfo.bmi}</span>
@@ -256,7 +286,7 @@ function AppLayout() {
               onClick={toggleTheme}
               className="theme-icon-btn"
               style={{ width: '29px', height: '29px', padding: 0 }}
-              title="Chuyển đổi Sáng / Tối"
+              title={lang === 'vi' ? 'Chuyển đổi Sáng / Tối' : 'Toggle Theme'}
             >
               {theme === 'light' ? <Sun size={14} color="#ea580c" /> : <Moon size={14} color="#bbf246" />}
             </button>
@@ -264,7 +294,7 @@ function AppLayout() {
             <button 
               onClick={logout}
               style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: '#f87171', cursor: 'pointer', width: '29px', height: '29px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              title="Đăng xuất"
+              title={t.logout}
             >
               <LogOut size={13} />
             </button>
@@ -302,15 +332,15 @@ function AppLayout() {
       <nav className="bottom-nav">
         <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           <Sparkles size={22} />
-          <span>Quay món</span>
+          <span>{t.bottomSpin}</span>
         </NavLink>
         <NavLink to="/menu" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           <Utensils size={22} />
-          <span>Sổ món</span>
+          <span>{t.bottomMenu}</span>
         </NavLink>
         <NavLink to="/history" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           <HistoryIcon size={22} />
-          <span>Nhật ký</span>
+          <span>{t.bottomHistory}</span>
         </NavLink>
       </nav>
 

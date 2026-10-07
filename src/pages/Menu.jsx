@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useStorage } from '../hooks/useStorage';
+import { translations } from '../utils/i18n';
 import FoodMedia from '../components/FoodMedia';
 import { 
   Plus, Eye, EyeOff, Search, Trash2, Edit3, X, Check, RotateCcw, 
@@ -27,7 +28,8 @@ const PRESET_FOOD_IMAGES = [
 ];
 
 export default function MenuPage() {
-  const { foods, addFood, updateFood, deleteFood, resetFoods, toggleFoodStatus } = useStorage();
+  const { foods, addFood, updateFood, deleteFood, resetFoods, toggleFoodStatus, lang = 'vi' } = useStorage();
+  const t = translations[lang] || translations.vi;
 
   // Filters & Search
   const [searchTerm, setSearchTerm] = useState('');
@@ -241,13 +243,13 @@ export default function MenuPage() {
       <div className="menu-header-bar">
         <div style={{ minWidth: 0, flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <h2 className="menu-title-heading">Sổ Món Thực Đơn</h2>
+            <h2 className="menu-title-heading">{t.menuTitle}</h2>
             <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 7px', whiteSpace: 'nowrap' }}>
-              {foods.length} món
+              {foods.length} {lang === 'vi' ? 'món' : 'dishes'}
             </span>
           </div>
           <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '3px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            Kho thực đơn cá nhân hoá • {activeCount} khả dụng
+            {lang === 'vi' ? `Kho thực đơn cá nhân hoá • ${activeCount} khả dụng` : `Personalized meal directory • ${activeCount} active`}
           </p>
         </div>
 
@@ -256,14 +258,14 @@ export default function MenuPage() {
             className="btn btn-secondary" 
             style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }} 
             onClick={() => {
-              if (window.confirm("Khôi phục danh sách món ăn mẫu (48 món tiêu chuẩn)?")) {
+              if (window.confirm(lang === 'vi' ? "Khôi phục danh sách món ăn mẫu (48 món tiêu chuẩn)?" : "Reset to default standard meals (48 dishes)?")) {
                 resetFoods();
               }
             }}
-            title="Khôi phục danh sách mẫu (48 món)"
+            title={t.resetDefault}
           >
             <RotateCcw size={13} />
-            <span className="menu-action-label">Mẫu</span>
+            <span className="menu-action-label">{lang === 'vi' ? 'Mẫu' : 'Reset'}</span>
           </button>
 
           <button 
@@ -272,7 +274,7 @@ export default function MenuPage() {
             onClick={handleOpenAdd}
           >
             <Plus size={15} />
-            <span>Thêm Món</span>
+            <span>{t.btnAddDish}</span>
           </button>
         </div>
       </div>
@@ -288,7 +290,7 @@ export default function MenuPage() {
               type="text"
               className="form-input"
               style={{ width: '100%', padding: '8px 30px 8px 32px', fontSize: '0.86rem' }}
-              placeholder="Tìm món, thịt, rau, hải sản..."
+              placeholder={t.searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

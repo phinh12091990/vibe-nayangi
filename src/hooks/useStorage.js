@@ -129,6 +129,24 @@ function useStorageManager() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Global Language State: 'vi' | 'en'
+  const [lang, setLangState] = useState(() => {
+    return localStorage.getItem('nayangi_lang') || 'vi';
+  });
+
+  const setLang = (newLang) => {
+    setLangState(newLang);
+    localStorage.setItem('nayangi_lang', newLang);
+  };
+
+  const toggleLang = () => {
+    setLangState(prev => {
+      const next = prev === 'vi' ? 'en' : 'vi';
+      localStorage.setItem('nayangi_lang', next);
+      return next;
+    });
+  };
+
   const currentAccount = accounts.find(a => a.id === currentAccountId) || null;
   const isLoggedIn = Boolean(currentAccount);
   const isAdmin = Boolean(currentAccount && (currentAccount.role === 'admin' || currentAccount.username === 'admin'));
@@ -465,7 +483,10 @@ function useStorageManager() {
     removeGroupMember,
     theme,
     setTheme,
-    toggleTheme
+    toggleTheme,
+    lang,
+    setLang,
+    toggleLang
   };
 }
 

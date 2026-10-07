@@ -1403,6 +1403,13 @@ h1, h2, h3, h4 {
   padding: 28px 24px;
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 122, 24, 0.18);
   box-sizing: border-box;
+  transition: max-width 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-gate-card.login-mode {
+  max-width: 480px;
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(56, 189, 248, 0.15);
 }
 
 .auth-grid-2col {

@@ -26,7 +26,7 @@ const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Tr�
 
 export default function AuthGate() {
   const { accounts, createAccount, loginWithCredentials } = useStorage();
-  const [tab, setTab] = useState('register'); // 'register' | 'login'
+  const [tab, setTab] = useState('login'); // Default is 'login' per user request
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -154,7 +154,7 @@ export default function AuthGate() {
 
   return (
     <div className="auth-gate-screen">
-      <div className="auth-gate-card">
+      <div className={`auth-gate-card ${tab === 'login' ? 'login-mode' : ''}`}>
         
         {/* Brand & Locked App Banner */}
         <div style={{ textAlign: 'center', marginBottom: '18px' }}>
@@ -165,31 +165,21 @@ export default function AuthGate() {
           </div>
 
           <h2 className="auth-header-title" style={{ fontWeight: 900, margin: '4px 0 8px', background: 'linear-gradient(135deg, #ffffff 40%, #ffb74d 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Thiết Lập Tài Khoản & Khai Báo Thể Trạng
+            {tab === 'login' ? 'Đăng Nhập Tài Khoản' : 'Thiết Lập Tài Khoản & Thể Trạng'}
           </h2>
 
-          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffb74d', background: 'rgba(255, 145, 0, 0.08)', borderRadius: '10px' }}>
+          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: tab === 'login' ? '#38bdf8' : '#ffb74d', background: tab === 'login' ? 'rgba(56, 189, 248, 0.08)' : 'rgba(255, 145, 0, 0.08)', borderRadius: '10px' }}>
             <Lock size={14} style={{ flexShrink: 0 }} />
-            <span>Vui lòng đăng ký tài khoản để mở khóa gợi ý thực đơn & dữ liệu dinh dưỡng</span>
+            <span>
+              {tab === 'login' 
+                ? 'Vui lòng đăng nhập để mở khóa thực đơn & dữ liệu cá nhân' 
+                : 'Khai báo thể trạng để AI tính toán TDEE và gợi ý món ăn chuẩn xác'}
+            </span>
           </div>
         </div>
 
         {/* Tab Switcher */}
         <div className="auth-tabs-row">
-          <button
-            type="button"
-            onClick={() => { setTab('register'); setErrorMsg(''); }}
-            className={`glass-pill auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
-            style={{
-              background: tab === 'register' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-              borderColor: tab === 'register' ? '#ff9100' : 'rgba(255, 255, 255, 0.1)',
-              color: tab === 'register' ? '#ffa726' : 'var(--text-muted)'
-            }}
-          >
-            <UserPlus size={16} />
-            <span>Đăng Ký Tài Khoản</span>
-          </button>
-
           <button
             type="button"
             onClick={() => { setTab('login'); setErrorMsg(''); }}
@@ -202,6 +192,20 @@ export default function AuthGate() {
           >
             <LogIn size={16} />
             <span>Đăng Nhập</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setTab('register'); setErrorMsg(''); }}
+            className={`glass-pill auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
+            style={{
+              background: tab === 'register' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
+              borderColor: tab === 'register' ? '#ff9100' : 'rgba(255, 255, 255, 0.1)',
+              color: tab === 'register' ? '#ffa726' : 'var(--text-muted)'
+            }}
+          >
+            <UserPlus size={16} />
+            <span>Đăng Ký Tài Khoản</span>
           </button>
         </div>
 
@@ -561,32 +565,36 @@ export default function AuthGate() {
             </button>
 
             {/* Switch to Login Link */}
-            <div style={{ textAlign: 'center', marginTop: '6px' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                Đã có tài khoản?{' '}
-                <button
-                  type="button"
-                  onClick={() => { setTab('login'); setErrorMsg(''); }}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#38bdf8',
-                    fontWeight: 800,
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
-                    padding: 0
-                  }}
-                >
-                  Đăng nhập tại đây ➔
-                </button>
-              </span>
+            <div style={{ marginTop: '10px', padding: '12px', borderRadius: '12px', background: 'rgba(56, 189, 248, 0.05)', border: '1px dashed rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                Đã có tài khoản từ trước?
+              </div>
+              <button
+                type="button"
+                onClick={() => { setTab('login'); setErrorMsg(''); }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#38bdf8',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  textDecoration: 'underline'
+                }}
+              >
+                <LogIn size={15} />
+                <span>Đăng nhập tại đây</span>
+                <ArrowRight size={14} />
+              </button>
             </div>
 
           </form>
         )}
 
-        {/* ================= LOGIN VIEW (Strict Password & Dedicated Admin Gateway) ================= */}
+        {/* ================= LOGIN VIEW ================= */}
         {tab === 'login' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
@@ -594,7 +602,7 @@ export default function AuthGate() {
               <div className="glass-panel" style={{ padding: '16px 18px', background: 'rgba(255,255,255,0.02)' }}>
                 <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', color: '#38bdf8', letterSpacing: '0.04em', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <LogIn size={15} />
-                  <span>Đăng Nhập Tài Khoản Người Dùng</span>
+                  <span>Thông Tin Đăng Nhập</span>
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '12px' }}>
@@ -643,32 +651,40 @@ export default function AuthGate() {
                 <LogIn size={18} /> ĐĂNG NHẬP VÀO ỨNG DỤNG
               </button>
 
-              {/* Switch to Register */}
-              <div style={{ textAlign: 'center', marginTop: '2px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                  Chưa có tài khoản?{' '}
-                  <button
-                    type="button"
-                    onClick={() => { setTab('register'); setErrorMsg(''); }}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: '#ffa726',
-                      fontWeight: 800,
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      padding: 0
-                    }}
-                  >
-                    Đăng ký tài khoản & khai báo thể trạng ➔
-                  </button>
-                </span>
+              {/* Call-to-action when user doesn't have an account */}
+              <div style={{ marginTop: '8px', padding: '14px', borderRadius: '12px', background: 'rgba(255, 145, 0, 0.06)', border: '1px dashed rgba(255, 145, 0, 0.3)', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                  Chưa có tài khoản trên hệ thống?
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setTab('register'); setErrorMsg(''); }}
+                  className="btn"
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255, 145, 0, 0.15)',
+                    border: '1px solid rgba(255, 145, 0, 0.45)',
+                    color: '#ffa726',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <UserPlus size={16} />
+                  <span>Đăng ký tài khoản & Khai báo thể trạng</span>
+                  <ArrowRight size={15} />
+                </button>
               </div>
             </form>
 
             {/* Privacy Protection Note */}
-            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               <Lock size={13} color="#10b981" />
               <span>Hệ thống bảo mật dữ liệu riêng tư & an toàn tuyệt đối.</span>
             </div>

@@ -214,40 +214,40 @@ function AppLayout() {
       <div className="main-content-wrapper">
         
         {/* Mobile-only Top Brand Header */}
-        <header className="mobile-only-header" style={{ padding: '8px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <BrandLogo size={36} />
-            <div>
+        <header className="mobile-only-header" style={{ padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flexShrink: 0 }}>
+            <BrandLogo size={32} />
+            <div style={{ minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <h1 className="brand-title" style={{ fontSize: '1.05rem', margin: 0, lineHeight: 1.2 }}>Nay Ăn Gì</h1>
-                <span className="brand-badge" style={{ fontSize: '0.55rem', padding: '1px 5px' }}>TRỢ LÝ BỮA ĂN • AI</span>
+                <h1 className="brand-title" style={{ fontSize: '1rem', margin: 0, lineHeight: 1.2, whiteSpace: 'nowrap' }}>Nay Ăn Gì</h1>
+                <span className="brand-badge" style={{ fontSize: '0.52rem', padding: '1px 5px', whiteSpace: 'nowrap' }}>AI</span>
               </div>
-              <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: '1px' }}>
-                Dinh dưỡng & Thực đơn chuẩn vóc dáng
+              <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '1px', whiteSpace: 'nowrap' }}>
+                Dinh dưỡng & Vóc dáng
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
             {isAdmin && (
               <button 
                 className="glass-pill"
-                style={{ padding: '4px 8px', fontSize: '0.75rem', cursor: 'pointer', background: 'rgba(255,193,7,0.14)', borderColor: '#ffc107', color: '#ffc107' }}
+                style={{ padding: '5px 7px', fontSize: '0.72rem', cursor: 'pointer', background: 'rgba(255,193,7,0.14)', borderColor: '#ffc107', color: '#ffc107' }}
                 onClick={openSwitchAccount}
                 title="👑 Quản trị tất cả tài khoản"
               >
                 <Users size={13} />
-                <span>Quản trị</span>
               </button>
             )}
 
             <button 
               className="glass-pill"
-              style={{ padding: '4px 10px', fontSize: '0.78rem', cursor: 'pointer' }}
+              style={{ padding: '4px 8px', fontSize: '0.74rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px' }}
               onClick={openEditProfile}
+              title="Xem hồ sơ thể trạng"
             >
-              <span style={{ fontSize: '1rem', marginRight: '2px' }}>{profile.avatar || '🧑‍💻'}</span>
-              <span style={{ color: bmiInfo.color }}>BMI {bmiInfo.bmi}</span>
+              <span style={{ fontSize: '0.95rem' }}>{profile.avatar || '🧑‍💻'}</span>
+              <span style={{ color: bmiInfo.color, fontWeight: 700 }}>{bmiInfo.bmi}</span>
             </button>
 
             {/* Quick Mobile Theme Switcher */}
@@ -255,17 +255,18 @@ function AppLayout() {
               type="button"
               onClick={toggleTheme}
               className="theme-icon-btn"
+              style={{ width: '29px', height: '29px', padding: 0 }}
               title="Chuyển đổi Sáng / Tối"
             >
-              {theme === 'light' ? <Sun size={15} color="#ea580c" /> : <Moon size={15} color="#bbf246" />}
+              {theme === 'light' ? <Sun size={14} color="#ea580c" /> : <Moon size={14} color="#bbf246" />}
             </button>
 
             <button 
               onClick={logout}
-              style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: '#f87171', cursor: 'pointer', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: '#f87171', cursor: 'pointer', width: '29px', height: '29px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="Đăng xuất"
             >
-              <LogOut size={14} />
+              <LogOut size={13} />
             </button>
           </div>
         </header>

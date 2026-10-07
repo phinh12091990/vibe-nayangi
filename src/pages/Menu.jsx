@@ -3,7 +3,8 @@ import { useStorage } from '../hooks/useStorage';
 import FoodMedia from '../components/FoodMedia';
 import { 
   Plus, Eye, EyeOff, Search, Trash2, Edit3, X, Check, RotateCcw, 
-  UtensilsCrossed, LayoutList, LayoutGrid, Rows3, ArrowUp, Image as ImageIcon
+  UtensilsCrossed, LayoutList, LayoutGrid, Rows3, ArrowUp, Image as ImageIcon,
+  SlidersHorizontal, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 const COMMON_EMOJIS = ['🍜', '🍲', '🍛', '🍚', '🥖', '🥗', '🐟', '🥩', '🍗', '🥘', '🥣', '🍳', '🥟', '🥪', '🌯', '🥞'];
@@ -34,6 +35,7 @@ export default function MenuPage() {
   const [selectedNutrition, setSelectedNutrition] = useState('ALL');
   const [selectedPriceTier, setSelectedPriceTier] = useState('ALL');
   const [hideInactive, setHideInactive] = useState(false);
+  const [showFilterDrawer, setShowFilterDrawer] = useState(false);
 
   // View Mode: 'compact' (siêu gọn ~48px) | 'grid' (lưới 2 cột mini) | 'cards' (thẻ lớn)
   const [viewMode, setViewMode] = useState(() => {
@@ -128,6 +130,17 @@ export default function MenuPage() {
 
   const activeCount = foods.filter(f => !f.hidden).length;
   const displayedFoods = filteredFoods.slice(0, visibleLimit);
+
+  // Secondary filters (Price, Nutrition, Inactive) that can be tucked into the drawer
+  const secondaryFilterCount = (selectedNutrition !== 'ALL' ? 1 : 0) + 
+                               (selectedPriceTier !== 'ALL' ? 1 : 0) + 
+                               (hideInactive ? 1 : 0);
+
+  const handleClearSecondaryFilters = () => {
+    setSelectedNutrition('ALL');
+    setSelectedPriceTier('ALL');
+    setHideInactive(false);
+  };
 
   const handleOpenAdd = () => {
     setEditingId(null);
@@ -224,69 +237,89 @@ export default function MenuPage() {
   return (
     <div className="page-container" ref={containerRef}>
       
-      {/* Top Header */}
-      <div className="app-header">
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Sổ Món Thực Đơn</h2>
-            <span className="brand-badge">TRỢ LÝ BỮA ĂN • AI</span>
+      {/* Top Header (Mobile-First Responsive) */}
+      <div className="menu-header-bar">
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <h2 className="menu-title-heading">Sổ Món Thực Đơn</h2>
+            <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 7px', whiteSpace: 'nowrap' }}>
+              {foods.length} món
+            </span>
           </div>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
-            Kho thực đơn dinh dưỡng cá nhân hoá • {foods.length} món ({activeCount} khả dụng)
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '3px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            Kho thực đơn cá nhân hoá • {activeCount} khả dụng
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
           <button 
             className="btn btn-secondary" 
-            style={{ padding: '8px 14px', fontSize: '0.82rem' }} 
+            style={{ padding: '6px 10px', fontSize: '0.78rem', whiteSpace: 'nowrap' }} 
             onClick={() => {
               if (window.confirm("Khôi phục danh sách món ăn mẫu (48 món tiêu chuẩn)?")) {
                 resetFoods();
               }
             }}
-            title="Khôi phục dữ liệu gốc"
+            title="Khôi phục danh sách mẫu (48 món)"
           >
-            <RotateCcw size={15} /> Mẫu
+            <RotateCcw size={13} />
+            <span className="menu-action-label">Mẫu</span>
           </button>
 
           <button 
             className="btn btn-primary" 
-            style={{ padding: '8px 16px', fontSize: '0.85rem' }} 
+            style={{ padding: '6px 12px', fontSize: '0.8rem', whiteSpace: 'nowrap' }} 
             onClick={handleOpenAdd}
           >
-            <Plus size={16} /> Thêm Món
+            <Plus size={15} />
+            <span>Thêm Món</span>
           </button>
         </div>
       </div>
 
-      {/* STICKY SEARCH & FILTER CONTROLS (Dính cố định khi cuộn) */}
+      {/* STICKY SEARCH & FILTER CONTROLS (Tối ưu Mobile: 2 Hàng Tinh Gọn + Ngăn Lọc Mở Rộng) */}
       <div className="sticky-menu-controls">
         
-        {/* Search bar & View Mode Toggles */}
+        {/* Hàng 1: Tìm kiếm + Nút Mở Ngăn Lọc + Chuyển Chế Độ Xem */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={17} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+            <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input 
               type="text"
               className="form-input"
-              style={{ width: '100%', padding: '9px 36px 9px 38px', fontSize: '0.9rem' }}
-              placeholder="Tìm món, nguyên liệu, thịt/rau..."
+              style={{ width: '100%', padding: '8px 30px 8px 32px', fontSize: '0.86rem' }}
+              placeholder="Tìm món, thịt, rau, hải sản..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             {searchTerm && (
               <button 
                 onClick={() => setSearchTerm('')}
-                style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '2px' }}
+                title="Xoá tìm kiếm"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             )}
           </div>
 
-          {/* View Mode Switcher Pills */}
-          <div style={{ display: 'flex', background: 'var(--bg-surface-secondary)', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid var(--border-color)' }}>
+          {/* Nút Kích Hoạt Ngăn Bộ Lọc */}
+          <button
+            type="button"
+            onClick={() => setShowFilterDrawer(prev => !prev)}
+            className={`btn-filter-trigger ${secondaryFilterCount > 0 ? 'active' : ''}`}
+            title="Lọc nâng cao theo Giá, Nhóm dưỡng chất & Trạng thái"
+          >
+            <SlidersHorizontal size={14} />
+            <span className="btn-filter-text">Lọc</span>
+            {secondaryFilterCount > 0 && (
+              <span className="filter-badge-pill">{secondaryFilterCount}</span>
+            )}
+            {showFilterDrawer ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+          </button>
+
+          {/* Chuyển Đổi Chế Độ Hiển Thị (Compact / Grid / Cards) */}
+          <div style={{ display: 'flex', background: 'var(--bg-surface-secondary)', borderRadius: 'var(--radius-sm)', padding: '2px', border: '1px solid var(--border-color)', flexShrink: 0 }}>
             <button
               onClick={() => handleChangeViewMode('compact')}
               style={{
@@ -294,15 +327,15 @@ export default function MenuPage() {
                 border: 'none',
                 color: viewMode === 'compact' ? 'var(--primary-dark)' : 'var(--text-muted)',
                 fontWeight: viewMode === 'compact' ? 800 : 600,
-                padding: '6px 8px',
-                borderRadius: '6px',
+                padding: '5px 7px',
+                borderRadius: '5px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center'
               }}
-              title="Chế độ danh sách gọn (Tiết kiệm chỗ)"
+              title="Danh sách siêu gọn (Tiết kiệm chỗ)"
             >
-              <LayoutList size={16} />
+              <LayoutList size={15} />
             </button>
 
             <button
@@ -312,15 +345,15 @@ export default function MenuPage() {
                 border: 'none',
                 color: viewMode === 'grid' ? 'var(--primary-dark)' : 'var(--text-muted)',
                 fontWeight: viewMode === 'grid' ? 800 : 600,
-                padding: '6px 8px',
-                borderRadius: '6px',
+                padding: '5px 7px',
+                borderRadius: '5px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center'
               }}
-              title="Chế độ lưới 2 cột"
+              title="Lưới 2 cột mini"
             >
-              <LayoutGrid size={16} />
+              <LayoutGrid size={15} />
             </button>
 
             <button
@@ -330,21 +363,21 @@ export default function MenuPage() {
                 border: 'none',
                 color: viewMode === 'cards' ? 'var(--primary-dark)' : 'var(--text-muted)',
                 fontWeight: viewMode === 'cards' ? 800 : 600,
-                padding: '6px 8px',
-                borderRadius: '6px',
+                padding: '5px 7px',
+                borderRadius: '5px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center'
               }}
-              title="Chế độ thẻ chi tiết"
+              title="Thẻ chi tiết lớn"
             >
-              <Rows3 size={16} />
+              <Rows3 size={15} />
             </button>
           </div>
         </div>
 
-        {/* Meal Category Filters with Counts */}
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', scrollbarWidth: 'none' }}>
+        {/* Hàng 2: Dải Cuộn Bữa Ăn (Sáng/Trưa/Tối) + Thẻ Lọc Đang Kích Hoạt */}
+        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', alignItems: 'center', scrollbarWidth: 'none' }}>
           {[
             { id: 'ALL', label: `Tất cả (${mealCounts.ALL})` },
             { id: 'Sáng', label: `🌅 Sáng (${mealCounts.Sáng})` },
@@ -356,90 +389,149 @@ export default function MenuPage() {
               onClick={() => setSelectedMeal(m.id)}
               className="glass-pill"
               style={{
-                fontSize: '0.82rem',
-                padding: '6px 14px',
+                fontSize: '0.78rem',
+                padding: '5px 12px',
                 background: selectedMeal === m.id ? 'var(--primary)' : 'var(--bg-card)',
                 color: selectedMeal === m.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
                 borderColor: selectedMeal === m.id ? 'var(--primary)' : 'var(--border-color)',
                 fontWeight: selectedMeal === m.id ? 800 : 600,
-                boxShadow: selectedMeal === m.id ? '0 3px 12px var(--primary-glow)' : 'var(--shadow-xs)',
+                boxShadow: selectedMeal === m.id ? '0 2px 8px var(--primary-glow)' : 'var(--shadow-xs)',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}
             >
               {m.label}
             </button>
           ))}
-        </div>
 
-        {/* Price Tier Filters */}
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', alignItems: 'center', scrollbarWidth: 'none' }}>
-          {[
-            { id: 'ALL', label: 'Tất cả mức giá' },
-            { id: 'budget', label: '💰 Bình dân (<45k)' },
-            { id: 'standard', label: '🍛 Tiêu chuẩn (45k-75k)' },
-            { id: 'treat', label: '🥩 Thưởng nóng (>75k)' }
-          ].map(p => (
+          {/* Quick Clearable Secondary Filter Chips in Ribbon */}
+          {selectedPriceTier !== 'ALL' && (
             <button
-              key={p.id}
-              onClick={() => setSelectedPriceTier(p.id)}
-              className="glass-pill"
-              style={{
-                fontSize: '0.78rem',
-                padding: '4px 10px',
-                background: selectedPriceTier === p.id ? 'var(--accent-mint-light)' : 'var(--bg-card)',
-                color: selectedPriceTier === p.id ? '#059669' : 'var(--text-secondary)',
-                border: selectedPriceTier === p.id ? '1px solid #10b981' : '1px solid var(--border-color)',
-                fontWeight: selectedPriceTier === p.id ? 700 : 600,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap'
-              }}
+              type="button"
+              onClick={() => setSelectedPriceTier('ALL')}
+              className="active-filter-chip"
+              title="Bỏ lọc mức giá"
             >
-              {p.label}
+              <span>{selectedPriceTier === 'budget' ? '💰 <45k' : selectedPriceTier === 'treat' ? '🥩 >75k' : '🍛 45-75k'}</span>
+              <X size={12} />
             </button>
-          ))}
-        </div>
+          )}
 
-        {/* Nutrition Category Filters & Status Toggle */}
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', alignItems: 'center', scrollbarWidth: 'none' }}>
-          {['ALL', ...NUTRITION_GROUPS].map(n => (
+          {selectedNutrition !== 'ALL' && (
             <button
-              key={n}
-              onClick={() => setSelectedNutrition(n)}
-              className="glass-pill"
-              style={{
-                fontSize: '0.78rem',
-                padding: '4px 10px',
-                background: selectedNutrition === n ? 'var(--primary-light)' : 'var(--bg-card)',
-                color: selectedNutrition === n ? 'var(--text-main)' : 'var(--text-secondary)',
-                border: selectedNutrition === n ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-                fontWeight: selectedNutrition === n ? 700 : 600,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap'
-              }}
+              type="button"
+              onClick={() => setSelectedNutrition('ALL')}
+              className="active-filter-chip"
+              title="Bỏ lọc nhóm dưỡng chất"
             >
-              {n === 'ALL' ? 'Tất cả nhóm chất' : n}
+              <span>🥗 {selectedNutrition}</span>
+              <X size={12} />
             </button>
-          ))}
+          )}
 
-          <button
-            onClick={() => setHideInactive(!hideInactive)}
-            className="glass-pill"
-            style={{
-              fontSize: '0.78rem',
-              padding: '4px 10px',
-              background: hideInactive ? 'var(--accent-mint-light)' : 'var(--bg-card)',
-              color: hideInactive ? '#059669' : 'var(--text-muted)',
-              border: hideInactive ? '1px solid #10b981' : '1px solid var(--border-color)',
-              fontWeight: 700,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              marginLeft: 'auto'
-            }}
-          >
-            {hideInactive ? '✓ Đang bật' : 'Tất cả'}
-          </button>
+          {hideInactive && (
+            <button
+              type="button"
+              onClick={() => setHideInactive(false)}
+              className="active-filter-chip"
+              title="Bỏ lọc trạng thái"
+            >
+              <span>✓ Chỉ món bật</span>
+              <X size={12} />
+            </button>
+          )}
         </div>
+
+        {/* Ngăn Bộ Lọc Nâng Cao (Expandable Drawer / Accordion Panel) */}
+        {showFilterDrawer && (
+          <div className="menu-filter-drawer-panel">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <SlidersHorizontal size={14} color="var(--primary-dark)" />
+                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-main)' }}>Bộ Lọc Nâng Cao</span>
+              </div>
+              {secondaryFilterCount > 0 && (
+                <button 
+                  type="button"
+                  onClick={handleClearSecondaryFilters}
+                  style={{ background: 'transparent', border: 'none', color: '#f87171', fontSize: '0.74rem', cursor: 'pointer', fontWeight: 700, padding: 0 }}
+                >
+                  Xoá lọc ({secondaryFilterCount})
+                </button>
+              )}
+            </div>
+
+            {/* Mức Giá */}
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '5px', fontWeight: 600 }}>Mức giá ngân sách:</div>
+              <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                {[
+                  { id: 'ALL', label: 'Tất cả mức giá' },
+                  { id: 'budget', label: '💰 Bình dân (<45k)' },
+                  { id: 'standard', label: '🍛 Tiêu chuẩn (45k-75k)' },
+                  { id: 'treat', label: '🥩 Thưởng nóng (>75k)' }
+                ].map(p => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSelectedPriceTier(p.id)}
+                    className="drawer-pill"
+                    style={{
+                      background: selectedPriceTier === p.id ? 'var(--accent-mint-light)' : 'var(--bg-surface)',
+                      color: selectedPriceTier === p.id ? '#059669' : 'var(--text-secondary)',
+                      borderColor: selectedPriceTier === p.id ? '#10b981' : 'var(--border-color)',
+                      fontWeight: selectedPriceTier === p.id ? 700 : 500
+                    }}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Nhóm Dinh Dưỡng */}
+            <div style={{ marginBottom: '10px' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '5px', fontWeight: 600 }}>Nhóm chất chính:</div>
+              <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                {['ALL', ...NUTRITION_GROUPS].map(n => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setSelectedNutrition(n)}
+                    className="drawer-pill"
+                    style={{
+                      background: selectedNutrition === n ? 'var(--primary-light)' : 'var(--bg-surface)',
+                      color: selectedNutrition === n ? 'var(--text-main)' : 'var(--text-secondary)',
+                      borderColor: selectedNutrition === n ? 'var(--primary)' : 'var(--border-color)',
+                      fontWeight: selectedNutrition === n ? 700 : 500
+                    }}
+                  >
+                    {n === 'ALL' ? 'Tất cả nhóm chất' : n}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Trạng Thái Ẩn/Hiện */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '8px', borderTop: '1px dashed var(--border-color)' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Ẩn các món tạm tắt khỏi danh sách</span>
+              <button
+                type="button"
+                onClick={() => setHideInactive(!hideInactive)}
+                className="drawer-pill"
+                style={{
+                  background: hideInactive ? 'var(--accent-mint-light)' : 'var(--bg-surface)',
+                  color: hideInactive ? '#059669' : 'var(--text-muted)',
+                  borderColor: hideInactive ? '#10b981' : 'var(--border-color)',
+                  fontWeight: 700
+                }}
+              >
+                {hideInactive ? '✓ Đang ẩn món tắt' : '○ Hiển thị tất cả'}
+              </button>
+            </div>
+          </div>
+        )}
 
       </div>
 
@@ -475,10 +567,12 @@ export default function MenuPage() {
                         <span className={getNutritionBadgeClass(food.nutrition)} style={{ fontSize: '0.68rem', padding: '1px 6px', whiteSpace: 'nowrap', flexShrink: 0 }}>
                           {food.nutrition}
                         </span>
-                        <span style={{ fontSize: '0.68rem', color: food.priceTier === 'budget' ? '#10b981' : food.priceTier === 'treat' ? '#ec4899' : '#38bdf8', fontWeight: 600 }}>
-                          {food.priceTier === 'budget' ? '💰<45k' : food.priceTier === 'treat' ? '🥩>75k' : '🍛45-75k'}
+                        <span style={{ fontSize: '0.68rem', color: food.priceTier === 'budget' ? '#10b981' : food.priceTier === 'treat' ? '#ec4899' : '#38bdf8', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                          {food.priceTier === 'budget' ? '💰 <45k' : food.priceTier === 'treat' ? '🥩 >75k' : '🍛 45-75k'}
                         </span>
-                        <span>{food.categories.join('/')}</span>
+                        <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                          • {food.categories.join('/')}
+                        </span>
                         {allergens.length > 0 && (
                           <span style={{ color: '#f87171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }} title={allergens.join(', ')}>
                             • ⚠️ {allergens.join(', ')}

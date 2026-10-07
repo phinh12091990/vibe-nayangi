@@ -807,24 +807,33 @@ h1, h2, h3, h4 {
   }
 }
 
-/* App Header bar */
-.app-header {
+/* App Header bar & Menu Header Bar (Mobile-First) */
+.app-header,
+.menu-header-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
   width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
+  gap: 8px;
 }
 
-@media (max-width: 640px) {
-  .app-header {
-    margin-bottom: 12px;
-    padding-bottom: 10px;
+.menu-title-heading {
+  font-size: clamp(1.2rem, 4.2vw, 1.65rem);
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .menu-action-label {
+    display: none;
   }
 }
 
@@ -1463,24 +1472,123 @@ h1, h2, h3, h4 {
   background: var(--glass-nav);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  padding: 10px 0 14px 0;
-  margin: -10px 0 16px 0;
+  padding: 8px 0 10px 0;
+  margin: -8px 0 12px 0;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+}
+
+/* Filter trigger button */
+.btn-filter-trigger {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--trans-smooth);
+  flex-shrink: 0;
+}
+
+.btn-filter-trigger:hover,
+.btn-filter-trigger.active {
+  background: var(--primary);
+  color: var(--primary-dark);
+  border-color: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.filter-badge-pill {
+  background: var(--primary-dark);
+  color: var(--primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+}
+
+.btn-filter-trigger.active .filter-badge-pill {
+  background: #000;
+  color: #fff;
+}
+
+/* Active filter chip in horizontal ribbon */
+.active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: var(--trans-smooth);
+}
+
+.active-filter-chip:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Expandable filter drawer panel */
+.menu-filter-drawer-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  box-shadow: var(--shadow-md);
+  animation: slideDownFade 0.2s ease-out;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.drawer-pill {
+  font-size: 0.74rem;
+  padding: 4px 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: var(--trans-smooth);
+}
+
+.drawer-pill:hover {
+  border-color: var(--primary);
 }
 
 .compact-food-item {
   display: flex;
   align-items: center;
-  padding: 10px 14px;
+  padding: 8px 10px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  gap: 12px;
+  gap: 10px;
   transition: var(--trans-smooth);
   box-shadow: var(--shadow-xs);
+  min-width: 0;
 }
 
 .compact-food-item:hover {

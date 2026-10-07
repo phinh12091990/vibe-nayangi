@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { Sparkles, Utensils, History as HistoryIcon, User, Settings, Activity, UserPlus, Users, LogOut, Sun, Moon } from 'lucide-react';
+import { Sparkles, Utensils, History as HistoryIcon, User, Settings, Activity, UserPlus, Users, LogOut, Sun, Moon, Database } from 'lucide-react';
 import HomePage from './pages/Home';
 import MenuPage from './pages/Menu';
 import HistoryPage from './pages/History';
@@ -13,7 +13,7 @@ import { translations } from './utils/i18n';
 function AppLayout() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState('create');
-  const { profile, isLoggedIn, isAdmin, logout, theme, toggleTheme, lang, setLang } = useStorage();
+  const { profile, isLoggedIn, isAdmin, logout, theme, toggleTheme, lang, setLang, dbConnected, dbName } = useStorage();
 
   const t = translations[lang] || translations.vi;
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
@@ -120,6 +120,39 @@ function AppLayout() {
             <span>{t.navHistory}</span>
           </NavLink>
         </nav>
+
+        {/* Database Status Indicator (PostgreSQL) */}
+        <div style={{
+          padding: '8px 12px',
+          borderRadius: 'var(--radius-sm)',
+          background: dbConnected ? 'rgba(16, 185, 129, 0.08)' : 'rgba(234, 88, 12, 0.08)',
+          border: `1px solid ${dbConnected ? 'rgba(16, 185, 129, 0.25)' : 'rgba(234, 88, 12, 0.25)'}`,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '0.74rem'
+        }}>
+          <Database size={15} color={dbConnected ? '#10b981' : '#ea580c'} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ fontWeight: 800, color: dbConnected ? '#10b981' : '#ea580c' }}>
+                PostgreSQL
+              </span>
+              <span style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                background: dbConnected ? '#10b981' : '#ea580c',
+                display: 'inline-block'
+              }} />
+            </div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {dbConnected 
+                ? (lang === 'vi' ? `Đã kết nối (${dbName})` : `Connected (${dbName})`)
+                : (lang === 'vi' ? 'Sẵn sàng kết nối Vibe Host' : 'Ready for Vibe Host DB')}
+            </div>
+          </div>
+        </div>
 
         {/* Sidebar Promo Card */}
         <div className="sidebar-promo-card">

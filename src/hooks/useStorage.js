@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext, createElement } from 'react';
 import { seedData } from '../data/seedData';
+import * as api from '../utils/apiClient';
 
 function getSafeItem(key, fallback) {
   try {
@@ -215,6 +216,46 @@ function useStorageManager() {
     return Array.isArray(safe) ? safe : DEFAULT_GROUP;
   });
 
+  // PostgreSQL Connection state
+  const [dbConnected, setDbConnected] = useState(false);
+  const [dbName, setDbName] = useState('');
+
+  // Initial check & auto-sync from PostgreSQL when available
+  useEffect(() => {
+    let isMounted = true;
+    api.checkServerStatus().then(status => {
+      if (!isMounted) return;
+      if (status && status.postgres && status.postgres.connected) {
+        setDbConnected(true);
+        setDbName(status.postgres.database || 'PostgreSQL');
+        // Fetch accounts from PostgreSQL
+        api.fetchRemoteAccounts().then(remoteAccounts => {
+          if (Array.isArray(remoteAccounts) && remoteAccounts.length > 0) {
+            setAccounts(prev => {
+              const combined = [...remoteAccounts];
+              // Keep any existing not yet in DB
+              for (const localAcc of prev) {
+                if (!combined.some(r => r.username === localAcc.username)) {
+                  combined.push(localAcc);
+                }
+              }
+              return combined;
+            });
+          }
+        });
+        // Fetch foods from PostgreSQL
+        api.fetchRemoteFoods().then(remoteFoods => {
+          if (Array.isArray(remoteFoods) && remoteFoods.length > 0) {
+            setFoods(remoteFoods);
+          }
+        });
+      } else {
+        setDbConnected(false);
+      }
+    });
+    return () => { isMounted = false; };
+  }, []);
+
   useEffect(() => localStorage.setItem('nayangi_accounts', JSON.stringify(accounts)), [accounts]);
   useEffect(() => localStorage.setItem('nayangi_current_account_id', JSON.stringify(currentAccountId)), [currentAccountId]);
   useEffect(() => localStorage.setItem('user_profile', JSON.stringify(profile)), [profile]);
@@ -238,6 +279,7 @@ function useStorageManager() {
       emoji: food.emoji || '🍲'
     };
     setFoods(prev => [newFood, ...prev]);
+    api.saveRemoteFood(newFood).catch(() => {});
   };
 
   const updateFood = (id, updatedData) => {
@@ -262,15 +304,19 @@ function useStorageManager() {
   };
   
   const addHistory = (foodId, mealType) => {
-    setHistory(prev => [...prev, { id: Date.now().toString(), foodId, timestamp: Date.now(), mealType }]);
+    const item = { id: Date.now().toString(), foodId, timestamp: Date.now(), mealType, accountId: currentAccountId };
+    setHistory(prev => [...prev, item]);
+    api.saveRemoteHistory(item).catch(() => {});
   };
 
   const deleteHistoryItem = (timestampOrId) => {
     setHistory(prev => prev.filter(h => (h.id ? h.id !== timestampOrId : h.timestamp !== timestampOrId)));
+    api.deleteRemoteHistory(timestampOrId).catch(() => {});
   };
 
   const clearHistory = () => {
     setHistory([]);
+    api.clearRemoteHistory(currentAccountId).catch(() => {});
   };
 
   const toggleAllergy = (allergy) => {
@@ -287,13 +333,15 @@ function useStorageManager() {
   const updateAccount = (accountId, updatedData) => {
     setAccounts(prev => prev.map(a => {
       if (a.id !== accountId) return a;
-      return {
+      const updated = {
         ...a,
         ...updatedData,
         height: updatedData.height !== undefined ? Number(updatedData.height) : a.height,
         weight: updatedData.weight !== undefined ? Number(updatedData.weight) : a.weight,
         age: updatedData.age !== undefined ? Number(updatedData.age) : a.age
       };
+      api.updateRemoteAccount(accountId, updated).catch(() => {});
+      return updated;
     }));
   };
 
@@ -340,6 +388,7 @@ function useStorageManager() {
     setAccounts(prev => [...prev, newAccount]);
     setCurrentAccountId(newId);
     setAllergies(newAccount.allergies);
+    api.saveRemoteAccount(newAccount).catch(() => {});
     return newAccount;
   };
 
@@ -486,7 +535,9 @@ function useStorageManager() {
     toggleTheme,
     lang,
     setLang,
-    toggleLang
+    toggleLang,
+    dbConnected,
+    dbName
   };
 }
 

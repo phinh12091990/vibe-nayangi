@@ -111,20 +111,23 @@ export default function AuthGate() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
+    <div className="auth-gate-screen" style={{
       width: '100%',
+      minHeight: '100%',
+      maxHeight: '100%',
+      overflowY: 'auto',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       background: 'radial-gradient(ellipse at 50% 10%, rgba(255, 122, 24, 0.15) 0%, rgba(10, 13, 24, 0.98) 70%)',
-      padding: '24px 16px',
+      padding: '24px 16px 48px',
       boxSizing: 'border-box'
     }}>
       <div style={{
         width: '100%',
         maxWidth: '680px',
-        background: 'linear-gradient(180deg, rgba(20, 25, 46, 0.92) 0%, rgba(13, 16, 30, 0.96) 100%)',
+        margin: 'auto 0',
+        background: 'linear-gradient(180deg, rgba(20, 25, 46, 0.95) 0%, rgba(13, 16, 30, 0.98) 100%)',
         backdropFilter: 'blur(28px)',
         WebkitBackdropFilter: 'blur(28px)',
         border: '1px solid rgba(255, 145, 0, 0.3)',

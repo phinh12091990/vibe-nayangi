@@ -120,6 +120,12 @@ body {
     overflow: hidden;
   }
 
+  #root:has(.auth-gate-screen) {
+    overflow-y: auto;
+    max-height: calc(100vh - 40px);
+    display: block;
+  }
+
   .bottom-nav {
     display: none !important;
   }

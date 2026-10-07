@@ -136,7 +136,7 @@ export function useStorage() {
   });
 
   const [allergies, setAllergies] = useState(() => {
-    if (Array.isArray(currentAccount.allergies) && currentAccount.allergies.length > 0) {
+    if (currentAccount && Array.isArray(currentAccount.allergies) && currentAccount.allergies.length > 0) {
       return currentAccount.allergies;
     }
     const safe = getSafeItem('allergies', []);

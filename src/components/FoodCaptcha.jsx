@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
-import { RefreshCw, X, CheckCircle2, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { RefreshCw, X, CheckCircle2, ShieldCheck, Sun, Moon, Sparkles, Trophy } from 'lucide-react';
 import { triggerConfetti } from '../utils/confetti';
 
 const FOOD_ITEMS = [
-  { id: 'pho', emoji: '🍜', name: 'Phở bò', color: '#fed7aa' },
-  { id: 'sushi', emoji: '🍣', name: 'Sushi cá hồi', color: '#fbcfe8' },
-  { id: 'bento', emoji: '🍱', name: 'Cơm Bento', color: '#bbf7d0' },
-  { id: 'pizza', emoji: '🍕', name: 'Pizza phô mai', color: '#fef08a' },
-  { id: 'steak', emoji: '🥩', name: 'Bò bít tết', color: '#fecdd3' },
-  { id: 'salad', emoji: '🥗', name: 'Salad xanh', color: '#c7d2fe' },
-  { id: 'avocado', emoji: '🥑', name: 'Trái bơ', color: '#d9f99d' },
-  { id: 'banhmi', emoji: '🥖', name: 'Bánh mì', color: '#fed7aa' },
+  { id: 'pho', emoji: '🍜', name: 'Phở bò', color: '#fed7aa', border: '#fb923c' },
+  { id: 'sushi', emoji: '🍣', name: 'Sushi cá hồi', color: '#fbcfe8', border: '#f472b6' },
+  { id: 'bento', emoji: '🍱', name: 'Cơm Bento', color: '#bbf7d0', border: '#4ade80' },
+  { id: 'pizza', emoji: '🍕', name: 'Pizza phô mai', color: '#fef08a', border: '#facc15' },
+  { id: 'steak', emoji: '🥩', name: 'Bò bít tết', color: '#fecdd3', border: '#fb7185' },
+  { id: 'salad', emoji: '🥗', name: 'Salad xanh', color: '#c7d2fe', border: '#818cf8' },
+  { id: 'avocado', emoji: '🥑', name: 'Trái bơ', color: '#d9f99d', border: '#a3e635' },
+  { id: 'banhmi', emoji: '🥖', name: 'Bánh mì', color: '#fed7aa', border: '#f97316' },
 ];
+
+const TOTAL_PAIRS = 8; // Bắt buộc ghép đúng đủ tất cả 8/8 cặp mới mở khoá!
 
 function generateCaptchaTiles() {
   // 8 pairs = 16 tiles
@@ -20,7 +22,7 @@ function generateCaptchaTiles() {
     deck.push({ ...food, uniqueId: `${food.id}_1` });
     deck.push({ ...food, uniqueId: `${food.id}_2` });
   });
-  // Shuffle array
+  // Shuffle array thoroughly
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -36,8 +38,6 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
   const [matchedCount, setMatchedCount] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [lang, setLang] = useState('vi'); // 'vi' | 'en'
-
-  const targetPairs = 1; // 1 pair for quick & delightful user verification!
 
   const handleReset = () => {
     setTiles(generateCaptchaTiles());
@@ -67,53 +67,56 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
           const nextCount = matchedCount + 1;
           setMatchedCount(nextCount);
 
-          if (nextCount >= targetPairs) {
+          if (nextCount >= TOTAL_PAIRS) {
             setIsCompleted(true);
             triggerConfetti();
             setTimeout(() => {
               if (onSuccess) onSuccess();
-            }, 800);
+            }, 900);
           }
-        }, 300);
+        }, 220);
       } else {
-        // WRONG MATCH
+        // WRONG MATCH -> rung lắc báo lỗi rồi reset
         setTimeout(() => {
           setWrongTiles([first.uniqueId, second.uniqueId]);
           setTimeout(() => {
             setSelectedTiles([]);
             setWrongTiles([]);
-          }, 600);
-        }, 400);
+          }, 450);
+        }, 320);
       }
     }
   };
 
   const texts = {
     vi: {
-      instruction: `Chọn hai món ăn giống nhau - ${matchedCount}/${targetPairs} cặp`,
+      instruction: `Chọn hai món ăn giống nhau - ${matchedCount}/${TOTAL_PAIRS} cặp`,
       title: 'Xác thực bảo vệ tài khoản',
-      success: 'Xác thực thành công!',
+      success: '🎉 Đã ghép đủ 8/8 cặp! Mở khoá thành công...',
       refresh: 'Đổi đề mới',
       themeLight: 'Sáng',
       themeDark: 'Tối',
-      tip: 'Nhấn vào 2 ô có cùng món ăn để hoàn tất xác thực'
+      tip: `Ghép đúng tất cả ${TOTAL_PAIRS} cặp món ăn để xác thực người dùng thật`,
+      allDone: 'ĐÃ HOÀN TẤT!'
     },
     en: {
-      instruction: `Select two matching foods - ${matchedCount}/${targetPairs} pair`,
+      instruction: `Match identical foods - ${matchedCount}/${TOTAL_PAIRS} pairs`,
       title: 'Human Verification Security',
-      success: 'Verified successfully!',
+      success: '🎉 All 8/8 pairs matched! Unlocked successfully...',
       refresh: 'Refresh',
       themeLight: 'Light',
       themeDark: 'Dark',
-      tip: 'Tap 2 tiles with the same food to verify'
+      tip: `Match all ${TOTAL_PAIRS} pairs to unlock access`,
+      allDone: 'ALL MATCHED!'
     }
   };
 
   const t = texts[lang] || texts.vi;
+  const progressPercent = Math.round((matchedCount / TOTAL_PAIRS) * 100);
 
   return (
     <div className="food-captcha-overlay" onClick={onClose}>
-      <div className="food-captcha-modal" onClick={e => e.stopPropagation()}>
+      <div className="food-captcha-modal cute-border" onClick={e => e.stopPropagation()}>
         
         {/* Top Control Bar (Pills & Theme Switcher like Image 4 & 5) */}
         <div className="captcha-top-bar">
@@ -168,13 +171,27 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
           </div>
         </div>
 
-        {/* Title / Instruction Header */}
+        {/* Title / Instruction Header with Progress Bar */}
         <div className="captcha-instruction-bar">
-          <ShieldCheck size={16} color="var(--primary-dark)" />
-          <span>{t.instruction}</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <ShieldCheck size={16} color="#059669" />
+              <span>{t.instruction}</span>
+            </div>
+            <span style={{ fontSize: '0.74rem', fontWeight: 800, color: matchedCount === TOTAL_PAIRS ? '#10b981' : 'var(--text-muted)' }}>
+              {progressPercent}%
+            </span>
+          </div>
+          {/* Progress bar line */}
+          <div className="captcha-progress-track">
+            <div 
+              className="captcha-progress-fill" 
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
         </div>
 
-        {/* 4x4 Grid of Cute Food Tiles (Matching Image 5 layout) */}
+        {/* 4x4 Grid of Cute Food Tiles (Matching Image 5 layout: pastel colors & cute frame) */}
         <div className="captcha-grid-container">
           {tiles.map((tile) => {
             const isSelected = selectedTiles.some(t => t.uniqueId === tile.uniqueId);
@@ -186,7 +203,10 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
                 key={tile.uniqueId}
                 type="button"
                 className={`captcha-tile ${isSelected ? 'selected' : ''} ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''}`}
-                style={{ backgroundColor: isMatched ? 'rgba(16, 185, 129, 0.2)' : tile.color }}
+                style={{ 
+                  backgroundColor: isMatched ? 'rgba(16, 185, 129, 0.18)' : tile.color,
+                  borderColor: isSelected ? '#f59e0b' : isMatched ? '#10b981' : tile.border 
+                }}
                 onClick={() => handleTileClick(tile)}
                 disabled={isMatched || isCompleted}
                 title={tile.name}
@@ -206,12 +226,12 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
         <div className="captcha-footer-status">
           {isCompleted ? (
             <div className="captcha-success-banner">
-              <CheckCircle2 size={16} color="#10b981" />
+              <Trophy size={16} color="#10b981" />
               <span>{t.success}</span>
             </div>
           ) : (
             <span className="captcha-tip-text">
-              💡 {t.tip}
+              ✨ {t.tip}
             </span>
           )}
         </div>

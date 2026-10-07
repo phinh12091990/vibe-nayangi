@@ -170,6 +170,18 @@ export default function AuthGate() {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
+  // Mouse cursor flashlight tracking (Buổi tối / Dark mode: chuột rê tới đâu đèn rọi sáng)
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const [isPasswordHovered, setIsPasswordHovered] = useState(false);
+
+  const handleCardMouseMove = (e) => {
+    if (theme === 'light') return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePos({ x, y });
+  };
+
   // Register Form State
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -330,7 +342,23 @@ export default function AuthGate() {
       
       {/* ================= 1. LOGIN SPLIT-CARD VIEW (Matching Images 1, 2, 3, 4) ================= */}
       {tab === 'login' ? (
-        <div className="auth-gate-split-card">
+        <div 
+          className={`auth-gate-split-card ${theme === 'dark' ? 'night-interactive' : ''}`}
+          onMouseMove={handleCardMouseMove}
+          style={{
+            '--mouse-x': `${mousePos.x}%`,
+            '--mouse-y': `${mousePos.y}%`
+          }}
+        >
+          {/* Dynamic Flashlight Beam Spotlight covering the card in Dark Mode */}
+          {theme === 'dark' && (
+            <div 
+              className="night-mouse-flashlight-beam"
+              style={{
+                background: `radial-gradient(circle 180px at ${mousePos.x}% ${mousePos.y}%, rgba(254, 240, 138, 0.15) 0%, rgba(254, 240, 138, 0.05) 50%, transparent 80%)`
+              }}
+            />
+          )}
           
           {/* Left Side: Landscape Sky Art (Sun / Moon) */}
           <div className="auth-split-left">
@@ -412,12 +440,16 @@ export default function AuthGate() {
                   </div>
                 </div>
 
-                {/* Password Input with FLASHLIGHT BEAM INTERACTION (Images 1 & 2) */}
+                {/* Password Input with FLASHLIGHT BEAM INTERACTION (Rê chuột tới đâu đèn pin sáng soi mật khẩu) */}
                 <div className="form-group" style={{ margin: 0 }}>
-                  <div className={`auth-input-wrapper password-flashlight-field ${showLoginPassword ? 'beam-on' : ''}`}>
+                  <div 
+                    className={`auth-input-wrapper password-flashlight-field ${(showLoginPassword || isPasswordHovered) ? 'beam-on' : ''}`}
+                    onMouseEnter={() => setIsPasswordHovered(true)}
+                    onMouseLeave={() => setIsPasswordHovered(false)}
+                  >
                     <Lock size={16} className="auth-input-icon" />
                     <input
-                      type={showLoginPassword ? 'text' : 'password'}
+                      type={(showLoginPassword || isPasswordHovered) ? 'text' : 'password'}
                       className="auth-text-input password-input-element"
                       placeholder={lang === 'vi' ? 'Nhập mật khẩu...' : 'Enter password...'}
                       value={loginPassword}
@@ -426,7 +458,7 @@ export default function AuthGate() {
                     />
                     <div className="flashlight-beam-light" />
                     <FlashlightButton 
-                      isOn={showLoginPassword} 
+                      isOn={showLoginPassword || isPasswordHovered} 
                       onToggle={() => setShowLoginPassword(!showLoginPassword)} 
                     />
                   </div>

@@ -25,9 +25,11 @@ const ACTIVITIES = [
 const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
 
 export default function AuthGate() {
-  const { accounts, createAccount, login, loginWithCredentials, createDemoAccount } = useStorage();
+  const { accounts, createAccount, loginWithCredentials } = useStorage();
   const [tab, setTab] = useState('register'); // 'register' | 'login'
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loginPassword, setLoginPassword] = useState('');
   const [customAllergy, setCustomAllergy] = useState('');
@@ -78,32 +80,71 @@ export default function AuthGate() {
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
+    setErrorMsg('');
+
     if (!regForm.name.trim()) {
       setErrorMsg('Vui lòng nhập họ và tên của bạn.');
       return;
     }
 
-    createAccount({
-      ...regForm,
-      name: regForm.name.trim(),
-      username: regForm.username.trim() || `user_${Date.now().toString().slice(-4)}`,
-      height: Number(regForm.height),
-      weight: Number(regForm.weight),
-      age: Number(regForm.age)
-    });
+    const uname = (regForm.username || '').trim().toLowerCase().replace(/\s+/g, '_');
+    if (!uname) {
+      setErrorMsg('Vui lòng nhập Tên đăng nhập (Username).');
+      return;
+    }
 
-    triggerConfetti();
+    if (uname === 'admin') {
+      setErrorMsg("Tên đăng nhập 'admin' là tài khoản Quản trị viên hệ thống. Vui lòng chọn tên khác.");
+      return;
+    }
+
+    const isExisted = accounts.some(a => (a.username || '').toLowerCase() === uname);
+    if (isExisted) {
+      setErrorMsg(`Tên đăng nhập "${uname}" đã có người sử dụng. Vui lòng chọn tên khác.`);
+      return;
+    }
+
+    const pwd = (regForm.password || '').trim();
+    if (!pwd || pwd.length < 4) {
+      setErrorMsg('Vui lòng đặt mật khẩu bảo mật (tối thiểu 4 ký tự).');
+      return;
+    }
+
+    if (pwd !== confirmPassword.trim()) {
+      setErrorMsg('Mật khẩu xác nhận không khớp! Vui lòng nhập lại.');
+      return;
+    }
+
+    try {
+      createAccount({
+        ...regForm,
+        name: regForm.name.trim(),
+        username: uname,
+        password: pwd,
+        height: Number(regForm.height),
+        weight: Number(regForm.weight),
+        age: Number(regForm.age)
+      });
+      triggerConfetti();
+    } catch (err) {
+      setErrorMsg(err.message || 'Lỗi khi tạo tài khoản.');
+    }
   };
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     setErrorMsg('');
     const uname = loginUsername.trim();
+    const pwd = loginPassword.trim();
     if (!uname) {
-      setErrorMsg('Vui lòng nhập tên đăng nhập (Username).');
+      setErrorMsg('Vui lòng nhập Tên đăng nhập (Username).');
       return;
     }
-    const res = loginWithCredentials(uname, loginPassword);
+    if (!pwd) {
+      setErrorMsg('Vui lòng nhập Mật khẩu để đăng nhập.');
+      return;
+    }
+    const res = loginWithCredentials(uname, pwd);
     if (res.success) {
       triggerConfetti();
     } else {
@@ -111,16 +152,21 @@ export default function AuthGate() {
     }
   };
 
+  const handleAdminAutofill = () => {
+    setLoginUsername('admin');
+    setLoginPassword('admin');
+    setErrorMsg('');
+  };
+
   const handleAdminQuickLogin = () => {
+    setLoginUsername('admin');
+    setLoginPassword('admin');
     const res = loginWithCredentials('admin', 'admin');
     if (res.success) {
       triggerConfetti();
+    } else {
+      setErrorMsg(res.message || 'Đăng nhập Quản trị viên không thành công.');
     }
-  };
-
-  const handleQuickDemo = () => {
-    createDemoAccount();
-    triggerConfetti();
   };
 
   return (
@@ -270,27 +316,30 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Tên đăng nhập (Username)</label>
+                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Tên đăng nhập (Username) *</label>
                   <input 
                     type="text" 
                     className="form-input" 
                     placeholder="VD: hoangnam" 
                     value={regForm.username} 
                     onChange={e => setRegForm(prev => ({ ...prev, username: e.target.value }))}
+                    required
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Mật khẩu</label>
+                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Mật khẩu bảo mật *</label>
                   <div style={{ position: 'relative' }}>
                     <input 
                       type={showPassword ? 'text' : 'password'} 
                       className="form-input" 
-                      placeholder="Mật khẩu tài khoản" 
+                      placeholder="Tối thiểu 4 ký tự" 
                       value={regForm.password} 
                       onChange={e => setRegForm(prev => ({ ...prev, password: e.target.value }))}
+                      required
+                      minLength={4}
                       style={{ paddingRight: '34px' }}
                     />
                     <button
@@ -304,16 +353,32 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Tuổi</label>
-                  <input 
-                    type="number" 
-                    className="form-input" 
-                    min="10" 
-                    max="100" 
-                    value={regForm.age} 
-                    onChange={e => setRegForm(prev => ({ ...prev, age: e.target.value }))}
-                  />
+                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Xác nhận mật khẩu *</label>
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type={showConfirmPassword ? 'text' : 'password'} 
+                      className="form-input" 
+                      placeholder="Nhập lại mật khẩu" 
+                      value={confirmPassword} 
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      required
+                      minLength={4}
+                      style={{ paddingRight: '34px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                    >
+                      {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
                 </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '8px' }}>
+                <Lock size={12} color="#10b981" />
+                <span>Mật khẩu bảo mật riêng tư, không công khai với các tài khoản khác.</span>
               </div>
             </div>
 
@@ -354,8 +419,8 @@ export default function AuthGate() {
                 </div>
               </div>
 
-              {/* Gender, Height & Weight */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+              {/* Gender, Age, Height & Weight in 4 columns */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '12px' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label" style={{ fontSize: '0.78rem' }}>Giới tính</label>
                   <div style={{ display: 'flex', gap: '4px', height: '40px' }}>
@@ -382,7 +447,21 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Chiều cao (cm)</label>
+                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Tuổi</label>
+                  <input 
+                    type="number" 
+                    className="form-input" 
+                    min="10" 
+                    max="100" 
+                    value={regForm.age} 
+                    onChange={e => setRegForm(prev => ({ ...prev, age: e.target.value }))}
+                    required
+                    style={{ height: '40px' }}
+                  />
+                </div>
+
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Cao (cm)</label>
                   <input 
                     type="number" 
                     className="form-input" 
@@ -396,7 +475,7 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Cân nặng (kg)</label>
+                  <label className="form-label" style={{ fontSize: '0.78rem' }}>Nặng (kg)</label>
                   <input 
                     type="number" 
                     className="form-input" 
@@ -522,28 +601,33 @@ export default function AuthGate() {
               <Sparkles size={18} /> ĐĂNG KÝ TÀI KHOẢN & MỞ KHÓA NGAY
             </button>
 
-            {/* Quick Demo Option */}
-            <div style={{ textAlign: 'center', marginTop: '4px' }}>
-              <button
-                type="button"
-                onClick={handleQuickDemo}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  fontSize: '0.78rem',
-                  cursor: 'pointer',
-                  textDecoration: 'underline'
-                }}
-              >
-                Hoặc trải nghiệm nhanh với tài khoản mẫu (Dân Văn Phòng) ⚡
-              </button>
+            {/* Switch to Login Link */}
+            <div style={{ textAlign: 'center', marginTop: '6px' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+                Đã có tài khoản?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setTab('login'); setErrorMsg(''); }}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#38bdf8',
+                    fontWeight: 800,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    padding: 0
+                  }}
+                >
+                  Đăng nhập tại đây ➔
+                </button>
+              </span>
             </div>
 
           </form>
         )}
 
-        {/* ================= LOGIN VIEW (Secure & Private - Accounts do not see each other) ================= */}
+        {/* ================= LOGIN VIEW (Strict Password & Dedicated Admin Gateway) ================= */}
         {tab === 'login' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
@@ -551,15 +635,15 @@ export default function AuthGate() {
               <div className="glass-panel" style={{ padding: '16px 18px', background: 'rgba(255,255,255,0.02)' }}>
                 <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', color: '#38bdf8', letterSpacing: '0.04em', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <LogIn size={15} />
-                  <span>Đăng Nhập Tài Khoản Cá Nhân</span>
+                  <span>Đăng Nhập Tài Khoản Người Dùng</span>
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '12px' }}>
-                  <label className="form-label" style={{ fontSize: '0.8rem' }}>Tên đăng nhập (Username hoặc Họ tên) *</label>
+                  <label className="form-label" style={{ fontSize: '0.8rem' }}>Tên đăng nhập (Username) *</label>
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="VD: phi, hoangnam, admin..."
+                    placeholder="VD: hoangnam, admin..."
                     value={loginUsername}
                     onChange={e => setLoginUsername(e.target.value)}
                     required
@@ -568,25 +652,22 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <label className="form-label" style={{ fontSize: '0.8rem', margin: 0 }}>Mật khẩu</label>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
-                      (Bỏ trống nếu chưa đặt mật khẩu)
-                    </span>
-                  </div>
+                  <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>Mật khẩu bảo mật *</label>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={showLoginPassword ? 'text' : 'password'}
                       className="form-input"
-                      placeholder="Nhập mật khẩu..."
+                      placeholder="Nhập mật khẩu của bạn..."
                       value={loginPassword}
                       onChange={e => setLoginPassword(e.target.value)}
+                      required
                       style={{ fontSize: '0.92rem', padding: '10px 40px 10px 14px', height: '44px' }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowLoginPassword(!showLoginPassword)}
                       style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
+                      title={showLoginPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                     >
                       {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -600,56 +681,133 @@ export default function AuthGate() {
                 className="btn btn-primary"
                 style={{ width: '100%', padding: '12px', fontSize: '0.95rem', fontWeight: 800, justifyContent: 'center' }}
               >
-                <LogIn size={18} /> Đăng Nhập Vào Ứng Dụng
+                <LogIn size={18} /> ĐĂNG NHẬP VÀO ỨNG DỤNG
               </button>
+
+              {/* Switch to Register */}
+              <div style={{ textAlign: 'center', marginTop: '2px' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+                  Chưa có tài khoản?{' '}
+                  <button
+                    type="button"
+                    onClick={() => { setTab('register'); setErrorMsg(''); }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#ffa726',
+                      fontWeight: 800,
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      padding: 0
+                    }}
+                  >
+                    Đăng ký tài khoản & khai báo thể trạng ➔
+                  </button>
+                </span>
+              </div>
             </form>
 
-            {/* Admin Quick Gate & Demo */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
-              <div 
-                className="glass-panel" 
-                style={{ 
-                  padding: '10px 14px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between', 
-                  border: '1px solid rgba(255, 193, 7, 0.3)',
-                  background: 'rgba(255, 193, 7, 0.05)'
-                }}
-              >
+            {/* CỔNG QUẢN TRỊ VIÊN (ADMIN) - USER: admin / PASSWORD: admin */}
+            <div 
+              className="glass-panel" 
+              style={{ 
+                padding: '16px', 
+                border: '1px solid rgba(255, 193, 7, 0.45)',
+                background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(20, 25, 46, 0.9) 100%)',
+                borderRadius: '16px',
+                marginTop: '4px'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '1.25rem' }}>👑</span>
+                  <span style={{ fontSize: '1.4rem' }}>👑</span>
                   <div>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#ffc107' }}>Cổng Quản Trị Viên (Admin)</div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Toàn quyền xem tất cả tài khoản & quản trị</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#ffc107' }}>
+                      Cổng Quản Trị Viên (Admin)
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                      Toàn quyền xem tất cả thành viên & quản lý hệ thống
+                    </div>
                   </div>
                 </div>
+                <span className="glass-pill" style={{ color: '#ffc107', borderColor: '#ffc107', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px' }}>
+                  HỆ THỐNG
+                </span>
+              </div>
+
+              {/* Default Admin Info Card */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr', 
+                gap: '8px', 
+                background: 'rgba(0, 0, 0, 0.35)', 
+                padding: '10px 12px', 
+                borderRadius: '10px',
+                marginBottom: '12px',
+                fontSize: '0.8rem',
+                border: '1px solid rgba(255, 193, 7, 0.15)'
+              }}>
+                <div>
+                  <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>User mặc định:</span>
+                  <div style={{ fontWeight: 800, color: '#38bdf8', fontFamily: 'monospace', fontSize: '0.92rem', letterSpacing: '0.04em' }}>
+                    admin
+                  </div>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>Password mặc định:</span>
+                  <div style={{ fontWeight: 800, color: '#ffc107', fontFamily: 'monospace', fontSize: '0.92rem', letterSpacing: '0.04em' }}>
+                    admin
+                  </div>
+                </div>
+              </div>
+
+              {/* Admin Actions */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={handleAdminAutofill}
+                  className="glass-pill"
+                  style={{
+                    padding: '8px 10px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    justifyContent: 'center',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
+                    color: '#ffffff',
+                    cursor: 'pointer'
+                  }}
+                  title="Điền tự động user: admin / password: admin vào form"
+                >
+                  📝 Điền mẫu Admin
+                </button>
+
                 <button
                   type="button"
                   onClick={handleAdminQuickLogin}
                   className="glass-pill"
-                  style={{ fontSize: '0.75rem', padding: '4px 10px', background: 'rgba(255, 193, 7, 0.15)', borderColor: '#ffc107', color: '#ffc107', cursor: 'pointer' }}
-                >
-                  Đăng nhập Admin ➔
-                </button>
-              </div>
-
-              <div style={{ textAlign: 'center', marginTop: '4px' }}>
-                <button
-                  type="button"
-                  onClick={handleQuickDemo}
                   style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-dim)',
+                    padding: '8px 10px',
                     fontSize: '0.78rem',
-                    cursor: 'pointer',
-                    textDecoration: 'underline'
+                    fontWeight: 800,
+                    justifyContent: 'center',
+                    background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.3) 100%)',
+                    borderColor: '#ffc107',
+                    color: '#ffc107',
+                    cursor: 'pointer'
                   }}
+                  title="Đăng nhập ngay lập tức với quyền Quản trị viên"
                 >
-                  Hoặc trải nghiệm nhanh với tài khoản mẫu (Dân Văn Phòng) ⚡
+                  ⚡ Đăng nhập Admin ➔
                 </button>
               </div>
+            </div>
+
+            {/* Privacy Protection Note */}
+            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <Lock size={13} color="#10b981" />
+              <span>Dữ liệu từng tài khoản được lưu trữ độc lập, bảo mật riêng tư.</span>
             </div>
 
           </div>

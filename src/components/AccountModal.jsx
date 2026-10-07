@@ -35,6 +35,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
   const [showPassword, setShowPassword] = useState(false);
   const [customAllergy, setCustomAllergy] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Form State for "Create Account"
   const [createForm, setCreateForm] = useState({
@@ -137,23 +138,36 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
   // Submit Create Account
   const handleCreateSubmit = (e) => {
     e.preventDefault();
-    if (!createForm.name.trim()) return;
+    setErrorMsg('');
+    if (!createForm.name.trim()) {
+      setErrorMsg('Vui lòng nhập Họ và tên thành viên.');
+      return;
+    }
+    if (!createForm.password || createForm.password.trim().length < 4) {
+      setErrorMsg('Vui lòng đặt mật khẩu bảo mật (tối thiểu 4 ký tự).');
+      return;
+    }
 
-    const newAcc = createAccount({
-      ...createForm,
-      name: createForm.name.trim(),
-      username: createForm.username.trim() || `user_${Date.now().toString().slice(-4)}`,
-      height: Number(createForm.height),
-      weight: Number(createForm.weight),
-      age: Number(createForm.age)
-    });
+    try {
+      const newAcc = createAccount({
+        ...createForm,
+        name: createForm.name.trim(),
+        username: createForm.username.trim() || `user_${Date.now().toString().slice(-4)}`,
+        password: createForm.password.trim(),
+        height: Number(createForm.height),
+        weight: Number(createForm.weight),
+        age: Number(createForm.age)
+      });
 
-    triggerConfetti();
-    setSuccessMsg(`Chào mừng ${newAcc.name}! Tài khoản và hồ sơ thể trạng đã được thiết lập thành công.`);
-    
-    setTimeout(() => {
-      onClose();
-    }, 1500);
+      triggerConfetti();
+      setSuccessMsg(`Chào mừng ${newAcc.name}! Tài khoản và hồ sơ thể trạng đã được thiết lập thành công.`);
+      
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (err) {
+      setErrorMsg(err.message || 'Lỗi khi tạo tài khoản.');
+    }
   };
 
   // Submit Edit Profile
@@ -331,6 +345,26 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
           </div>
         )}
 
+        {/* Error Alert Banner */}
+        {errorMsg && (
+          <div style={{ 
+            padding: '10px 14px', 
+            borderRadius: '10px', 
+            background: 'rgba(239, 68, 68, 0.18)', 
+            border: '1px solid rgba(239, 68, 68, 0.4)', 
+            color: '#fca5a5', 
+            fontSize: '0.85rem', 
+            fontWeight: 700, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            marginBottom: '12px' 
+          }}>
+            <ShieldAlert size={18} />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+
         {/* Scrollable Form Body */}
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
           
@@ -392,13 +426,14 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
                   </div>
 
                   <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label" style={{ fontSize: '0.78rem' }}>Tên đăng nhập (Username)</label>
+                    <label className="form-label" style={{ fontSize: '0.78rem' }}>Tên đăng nhập (Username) *</label>
                     <input 
                       type="text" 
                       className="form-input"
                       placeholder="VD: minhanh_dev"
                       value={createForm.username}
                       onChange={e => setCreateForm(prev => ({ ...prev, username: e.target.value }))}
+                      required
                       style={{ fontSize: '0.86rem', padding: '8px 12px' }}
                     />
                   </div>
@@ -407,14 +442,16 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
                 {/* Password & Age */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px' }}>
                   <div className="form-group" style={{ margin: 0 }}>
-                    <label className="form-label" style={{ fontSize: '0.78rem' }}>Mật khẩu (Tùy chọn)</label>
+                    <label className="form-label" style={{ fontSize: '0.78rem' }}>Mật khẩu bảo mật *</label>
                     <div style={{ position: 'relative' }}>
                       <input 
                         type={showPassword ? 'text' : 'password'} 
                         className="form-input"
-                        placeholder="Để trống nếu đăng nhập nhanh"
+                        placeholder="Tối thiểu 4 ký tự"
                         value={createForm.password}
                         onChange={e => setCreateForm(prev => ({ ...prev, password: e.target.value }))}
+                        required
+                        minLength={4}
                         style={{ fontSize: '0.86rem', padding: '8px 34px 8px 12px' }}
                       />
                       <button

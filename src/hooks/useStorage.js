@@ -93,13 +93,15 @@ function useStorageManager() {
       // Filter out stale mock acc_default
       userAccounts = saved.filter(a => a && a.id && a.id !== 'acc_default');
     }
-    // Always guarantee admin account exists
+    // Always guarantee admin account exists with username: 'admin' and password: 'admin'
     const hasAdmin = userAccounts.some(a => a.id === 'acc_admin' || a.username === 'admin');
     if (!hasAdmin) {
       userAccounts = [ADMIN_ACCOUNT, ...userAccounts];
     } else {
       userAccounts = userAccounts.map(a => 
-        (a.id === 'acc_admin' || a.username === 'admin') ? { ...ADMIN_ACCOUNT, ...a, role: 'admin' } : a
+        (a.id === 'acc_admin' || a.username === 'admin') 
+          ? { ...a, id: 'acc_admin', name: a.name || 'Quản Trị Viên', username: 'admin', password: 'admin', role: 'admin', avatar: a.avatar || '👑' } 
+          : a
       );
     }
     return userAccounts;
@@ -264,13 +266,29 @@ function useStorageManager() {
   };
 
   const createAccount = (accountData) => {
+    const rawUsername = (accountData.username || '').trim().toLowerCase().replace(/\s+/g, '_');
+    const username = rawUsername || `user_${Date.now().toString().slice(-4)}`;
+
+    if (username === 'admin') {
+      throw new Error("Tên đăng nhập 'admin' là tài khoản Quản trị viên mặc định.");
+    }
+    const isExisted = accounts.some(a => (a.username || '').toLowerCase() === username);
+    if (isExisted) {
+      throw new Error(`Tên đăng nhập "${username}" đã có người sử dụng. Vui lòng chọn tên khác.`);
+    }
+
+    const pwd = (accountData.password || '').trim();
+    if (!pwd || pwd.length < 4) {
+      throw new Error('Mật khẩu bảo mật phải có ít nhất 4 ký tự.');
+    }
+
     const newId = 'acc_' + Date.now();
     const newAccount = {
       id: newId,
       name: accountData.name ? accountData.name.trim() : 'Người Dùng Mới',
-      username: accountData.username ? accountData.username.trim().toLowerCase().replace(/\s+/g, '_') : `user_${Date.now().toString().slice(-4)}`,
+      username: username,
       email: accountData.email ? accountData.email.trim() : '',
-      password: accountData.password || '',
+      password: pwd,
       role: 'user', // New registrations are always standard users
       avatar: accountData.avatar || (accountData.gender === 'Nữ' ? '👩‍💻' : '🧑‍💻'),
       age: Number(accountData.age) || 26,
@@ -323,19 +341,29 @@ function useStorageManager() {
 
   const loginWithCredentials = (usernameOrEmail, password = '') => {
     const term = (usernameOrEmail || '').trim().toLowerCase();
+    const pwd = (password || '').trim();
+
+    if (!term) {
+      return { success: false, message: 'Vui lòng nhập Tên đăng nhập (Username).' };
+    }
+    if (!pwd) {
+      return { success: false, message: 'Vui lòng nhập Mật khẩu bảo mật để đăng nhập.' };
+    }
+
     const found = accounts.find(a => 
       (a.username || '').toLowerCase() === term || 
       (a.name || '').toLowerCase() === term ||
       (a.email || '').toLowerCase() === term
     );
+
     if (!found) {
-      return { success: false, message: 'Tài khoản không tồn tại trong hệ thống.' };
+      return { success: false, message: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại Tên đăng nhập hoặc đăng ký tài khoản mới.' };
     }
-    if (found.password && password && found.password !== password) {
-      return { success: false, message: 'Mật khẩu không chính xác.' };
-    }
-    if (found.password && !password && found.role === 'admin') {
-      return { success: false, message: 'Tài khoản Quản Trị Viên yêu cầu nhập mật khẩu (mặc định: admin).' };
+
+    // Strict password verification (admin: admin, users: their registered password)
+    const expectedPassword = (found.username === 'admin' || found.role === 'admin') ? 'admin' : (found.password || '');
+    if (expectedPassword !== pwd) {
+      return { success: false, message: 'Mật khẩu không chính xác. Vui lòng kiểm tra lại.' };
     }
 
     setCurrentAccountId(found.id);
@@ -353,7 +381,7 @@ function useStorageManager() {
       name: 'Dân Văn Phòng',
       username: 'danvanphong',
       email: 'vanphong@nayangi.vn',
-      password: '',
+      password: 'demo_password',
       avatar: '🧑‍💻',
       age: 26,
       gender: 'Nam',

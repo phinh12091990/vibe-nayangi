@@ -310,10 +310,10 @@ export default function MenuPage() {
             type="button"
             onClick={() => setShowFilterDrawer(prev => !prev)}
             className={`btn-filter-trigger ${secondaryFilterCount > 0 ? 'active' : ''}`}
-            title="Lọc nâng cao theo Giá, Nhóm dưỡng chất & Trạng thái"
+            title={lang === 'vi' ? "Lọc nâng cao theo Giá, Nhóm dưỡng chất & Trạng thái" : "Advanced filter by Price, Nutrition & Status"}
           >
             <SlidersHorizontal size={14} />
-            <span className="btn-filter-text">Lọc</span>
+            <span className="btn-filter-text">{lang === 'vi' ? 'Lọc' : 'Filters'}</span>
             {secondaryFilterCount > 0 && (
               <span className="filter-badge-pill">{secondaryFilterCount}</span>
             )}
@@ -335,7 +335,7 @@ export default function MenuPage() {
                 display: 'flex',
                 alignItems: 'center'
               }}
-              title="Danh sách siêu gọn (Tiết kiệm chỗ)"
+              title={lang === 'vi' ? "Danh sách siêu gọn (Tiết kiệm chỗ)" : "Compact list view"}
             >
               <LayoutList size={15} />
             </button>
@@ -353,7 +353,7 @@ export default function MenuPage() {
                 display: 'flex',
                 alignItems: 'center'
               }}
-              title="Lưới 2 cột mini"
+              title={lang === 'vi' ? "Lưới 2 cột mini" : "2-column grid view"}
             >
               <LayoutGrid size={15} />
             </button>
@@ -371,7 +371,7 @@ export default function MenuPage() {
                 display: 'flex',
                 alignItems: 'center'
               }}
-              title="Thẻ chi tiết lớn"
+              title={lang === 'vi' ? "Thẻ chi tiết lớn" : "Detailed cards view"}
             >
               <Rows3 size={15} />
             </button>
@@ -381,10 +381,10 @@ export default function MenuPage() {
         {/* Hàng 2: Dải Cuộn Bữa Ăn (Sáng/Trưa/Tối) + Thẻ Lọc Đang Kích Hoạt */}
         <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px', alignItems: 'center', scrollbarWidth: 'none' }}>
           {[
-            { id: 'ALL', label: `Tất cả (${mealCounts.ALL})` },
-            { id: 'Sáng', label: `🌅 Sáng (${mealCounts.Sáng})` },
-            { id: 'Trưa', label: `☀️ Trưa (${mealCounts.Trưa})` },
-            { id: 'Tối', label: `🌙 Tối (${mealCounts.Tối})` }
+            { id: 'ALL', label: lang === 'vi' ? `Tất cả (${mealCounts.ALL})` : `All (${mealCounts.ALL})` },
+            { id: 'Sáng', label: lang === 'vi' ? `🌅 Sáng (${mealCounts.Sáng})` : `🌅 Breakfast (${mealCounts.Sáng})` },
+            { id: 'Trưa', label: lang === 'vi' ? `☀️ Trưa (${mealCounts.Trưa})` : `☀️ Lunch (${mealCounts.Trưa})` },
+            { id: 'Tối', label: lang === 'vi' ? `🌙 Tối (${mealCounts.Tối})` : `🌙 Dinner (${mealCounts.Tối})` }
           ].map(m => (
             <button
               key={m.id}
@@ -413,7 +413,7 @@ export default function MenuPage() {
               type="button"
               onClick={() => setSelectedPriceTier('ALL')}
               className="active-filter-chip"
-              title="Bỏ lọc mức giá"
+              title={lang === 'vi' ? "Bỏ lọc mức giá" : "Clear price filter"}
             >
               <span>{selectedPriceTier === 'budget' ? '💰 <45k' : selectedPriceTier === 'treat' ? '🥩 >75k' : '🍛 45-75k'}</span>
               <X size={12} />
@@ -425,7 +425,7 @@ export default function MenuPage() {
               type="button"
               onClick={() => setSelectedNutrition('ALL')}
               className="active-filter-chip"
-              title="Bỏ lọc nhóm dưỡng chất"
+              title={lang === 'vi' ? "Bỏ lọc nhóm dưỡng chất" : "Clear nutrition filter"}
             >
               <span>🥗 {selectedNutrition}</span>
               <X size={12} />
@@ -451,7 +451,9 @@ export default function MenuPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <SlidersHorizontal size={14} color="var(--primary-dark)" />
-                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-main)' }}>Bộ Lọc Nâng Cao</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                  {lang === 'vi' ? 'Bộ Lọc Nâng Cao' : 'Advanced Filters'}
+                </span>
               </div>
               {secondaryFilterCount > 0 && (
                 <button 
@@ -459,20 +461,22 @@ export default function MenuPage() {
                   onClick={handleClearSecondaryFilters}
                   style={{ background: 'transparent', border: 'none', color: '#f87171', fontSize: '0.74rem', cursor: 'pointer', fontWeight: 700, padding: 0 }}
                 >
-                  Xoá lọc ({secondaryFilterCount})
+                  {lang === 'vi' ? `Xoá lọc (${secondaryFilterCount})` : `Clear filters (${secondaryFilterCount})`}
                 </button>
               )}
             </div>
 
             {/* Mức Giá */}
             <div style={{ marginBottom: '10px' }}>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '5px', fontWeight: 600 }}>Mức giá ngân sách:</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '5px', fontWeight: 600 }}>
+                {lang === 'vi' ? 'Mức giá ngân sách:' : 'Budget price tier:'}
+              </div>
               <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
                 {[
-                  { id: 'ALL', label: 'Tất cả mức giá' },
-                  { id: 'budget', label: '💰 Bình dân (<45k)' },
-                  { id: 'standard', label: '🍛 Tiêu chuẩn (45k-75k)' },
-                  { id: 'treat', label: '🥩 Thưởng nóng (>75k)' }
+                  { id: 'ALL', label: lang === 'vi' ? 'Tất cả mức giá' : 'All prices' },
+                  { id: 'budget', label: lang === 'vi' ? '💰 Bình dân (<45k)' : '💰 Budget (<$2)' },
+                  { id: 'standard', label: lang === 'vi' ? '🍛 Tiêu chuẩn (45k-75k)' : '🍛 Standard ($2-$3.5)' },
+                  { id: 'treat', label: lang === 'vi' ? '🥩 Thưởng nóng (>75k)' : '🥩 Treat (>$3.5)' }
                 ].map(p => (
                   <button
                     key={p.id}
@@ -494,30 +498,39 @@ export default function MenuPage() {
 
             {/* Nhóm Dinh Dưỡng */}
             <div style={{ marginBottom: '10px' }}>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '5px', fontWeight: 600 }}>Nhóm chất chính:</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '5px', fontWeight: 600 }}>
+                {lang === 'vi' ? 'Nhóm chất chính:' : 'Nutritional group:'}
+              </div>
               <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                {['ALL', ...NUTRITION_GROUPS].map(n => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setSelectedNutrition(n)}
-                    className="drawer-pill"
-                    style={{
-                      background: selectedNutrition === n ? 'var(--primary-light)' : 'var(--bg-surface)',
-                      color: selectedNutrition === n ? 'var(--text-main)' : 'var(--text-secondary)',
-                      borderColor: selectedNutrition === n ? 'var(--primary)' : 'var(--border-color)',
-                      fontWeight: selectedNutrition === n ? 700 : 500
-                    }}
-                  >
-                    {n === 'ALL' ? 'Tất cả nhóm chất' : n}
-                  </button>
-                ))}
+                {['ALL', ...NUTRITION_GROUPS].map(n => {
+                  const label = n === 'ALL' 
+                    ? (lang === 'vi' ? 'Tất cả nhóm chất' : 'All groups') 
+                    : (lang === 'vi' ? n : (n === 'Thịt đỏ' ? 'Red Meat' : n === 'Thịt trắng' ? 'Poultry' : n === 'Cá' ? 'Seafood' : n === 'Rau củ' ? 'Veggies' : 'Carbs'));
+                  return (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setSelectedNutrition(n)}
+                      className="drawer-pill"
+                      style={{
+                        background: selectedNutrition === n ? 'var(--primary-light)' : 'var(--bg-surface)',
+                        color: selectedNutrition === n ? 'var(--text-main)' : 'var(--text-secondary)',
+                        borderColor: selectedNutrition === n ? 'var(--primary)' : 'var(--border-color)',
+                        fontWeight: selectedNutrition === n ? 700 : 500
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Trạng Thái Ẩn/Hiện */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '8px', borderTop: '1px dashed var(--border-color)' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Ẩn các món tạm tắt khỏi danh sách</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                {lang === 'vi' ? 'Ẩn các món tạm tắt khỏi danh sách' : 'Hide inactive dishes from list'}
+              </span>
               <button
                 type="button"
                 onClick={() => setHideInactive(!hideInactive)}
@@ -529,7 +542,9 @@ export default function MenuPage() {
                   fontWeight: 700
                 }}
               >
-                {hideInactive ? '✓ Đang ẩn món tắt' : '○ Hiển thị tất cả'}
+                {hideInactive 
+                  ? (lang === 'vi' ? '✓ Đang ẩn món tắt' : '✓ Hiding inactive') 
+                  : (lang === 'vi' ? '○ Hiển thị tất cả' : '○ Show all')}
               </button>
             </div>
           </div>
@@ -772,14 +787,18 @@ export default function MenuPage() {
                 style={{ width: '100%', maxWidth: '320px', padding: '12px 20px', fontSize: '0.92rem' }}
                 onClick={() => setVisibleLimit(prev => prev + 20)}
               >
-                Xem thêm 20 món (còn {filteredFoods.length - visibleLimit})
+                {lang === 'vi' 
+                  ? `Xem thêm 20 món (còn ${filteredFoods.length - visibleLimit})` 
+                  : `Load 20 more dishes (${filteredFoods.length - visibleLimit} left)`}
               </button>
               <button
                 className="glass-pill"
                 style={{ cursor: 'pointer', padding: '8px 16px', fontSize: '0.82rem' }}
                 onClick={() => setVisibleLimit(filteredFoods.length)}
               >
-                Hiển thị tất cả ({filteredFoods.length} món)
+                {lang === 'vi' 
+                  ? `Hiển thị tất cả (${filteredFoods.length} món)` 
+                  : `Show all (${filteredFoods.length} dishes)`}
               </button>
             </div>
           )}
@@ -792,7 +811,7 @@ export default function MenuPage() {
         <button 
           className="scroll-top-fab"
           onClick={scrollToTop}
-          title="Cuộn lên đầu trang"
+          title={lang === 'vi' ? "Cuộn lên đầu trang" : "Scroll to top"}
         >
           <ArrowUp size={20} />
         </button>
@@ -805,7 +824,9 @@ export default function MenuPage() {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <h3 style={{ fontSize: '1.35rem', fontWeight: 800 }}>
-                {editingId ? 'Chỉnh Sửa Món Ăn' : 'Thêm Món Mới'}
+                {editingId 
+                  ? (lang === 'vi' ? 'Chỉnh Sửa Món Ăn' : 'Edit Meal') 
+                  : (lang === 'vi' ? 'Thêm Món Mới' : 'Add New Meal')}
               </h3>
               <button 
                 onClick={() => setModalOpen(false)}
@@ -823,12 +844,12 @@ export default function MenuPage() {
                   <FoodMedia food={formData} size="lg" showBadge />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <label className="form-label" style={{ margin: '0 0 4px 0', fontSize: '0.82rem' }}>
-                      Hình ảnh món ăn (URL hoặc chọn sẵn)
+                      {lang === 'vi' ? 'Hình ảnh món ăn (URL hoặc chọn sẵn)' : 'Meal Image (URL or preset)'}
                     </label>
                     <input 
                       type="url" 
                       className="form-input" 
-                      placeholder="Dán link ảnh online (https://...)..."
+                      placeholder={lang === 'vi' ? "Dán link ảnh online (https://...)..." : "Paste image URL (https://...)..."}
                       value={formData.image || ''}
                       onChange={e => setFormData({ ...formData, image: e.target.value })}
                       style={{ fontSize: '0.8rem', padding: '6px 10px' }}
@@ -839,7 +860,7 @@ export default function MenuPage() {
                         onClick={() => setFormData({ ...formData, image: '' })}
                         style={{ background: 'none', border: 'none', color: '#f87171', fontSize: '0.72rem', cursor: 'pointer', padding: 0, marginTop: '3px' }}
                       >
-                        ✕ Xoá ảnh, dùng icon emoji
+                        {lang === 'vi' ? '✕ Xoá ảnh, dùng icon emoji' : '✕ Remove image, use emoji'}
                       </button>
                     )}
                   </div>
@@ -847,7 +868,7 @@ export default function MenuPage() {
 
                 {/* Quick Presets */}
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>
-                  Gợi ý ảnh chụp món ăn chuẩn đẹp:
+                  {lang === 'vi' ? 'Gợi ý ảnh chụp món ăn chuẩn đẹp:' : 'Photography presets:'}
                 </div>
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
                   {PRESET_FOOD_IMAGES.map(pre => (
@@ -875,7 +896,9 @@ export default function MenuPage() {
 
               {/* Emoji Picker fallback */}
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '0.82rem' }}>Biểu tượng Emoji phụ trợ</label>
+                <label className="form-label" style={{ fontSize: '0.82rem' }}>
+                  {lang === 'vi' ? 'Biểu tượng Emoji phụ trợ' : 'Fallback Emoji icon'}
+                </label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {COMMON_EMOJIS.map(em => (
                     <button
@@ -900,11 +923,11 @@ export default function MenuPage() {
 
               {/* Dish Name */}
               <div className="form-group">
-                <label className="form-label">Tên món ăn (*)</label>
+                <label className="form-label">{lang === 'vi' ? 'Tên món ăn (*)' : 'Meal Name (*)'}</label>
                 <input 
                   type="text" 
                   className="form-input" 
-                  placeholder="Ví dụ: Bún chả giò, Bánh mì xíu mại..."
+                  placeholder={lang === 'vi' ? "Ví dụ: Bún chả giò, Bánh mì xíu mại..." : "E.g. Grilled beef salad, Pho noodle..."}
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   required
@@ -914,45 +937,58 @@ export default function MenuPage() {
               {/* Price Tier & Nutrition in 2 columns */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
-                  <label className="form-label">Phân khúc giá</label>
+                  <label className="form-label">{lang === 'vi' ? 'Phân khúc giá' : 'Price tier'}</label>
                   <select 
                     className="form-select"
                     value={formData.priceTier || 'standard'}
                     onChange={e => setFormData({ ...formData, priceTier: e.target.value })}
                   >
-                    <option value="budget" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>💰 Bình dân (&lt;45k)</option>
-                    <option value="standard" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>🍛 Tiêu chuẩn (45k-75k)</option>
-                    <option value="treat" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>🥩 Thưởng nóng (&gt;75k)</option>
+                    <option value="budget" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
+                      {lang === 'vi' ? '💰 Bình dân (<45k)' : '💰 Budget (<$2)'}
+                    </option>
+                    <option value="standard" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
+                      {lang === 'vi' ? '🍛 Tiêu chuẩn (45k-75k)' : '🍛 Standard ($2-$3.5)'}
+                    </option>
+                    <option value="treat" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
+                      {lang === 'vi' ? '🥩 Thưởng nóng (>75k)' : '🥩 Treat (>$3.5)'}
+                    </option>
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Nhóm chất chính</label>
+                  <label className="form-label">{lang === 'vi' ? 'Nhóm chất chính' : 'Nutrient group'}</label>
                   <select 
                     className="form-select"
                     value={formData.nutrition}
                     onChange={e => setFormData({ ...formData, nutrition: e.target.value })}
                   >
-                    {NUTRITION_GROUPS.map(n => (
-                      <option key={n} value={n} style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
-                        {n}
-                      </option>
-                    ))}
+                    {NUTRITION_GROUPS.map(n => {
+                      const label = lang === 'vi' ? n : (n === 'Thịt đỏ' ? 'Red Meat' : n === 'Thịt trắng' ? 'Poultry' : n === 'Cá' ? 'Seafood' : n === 'Rau củ' ? 'Vegetables' : 'Carbs');
+                      return (
+                        <option key={n} value={n} style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
+                          {label}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               </div>
 
               {/* Meal Types Selection */}
               <div className="form-group">
-                <label className="form-label">Bữa ăn phù hợp</label>
+                <label className="form-label">{lang === 'vi' ? 'Bữa ăn phù hợp' : 'Suitable Meal Times'}</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {['Sáng', 'Trưa', 'Tối'].map(m => {
-                    const checked = formData.categories.includes(m);
+                  {[
+                    { id: 'Sáng', vi: '🌅 Sáng', en: '🌅 Breakfast' },
+                    { id: 'Trưa', vi: '☀️ Trưa', en: '☀️ Lunch' },
+                    { id: 'Tối', vi: '🌙 Tối', en: '🌙 Dinner' }
+                  ].map(m => {
+                    const checked = formData.categories.includes(m.id);
                     return (
                       <button
-                        key={m}
+                        key={m.id}
                         type="button"
-                        onClick={() => handleToggleMealCategory(m)}
+                        onClick={() => handleToggleMealCategory(m.id)}
                         style={{
                           flex: 1,
                           padding: '10px',
@@ -964,7 +1000,7 @@ export default function MenuPage() {
                           cursor: 'pointer'
                         }}
                       >
-                        {m === 'Sáng' ? '🌅 Sáng' : m === 'Trưa' ? '☀️ Trưa' : '🌙 Tối'}
+                        {lang === 'vi' ? m.vi : m.en}
                       </button>
                     );
                   })}
@@ -973,15 +1009,24 @@ export default function MenuPage() {
 
               {/* Allergens Selection */}
               <div className="form-group">
-                <label className="form-label">Nguyên liệu đặc thù / Có thể gây dị ứng</label>
+                <label className="form-label">{lang === 'vi' ? 'Nguyên liệu đặc thù / Có thể gây dị ứng' : 'Allergens & Ingredients'}</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
-                  {COMMON_ALLERGENS.map(al => {
-                    const selected = formData.allergies.includes(al);
+                  {[
+                    { id: 'Bò', vi: 'Bò', en: 'Beef' },
+                    { id: 'Tôm', vi: 'Tôm', en: 'Shrimp' },
+                    { id: 'Mực', vi: 'Mực', en: 'Squid' },
+                    { id: 'Cua', vi: 'Cua', en: 'Crab' },
+                    { id: 'Đậu phộng', vi: 'Đậu phộng', en: 'Peanuts' },
+                    { id: 'Trứng', vi: 'Trứng', en: 'Eggs' },
+                    { id: 'Đậu nành', vi: 'Đậu nành', en: 'Soy' },
+                    { id: 'Sữa', vi: 'Sữa', en: 'Dairy' }
+                  ].map(al => {
+                    const selected = formData.allergies.includes(al.id);
                     return (
                       <button
-                        key={al}
+                        key={al.id}
                         type="button"
-                        onClick={() => handleToggleAllergyTag(al)}
+                        onClick={() => handleToggleAllergyTag(al.id)}
                         style={{
                           padding: '6px 12px',
                           borderRadius: 'var(--radius-full)',
@@ -993,7 +1038,7 @@ export default function MenuPage() {
                           cursor: 'pointer'
                         }}
                       >
-                        {al}
+                        {lang === 'vi' ? al.vi : al.en}
                       </button>
                     );
                   })}
@@ -1005,7 +1050,7 @@ export default function MenuPage() {
                     type="text" 
                     className="form-input" 
                     style={{ flex: 1, padding: '8px 12px', fontSize: '0.85rem' }}
-                    placeholder="Gõ dị ứng khác..."
+                    placeholder={lang === 'vi' ? "Gõ dị ứng khác..." : "Type custom allergen..."}
                     value={customAllergy}
                     onChange={e => setCustomAllergy(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomAllergy(); } }}
@@ -1016,7 +1061,7 @@ export default function MenuPage() {
                     style={{ padding: '8px 14px', fontSize: '0.85rem' }}
                     onClick={handleAddCustomAllergy}
                   >
-                    + Thêm
+                    + {lang === 'vi' ? 'Thêm' : 'Add'}
                   </button>
                 </div>
               </div>
@@ -1029,14 +1074,14 @@ export default function MenuPage() {
                   style={{ flex: 1 }} 
                   onClick={() => setModalOpen(false)}
                 >
-                  Huỷ
+                  {lang === 'vi' ? 'Huỷ' : 'Cancel'}
                 </button>
                 <button 
                   type="submit" 
                   className="btn btn-primary" 
                   style={{ flex: 2 }}
                 >
-                  <Check size={18} /> Lưu Món
+                  <Check size={18} /> {lang === 'vi' ? 'Lưu Món' : 'Save Dish'}
                 </button>
               </div>
 

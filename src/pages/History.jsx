@@ -8,7 +8,16 @@ import {
   Trash2, Plus, Clock, Utensils, Sparkles, Heart, User, UserPlus
 } from 'lucide-react';
 
-const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
+const COMMON_ALLERGIES_MAP = [
+  { id: 'Bò', vi: 'Bò', en: 'Beef' },
+  { id: 'Tôm', vi: 'Tôm', en: 'Shrimp' },
+  { id: 'Mực', vi: 'Mực', en: 'Squid' },
+  { id: 'Cua', vi: 'Cua', en: 'Crab' },
+  { id: 'Đậu phộng', vi: 'Đậu phộng', en: 'Peanuts' },
+  { id: 'Trứng', vi: 'Trứng', en: 'Eggs' },
+  { id: 'Đậu nành', vi: 'Đậu nành', en: 'Soy' },
+  { id: 'Sữa', vi: 'Sữa', en: 'Dairy' }
+];
 
 export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
   const navigate = useNavigate();
@@ -18,6 +27,25 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
 
   const displayHistory = useMemo(() => [...history].reverse(), [history]);
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
+
+  const localizedBmiStatus = useMemo(() => {
+    if (lang === 'vi') return bmiInfo.status;
+    const v = bmiInfo.bmi;
+    if (v < 18.5) return 'Underweight';
+    if (v < 23) return 'Optimal / Normal';
+    if (v < 25) return 'Pre-overweight';
+    return 'Overweight';
+  }, [bmiInfo, lang]);
+
+  const localizedGoal = useMemo(() => {
+    const g = profile.goal;
+    if (lang === 'vi') return g || 'Cân bằng';
+    if (g === 'Giảm cân') return 'Fat Loss';
+    if (g === 'Tăng cân') return 'Weight Gain';
+    if (g === 'Tăng cơ') return 'Muscle Gain';
+    if (g === 'Thanh lọc') return 'Detox';
+    return 'Balanced';
+  }, [profile.goal, lang]);
 
   // Compute nutritional statistics from recent history (last 7 meals)
   const stats = useMemo(() => {
@@ -80,18 +108,36 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
     }
   };
 
+  const getNutritionLabel = (nutrition) => {
+    if (lang === 'vi') return nutrition;
+    switch (nutrition) {
+      case 'Thịt đỏ': return 'Red Meat';
+      case 'Thịt trắng': return 'Poultry';
+      case 'Cá': return 'Fish & Seafood';
+      case 'Rau củ': return 'Vegetables';
+      case 'Tinh bột': return 'Carbs';
+      default: return nutrition;
+    }
+  };
+
   return (
     <div className="page-container">
       
       {/* Top Header */}
       <div className="app-header">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Nhật Ký & Thống Kê Dinh Dưỡng</h2>
-            <span className="brand-badge">TRỢ LÝ BỮA ĂN • AI</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>
+              {lang === 'vi' ? 'Nhật Ký & Thống Kê Dinh Dưỡng' : 'Nutrition Log & Analytics'}
+            </h2>
+            <span className="brand-badge">
+              {lang === 'vi' ? 'TRỢ LÝ BỮA ĂN • AI' : 'AI MEAL ASSISTANT'}
+            </span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
-            Theo dõi dinh dưỡng 7 bữa gần nhất & quản lý thể trạng cá nhân
+            {lang === 'vi' 
+              ? 'Theo dõi dinh dưỡng 7 bữa gần nhất & quản lý thể trạng cá nhân' 
+              : 'Track nutritional balance over recent meals & manage personal health metrics'}
           </p>
         </div>
 
@@ -100,12 +146,15 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
             className="btn btn-secondary" 
             style={{ padding: '8px 14px', fontSize: '0.8rem', color: '#f87171' }}
             onClick={() => {
-              if (window.confirm("Bạn có chắc chắn muốn xoá toàn bộ lịch sử ăn uống?")) {
+              const confirmMsg = lang === 'vi' 
+                ? "Bạn có chắc chắn muốn xoá toàn bộ lịch sử ăn uống?" 
+                : "Are you sure you want to clear your entire meal history?";
+              if (window.confirm(confirmMsg)) {
                 clearHistory();
               }
             }}
           >
-            <Trash2 size={15} /> Xoá tất cả
+            <Trash2 size={15} /> {lang === 'vi' ? 'Xoá tất cả' : 'Clear all'}
           </button>
         )}
       </div>
@@ -121,18 +170,24 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Activity size={20} color="#ff9100" />
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Dinh Dưỡng 7 Bữa Gần Nhất</h3>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>
+                  {lang === 'vi' ? 'Dinh Dưỡng 7 Bữa Gần Nhất' : 'Recent 7-Meal Nutrition Balance'}
+                </h3>
               </div>
               {stats.total > 0 && (
                 <span className="glass-pill" style={{ color: stats.score >= 70 ? '#4ade80' : '#ffa000', borderColor: stats.score >= 70 ? 'rgba(74, 222, 128, 0.4)' : 'rgba(255, 160, 0, 0.4)' }}>
-                  <Heart size={14} /> {stats.score}/100 Điểm
+                  <Heart size={14} /> {stats.score}/100 {lang === 'vi' ? 'Điểm' : 'Pts'}
                 </span>
               )}
             </div>
 
             {stats.total === 0 ? (
               <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textAlign: 'center', padding: '16px 0' }}>
-                Chưa có dữ liệu bữa ăn. Hãy bấm <strong>Quay & Chốt món</strong> để hệ thống bắt đầu thống kê!
+                {lang === 'vi' ? (
+                  <>Chưa có dữ liệu bữa ăn. Hãy bấm <strong>Quay & Chốt món</strong> để hệ thống bắt đầu thống kê!</>
+                ) : (
+                  <>No meal data logged yet. Head over to <strong>Spin & Confirm</strong> to start tracking nutrition!</>
+                )}
               </p>
             ) : (
               <>
@@ -140,35 +195,35 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', marginBottom: '8px' }}>
                     {stats.counts['Thịt đỏ'] > 0 && (
-                      <div style={{ width: `${(stats.counts['Thịt đỏ'] / stats.total) * 100}%`, background: 'var(--nutri-red)' }} title={`Thịt đỏ: ${stats.counts['Thịt đỏ']}`} />
+                      <div style={{ width: `${(stats.counts['Thịt đỏ'] / stats.total) * 100}%`, background: 'var(--nutri-red)' }} title={`${getNutritionLabel('Thịt đỏ')}: ${stats.counts['Thịt đỏ']}`} />
                     )}
                     {stats.counts['Thịt trắng'] > 0 && (
-                      <div style={{ width: `${(stats.counts['Thịt trắng'] / stats.total) * 100}%`, background: 'var(--nutri-white)' }} title={`Thịt trắng: ${stats.counts['Thịt trắng']}`} />
+                      <div style={{ width: `${(stats.counts['Thịt trắng'] / stats.total) * 100}%`, background: 'var(--nutri-white)' }} title={`${getNutritionLabel('Thịt trắng')}: ${stats.counts['Thịt trắng']}`} />
                     )}
                     {stats.counts['Cá'] > 0 && (
-                      <div style={{ width: `${(stats.counts['Cá'] / stats.total) * 100}%`, background: 'var(--nutri-fish)' }} title={`Cá/Hải sản: ${stats.counts['Cá']}`} />
+                      <div style={{ width: `${(stats.counts['Cá'] / stats.total) * 100}%`, background: 'var(--nutri-fish)' }} title={`${getNutritionLabel('Cá')}: ${stats.counts['Cá']}`} />
                     )}
                     {stats.counts['Rau củ'] > 0 && (
-                      <div style={{ width: `${(stats.counts['Rau củ'] / stats.total) * 100}%`, background: 'var(--nutri-veg)' }} title={`Rau củ: ${stats.counts['Rau củ']}`} />
+                      <div style={{ width: `${(stats.counts['Rau củ'] / stats.total) * 100}%`, background: 'var(--nutri-veg)' }} title={`${getNutritionLabel('Rau củ')}: ${stats.counts['Rau củ']}`} />
                     )}
                     {stats.counts['Tinh bột'] > 0 && (
-                      <div style={{ width: `${(stats.counts['Tinh bột'] / stats.total) * 100}%`, background: 'var(--nutri-carb)' }} title={`Tinh bột: ${stats.counts['Tinh bột']}`} />
+                      <div style={{ width: `${(stats.counts['Tinh bột'] / stats.total) * 100}%`, background: 'var(--nutri-carb)' }} title={`${getNutritionLabel('Tinh bột')}: ${stats.counts['Tinh bột']}`} />
                     )}
                   </div>
 
                   {/* Legend */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '0.8rem' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-red)' }}></span> Thịt đỏ: <strong>{stats.counts['Thịt đỏ']}</strong>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-red)' }}></span> {lang === 'vi' ? 'Thịt đỏ' : 'Red Meat'}: <strong>{stats.counts['Thịt đỏ']}</strong>
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-white)' }}></span> Thịt trắng: <strong>{stats.counts['Thịt trắng']}</strong>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-white)' }}></span> {lang === 'vi' ? 'Thịt trắng' : 'Poultry'}: <strong>{stats.counts['Thịt trắng']}</strong>
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-fish)' }}></span> Cá: <strong>{stats.counts['Cá']}</strong>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-fish)' }}></span> {lang === 'vi' ? 'Cá' : 'Seafood'}: <strong>{stats.counts['Cá']}</strong>
                     </span>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-veg)' }}></span> Rau củ: <strong>{stats.counts['Rau củ']}</strong>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--nutri-veg)' }}></span> {lang === 'vi' ? 'Rau củ' : 'Veggies'}: <strong>{stats.counts['Rau củ']}</strong>
                     </span>
                   </div>
                 </div>
@@ -178,28 +233,48 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                   {stats.missingVeggie && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fca5a5', fontSize: '0.88rem' }}>
                       <AlertTriangle size={18} color="#ef4444" />
-                      <span><strong>Báo động:</strong> Bạn chưa ăn món nào chứa nhiều rau củ trong các bữa gần đây!</span>
+                      <span>
+                        <strong>{lang === 'vi' ? 'Báo động: ' : 'Alert: '}</strong>
+                        {lang === 'vi' 
+                          ? 'Bạn chưa ăn món nào chứa nhiều rau củ trong các bữa gần đây!' 
+                          : 'You have not eaten enough green vegetables in recent meals!'}
+                      </span>
                     </div>
                   )}
 
                   {stats.missingFish && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'rgba(0, 180, 216, 0.12)', border: '1px solid rgba(0, 180, 216, 0.3)', color: '#7dd3fc', fontSize: '0.88rem' }}>
                       <Sparkles size={18} color="#00b4d8" />
-                      <span><strong>Gợi ý:</strong> Đã lâu bạn chưa đổi vị với cá hoặc hải sản để nạp Omega-3.</span>
+                      <span>
+                        <strong>{lang === 'vi' ? 'Gợi ý: ' : 'Tip: '}</strong>
+                        {lang === 'vi' 
+                          ? 'Đã lâu bạn chưa đổi vị với cá hoặc hải sản để nạp Omega-3.' 
+                          : "It's been a while since your last seafood or fish meal rich in Omega-3."}
+                      </span>
                     </div>
                   )}
 
                   {stats.tooMuchRedMeat && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'rgba(255, 145, 0, 0.12)', border: '1px solid rgba(255, 145, 0, 0.3)', color: '#fcd34d', fontSize: '0.88rem' }}>
                       <AlertTriangle size={18} color="#ff9100" />
-                      <span><strong>Nhắc nhở:</strong> Bạn đang ăn nhiều thịt đỏ liên tục, hãy thử đổi sang thịt trắng hoặc món chay!</span>
+                      <span>
+                        <strong>{lang === 'vi' ? 'Nhắc nhở: ' : 'Reminder: '}</strong>
+                        {lang === 'vi' 
+                          ? 'Bạn đang ăn nhiều thịt đỏ liên tục, hãy thử đổi sang thịt trắng hoặc món chay!' 
+                          : 'You have been consuming high amounts of red meat; consider lean poultry or vegetarian options!'}
+                      </span>
                     </div>
                   )}
 
                   {!stats.missingVeggie && !stats.missingFish && !stats.tooMuchRedMeat && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: 'var(--radius-sm)', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#6ee7b7', fontSize: '0.88rem' }}>
                       <CheckCircle2 size={18} color="#10b981" />
-                      <span><strong>Rất tốt:</strong> Chế độ dinh dưỡng các bữa gần đây của bạn khá đa dạng và cân đối!</span>
+                      <span>
+                        <strong>{lang === 'vi' ? 'Rất tốt: ' : 'Great job: '}</strong>
+                        {lang === 'vi' 
+                          ? 'Chế độ dinh dưỡng các bữa gần đây của bạn khá đa dạng và cân đối!' 
+                          : 'Your recent meals show healthy diversity and well-balanced nutrition!'}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -215,7 +290,9 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                   {profile.avatar || '🧑‍💻'}
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>Hồ Sơ Sức Khỏe ({profile.name})</h3>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>
+                    {lang === 'vi' ? `Hồ Sơ Sức Khỏe (${profile.name})` : `Health Profile (${profile.name})`}
+                  </h3>
                   <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>@{profile.username || 'danvanphong'}</span>
                 </div>
               </div>
@@ -225,26 +302,32 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                   className="glass-pill" 
                   style={{ padding: '4px 10px', fontSize: '0.75rem', cursor: 'pointer', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
                   onClick={onOpenCreateAccount}
-                  title="Tạo tài khoản mới & Khai báo thể trạng"
+                  title={lang === 'vi' ? "Tạo tài khoản mới & Khai báo thể trạng" : "Create new account & health profile"}
                 >
-                  <UserPlus size={12} /> Tạo TK
+                  <UserPlus size={12} /> {lang === 'vi' ? 'Tạo TK' : '+ Add Acc'}
                 </button>
                 <button 
                   className="glass-pill" 
                   style={{ padding: '4px 12px', fontSize: '0.78rem', cursor: 'pointer' }}
                   onClick={onOpenProfile}
-                  title="Chỉnh sửa thể trạng hiện tại"
+                  title={lang === 'vi' ? "Chỉnh sửa thể trạng hiện tại" : "Edit current health profile"}
                 >
-                  Chỉnh sửa
+                  {lang === 'vi' ? 'Chỉnh sửa' : 'Edit Stats'}
                 </button>
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.88rem' }}>
-              <div>Chiều cao: <strong>{profile.height} cm</strong></div>
-              <div>Cân nặng: <strong>{profile.weight} kg</strong></div>
-              <div>Thể trạng: <strong style={{ color: bmiInfo.color }}>{bmiInfo.status} (BMI {bmiInfo.bmi})</strong></div>
-              <div>Mục tiêu: <strong style={{ color: '#ffa000' }}>{profile.goal}</strong></div>
+              <div>{lang === 'vi' ? 'Chiều cao: ' : 'Height: '}<strong>{profile.height} cm</strong></div>
+              <div>{lang === 'vi' ? 'Cân nặng: ' : 'Weight: '}<strong>{profile.weight} kg</strong></div>
+              <div>
+                {lang === 'vi' ? 'Thể trạng: ' : 'Health status: '}
+                <strong style={{ color: bmiInfo.color }}>{localizedBmiStatus} (BMI {bmiInfo.bmi})</strong>
+              </div>
+              <div>
+                {lang === 'vi' ? 'Mục tiêu: ' : 'Goal: '}
+                <strong style={{ color: '#ffa000' }}>{localizedGoal}</strong>
+              </div>
             </div>
           </div>
 
@@ -252,19 +335,26 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
           <div className="glass-panel">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <ShieldAlert size={20} color="#ff4757" />
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Dị Ứng & Kiêng Cữ</h3>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>
+                {lang === 'vi' ? 'Dị Ứng & Kiêng Cữ' : 'Allergies & Dietary Restrictions'}
+              </h3>
             </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-              Hệ thống sẽ <strong>loại cứng 100%</strong> các món chứa nguyên liệu bạn chọn bên dưới:
+              {lang === 'vi' ? (
+                <>Hệ thống sẽ <strong>loại cứng 100%</strong> các món chứa nguyên liệu bạn chọn bên dưới:</>
+              ) : (
+                <>The algorithm will <strong>strictly filter 100%</strong> dishes containing ingredients selected below:</>
+              )}
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-              {COMMON_ALLERGIES.map(al => {
-                const isSelected = allergies.includes(al);
+              {COMMON_ALLERGIES_MAP.map(al => {
+                const isSelected = allergies.includes(al.id);
+                const label = lang === 'vi' ? al.vi : al.en;
                 return (
                   <button 
-                    key={al} 
-                    onClick={() => toggleAllergy(al)}
+                    key={al.id} 
+                    onClick={() => toggleAllergy(al.id)}
                     style={{ 
                       padding: '6px 12px', 
                       borderRadius: 'var(--radius-full)', 
@@ -277,12 +367,12 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                       transition: 'all 0.2s ease'
                     }}
                   >
-                    {isSelected ? `✓ ${al}` : al}
+                    {isSelected ? `✓ ${label}` : label}
                   </button>
                 );
               })}
 
-              {allergies.filter(a => !COMMON_ALLERGIES.includes(a)).map(al => (
+              {allergies.filter(a => !COMMON_ALLERGIES_MAP.some(item => item.id === a)).map(al => (
                 <button 
                   key={al} 
                   onClick={() => toggleAllergy(al)}
@@ -297,7 +387,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                     fontSize: '0.85rem'
                   }}
                 >
-                  ✓ {al} (tự tạo)
+                  ✓ {al} ({lang === 'vi' ? 'tự tạo' : 'custom'})
                 </button>
               ))}
             </div>
@@ -307,7 +397,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                 type="text" 
                 className="form-input" 
                 style={{ padding: '8px 12px', fontSize: '0.85rem', flex: 1 }}
-                placeholder="Thêm dị ứng khác (ví dụ: gluten, mè...)"
+                placeholder={lang === 'vi' ? "Thêm dị ứng khác (ví dụ: gluten, mè...)" : "Add custom allergen (e.g. gluten, sesame...)"}
                 value={customAllergyInput}
                 onChange={e => setCustomAllergyInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddCustomAllergy(); } }}
@@ -318,7 +408,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                 style={{ padding: '8px 14px', fontSize: '0.85rem' }}
                 onClick={handleAddCustomAllergy}
               >
-                <Plus size={16} /> Thêm
+                <Plus size={16} /> {lang === 'vi' ? 'Thêm' : 'Add'}
               </button>
             </div>
           </div>
@@ -363,7 +453,11 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                 const food = foods.find(f => f.id === h.foodId);
                 if (!food) return null;
                 const date = new Date(h.timestamp);
-                const timeString = `${date.toLocaleDateString('vi-VN')} • ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                const locale = lang === 'vi' ? 'vi-VN' : 'en-US';
+                const timeString = `${date.toLocaleDateString(locale)} • ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                const mealLabel = lang === 'vi' 
+                  ? `Bữa ${h.mealType}` 
+                  : (h.mealType === 'Sáng' ? 'Breakfast' : h.mealType === 'Trưa' ? 'Lunch' : 'Dinner');
 
                 return (
                   <div 
@@ -372,7 +466,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                     style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
-                      padding: '12px 16px',
+                      padding: '12px 16px', 
                       justifyContent: 'space-between'
                     }}
                   >
@@ -385,21 +479,21 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                             {food.name}
                           </h4>
                           <span className={getNutritionBadgeClass(food.nutrition)}>
-                            {food.nutrition}
+                            {getNutritionLabel(food.nutrition)}
                           </span>
                         </div>
 
                         <p style={{ margin: '3px 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                          <span style={{ color: '#ffb74d', fontWeight: 600 }}>Bữa {h.mealType}</span> • {timeString}
+                          <span style={{ color: '#ffb74d', fontWeight: 600 }}>{mealLabel}</span> • {timeString}
                         </p>
                       </div>
                     </div>
 
                     <button 
                       onClick={() => deleteHistoryItem(h.id || h.timestamp)}
-                      className="btn-icon"
+                      className="btn-icon" 
                       style={{ width: '34px', height: '34px', marginLeft: '8px' }}
-                      title="Xoá bản ghi này"
+                      title={lang === 'vi' ? "Xoá bản ghi này" : "Delete this record"}
                     >
                       <Trash2 size={16} color="var(--text-dim)" />
                     </button>

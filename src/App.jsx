@@ -1,17 +1,39 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { Sparkles, Utensils, History as HistoryIcon, User, Settings, Activity } from 'lucide-react';
+import { Sparkles, Utensils, History as HistoryIcon, User, Settings, Activity, UserPlus, Users, LogOut } from 'lucide-react';
 import HomePage from './pages/Home';
 import MenuPage from './pages/Menu';
 import HistoryPage from './pages/History';
-import ProfileModal from './components/ProfileModal';
+import AccountModal from './components/AccountModal';
+import AuthGate from './components/AuthGate';
 import { useStorage, calculateBMI } from './hooks/useStorage';
 
 function AppLayout() {
-  const [profileModalOpen, setProfileModalOpen] = useState(false);
-  const { profile } = useStorage();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState('create');
+  const { profile, isLoggedIn, logout } = useStorage();
 
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
+
+  const openCreateAccount = () => {
+    setModalTab('create');
+    setModalOpen(true);
+  };
+
+  const openEditProfile = () => {
+    setModalTab('edit');
+    setModalOpen(true);
+  };
+
+  const openSwitchAccount = () => {
+    setModalTab('switch');
+    setModalOpen(true);
+  };
+
+  // Lock entire application if user is not registered / logged in!
+  if (!isLoggedIn) {
+    return <AuthGate />;
+  }
 
   return (
     <>
@@ -53,24 +75,38 @@ function AppLayout() {
           </NavLink>
         </nav>
 
-        {/* Profile / Body Metrics Card in Sidebar */}
+        {/* Profile / Account Card in Sidebar */}
         <div className="sidebar-profile-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(255, 145, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <User size={16} color="#ff9100" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+              <div style={{ width: '36px', height: '36px', minWidth: '36px', borderRadius: '10px', background: 'rgba(255, 145, 0, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem' }}>
+                {profile.avatar || '🧑‍💻'}
               </div>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff' }}>
-                {profile.name || 'Hồ Sơ Của Bạn'}
-              </span>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {profile.name || 'Hồ Sơ Của Bạn'}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  @{profile.username || 'danvanphong'}
+                </div>
+              </div>
             </div>
-            <button 
-              onClick={() => setProfileModalOpen(true)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
-              title="Chỉnh sửa thể trạng & mục tiêu"
-            >
-              <Settings size={16} />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <button 
+                onClick={openSwitchAccount}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+                title="Đổi tài khoản khác"
+              >
+                <Users size={16} />
+              </button>
+              <button 
+                onClick={logout}
+                style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', padding: '4px' }}
+                title="Đăng xuất (Khóa ứng dụng)"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
@@ -87,13 +123,24 @@ function AppLayout() {
             </span>
           </div>
 
-          <button 
-            className="btn btn-secondary"
-            style={{ width: '100%', padding: '8px 12px', fontSize: '0.8rem', marginTop: '4px' }}
-            onClick={() => setProfileModalOpen(true)}
-          >
-            <Activity size={14} /> Cập nhật thể trạng
-          </button>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginTop: '6px' }}>
+            <button 
+              className="btn btn-secondary"
+              style={{ padding: '7px 6px', fontSize: '0.75rem', justifyContent: 'center' }}
+              onClick={openEditProfile}
+              title="Chỉnh sửa thể trạng hiện tại"
+            >
+              <Activity size={13} /> Sửa thể trạng
+            </button>
+            <button 
+              className="btn btn-primary"
+              style={{ padding: '7px 6px', fontSize: '0.75rem', justifyContent: 'center' }}
+              onClick={openCreateAccount}
+              title="Tạo tài khoản mới & Khai báo thể trạng"
+            >
+              <UserPlus size={13} /> Tạo TK mới
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -109,21 +156,59 @@ function AppLayout() {
             </div>
           </div>
 
-          <button 
-            className="glass-pill"
-            style={{ padding: '4px 10px', fontSize: '0.78rem', cursor: 'pointer' }}
-            onClick={() => setProfileModalOpen(true)}
-          >
-            <User size={14} color="#ff9100" />
-            <span style={{ color: bmiInfo.color }}>BMI: {bmiInfo.bmi}</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button 
+              className="glass-pill"
+              style={{ padding: '4px 8px', fontSize: '0.75rem', cursor: 'pointer', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
+              onClick={openCreateAccount}
+              title="Tạo tài khoản mới & khai báo thể trạng"
+            >
+              <UserPlus size={13} />
+              <span>Tạo TK</span>
+            </button>
+
+            <button 
+              className="glass-pill"
+              style={{ padding: '4px 10px', fontSize: '0.78rem', cursor: 'pointer' }}
+              onClick={openEditProfile}
+            >
+              <span style={{ fontSize: '1rem', marginRight: '2px' }}>{profile.avatar || '🧑‍💻'}</span>
+              <span style={{ color: bmiInfo.color }}>BMI {bmiInfo.bmi}</span>
+            </button>
+
+            <button 
+              onClick={logout}
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#f87171', cursor: 'pointer', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Đăng xuất"
+            >
+              <LogOut size={14} />
+            </button>
+          </div>
         </header>
 
         {/* Dynamic Route Pages */}
         <Routes>
-          <Route path="/" element={<HomePage onOpenProfile={() => setProfileModalOpen(true)} />} />
+          <Route 
+            path="/" 
+            element={
+              <HomePage 
+                onOpenProfile={openEditProfile} 
+                onOpenCreateAccount={openCreateAccount}
+                onOpenSwitchAccount={openSwitchAccount}
+              />
+            } 
+          />
           <Route path="/menu" element={<MenuPage />} />
-          <Route path="/history" element={<HistoryPage onOpenProfile={() => setProfileModalOpen(true)} />} />
+          <Route 
+            path="/history" 
+            element={
+              <HistoryPage 
+                onOpenProfile={openEditProfile}
+                onOpenCreateAccount={openCreateAccount}
+                onOpenSwitchAccount={openSwitchAccount}
+              />
+            } 
+          />
         </Routes>
       </div>
 
@@ -143,10 +228,11 @@ function AppLayout() {
         </NavLink>
       </nav>
 
-      {/* 4. USER PROFILE MODAL */}
-      <ProfileModal 
-        isOpen={profileModalOpen} 
-        onClose={() => setProfileModalOpen(false)} 
+      {/* 4. USER ACCOUNT & HEALTH PROFILE MODAL */}
+      <AccountModal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+        initialTab={modalTab}
       />
     </>
   );

@@ -13,23 +13,51 @@ function getSafeItem(key, fallback) {
   }
 }
 
-const DEFAULT_PROFILE = {
-  name: 'Dân Văn Phòng',
-  height: 168,
-  weight: 62,
-  gender: 'Nam',
-  goal: 'Cân bằng', // 'Giảm cân' | 'Tăng cơ' | 'Cân bằng' | 'Thanh lọc'
-  activity: 'Văn phòng (Ít vận động)'
-};
+const DEFAULT_ACCOUNTS = [
+  {
+    id: 'acc_default',
+    name: 'Dân Văn Phòng',
+    username: 'danvanphong',
+    email: 'vanphong@nayangi.vn',
+    password: '',
+    avatar: '🧑‍💻',
+    age: 26,
+    gender: 'Nam',
+    height: 168,
+    weight: 62,
+    activity: 'Văn phòng (Ít vận động)',
+    goal: 'Cân bằng', // 'Giảm cân' | 'Tăng cơ' | 'Cân bằng' | 'Thanh lọc'
+    allergies: [],
+    createdAt: 1710000000000
+  }
+];
 
 export function calculateBMI(weight, height) {
-  const hM = height / 100;
-  if (!hM || hM <= 0) return { bmi: 22, status: 'Chuẩn cân đối', color: '#10b981' };
-  const val = Number((weight / (hM * hM)).toFixed(1));
+  const hM = Number(height) / 100;
+  const w = Number(weight);
+  if (!hM || hM <= 0 || !w || w <= 0) return { bmi: 22, status: 'Chuẩn cân đối', color: '#10b981' };
+  const val = Number((w / (hM * hM)).toFixed(1));
   if (val < 18.5) return { bmi: val, status: 'Hơi gầy', color: '#38bdf8' };
   if (val < 23) return { bmi: val, status: 'Chuẩn cân đối', color: '#10b981' };
   if (val < 25) return { bmi: val, status: 'Tiền thừa cân', color: '#f59e0b' };
   return { bmi: val, status: 'Thừa cân / Cần kiểm soát', color: '#ef4444' };
+}
+
+export function calculateTDEE(weight, height, age = 26, gender = 'Nam', activity = 'Văn phòng (Ít vận động)') {
+  const w = Number(weight) || 60;
+  const h = Number(height) || 165;
+  const a = Number(age) || 26;
+  const isMale = gender === 'Nam';
+  // Mifflin-St Jeor formula
+  const bmr = 10 * w + 6.25 * h - 5 * a + (isMale ? 5 : -161);
+  let multiplier = 1.2;
+  if (typeof activity === 'string') {
+    if (activity.includes('nhiều') || activity.includes('Gym')) multiplier = 1.725;
+    else if (activity.includes('vừa') || activity.includes('thao')) multiplier = 1.55;
+    else if (activity.includes('nhẹ') || activity.includes('bộ')) multiplier = 1.375;
+    else multiplier = 1.2;
+  }
+  return Math.round(bmr * multiplier);
 }
 
 const DEFAULT_GROUP = [
@@ -39,11 +67,58 @@ const DEFAULT_GROUP = [
 ];
 
 export function useStorage() {
+  // 1. ACCOUNTS & USER PROFILE (Enforce registration before entering the app)
+  const [accounts, setAccounts] = useState(() => {
+    const saved = getSafeItem('nayangi_accounts', null);
+    if (Array.isArray(saved)) {
+      // Filter out stale mock acc_default so users must register their own profile
+      const userAccounts = saved.filter(a => a && a.id && a.id !== 'acc_default');
+      return userAccounts;
+    }
+    return [];
+  });
+
+  const [currentAccountId, setCurrentAccountId] = useState(() => {
+    const savedId = getSafeItem('nayangi_current_account_id', null);
+    if (savedId === 'acc_default') return null;
+    return savedId || null;
+  });
+
+  const currentAccount = accounts.find(a => a.id === currentAccountId) || null;
+  const isLoggedIn = Boolean(currentAccount);
+
+  const profile = currentAccount ? {
+    id: currentAccount.id,
+    name: currentAccount.name || 'Người Dùng',
+    username: currentAccount.username || 'user',
+    email: currentAccount.email || '',
+    password: currentAccount.password || '',
+    avatar: currentAccount.avatar || '🧑‍💻',
+    age: currentAccount.age || 26,
+    gender: currentAccount.gender || 'Nam',
+    height: Number(currentAccount.height) || 168,
+    weight: Number(currentAccount.weight) || 62,
+    activity: currentAccount.activity || 'Văn phòng (Ít vận động)',
+    goal: currentAccount.goal || 'Cân bằng',
+    allergies: Array.isArray(currentAccount.allergies) ? currentAccount.allergies : []
+  } : {
+    id: '',
+    name: 'Khách',
+    username: 'guest',
+    avatar: '👤',
+    age: 25,
+    gender: 'Nam',
+    height: 168,
+    weight: 60,
+    activity: 'Văn phòng (Ít vận động)',
+    goal: 'Cân bằng',
+    allergies: []
+  };
+
   const [foods, setFoods] = useState(() => {
     const safeFoods = getSafeItem('foods', seedData);
     const arr = Array.isArray(safeFoods) ? safeFoods : seedData;
     return arr.map(f => {
-      // Find default seed for priceTier & mood if missing in saved storage
       const matchSeed = seedData.find(s => s.id === f.id || s.name === f.name);
       return {
         ...f,
@@ -61,13 +136,11 @@ export function useStorage() {
   });
 
   const [allergies, setAllergies] = useState(() => {
+    if (Array.isArray(currentAccount.allergies) && currentAccount.allergies.length > 0) {
+      return currentAccount.allergies;
+    }
     const safe = getSafeItem('allergies', []);
     return Array.isArray(safe) ? safe : [];
-  });
-
-  const [profile, setProfile] = useState(() => {
-    const safe = getSafeItem('user_profile', DEFAULT_PROFILE);
-    return { ...DEFAULT_PROFILE, ...safe };
   });
 
   const [groupMembers, setGroupMembers] = useState(() => {
@@ -75,10 +148,12 @@ export function useStorage() {
     return Array.isArray(safe) ? safe : DEFAULT_GROUP;
   });
 
+  useEffect(() => localStorage.setItem('nayangi_accounts', JSON.stringify(accounts)), [accounts]);
+  useEffect(() => localStorage.setItem('nayangi_current_account_id', JSON.stringify(currentAccountId)), [currentAccountId]);
+  useEffect(() => localStorage.setItem('user_profile', JSON.stringify(profile)), [profile]);
   useEffect(() => localStorage.setItem('foods', JSON.stringify(foods)), [foods]);
   useEffect(() => localStorage.setItem('history', JSON.stringify(history)), [history]);
   useEffect(() => localStorage.setItem('allergies', JSON.stringify(allergies)), [allergies]);
-  useEffect(() => localStorage.setItem('user_profile', JSON.stringify(profile)), [profile]);
   useEffect(() => localStorage.setItem('group_members', JSON.stringify(groupMembers)), [groupMembers]);
 
   const addFood = (food) => {
@@ -131,13 +206,108 @@ export function useStorage() {
   };
 
   const toggleAllergy = (allergy) => {
-    setAllergies(prev => prev.includes(allergy) 
-      ? prev.filter(a => a !== allergy) 
-      : [...prev, allergy]);
+    setAllergies(prev => {
+      const next = prev.includes(allergy) 
+        ? prev.filter(a => a !== allergy) 
+        : [...prev, allergy];
+      // Sync into current account
+      setAccounts(curr => curr.map(a => a.id === currentAccountId ? { ...a, allergies: next } : a));
+      return next;
+    });
+  };
+
+  const updateAccount = (accountId, updatedData) => {
+    setAccounts(prev => prev.map(a => {
+      if (a.id !== accountId) return a;
+      return {
+        ...a,
+        ...updatedData,
+        height: updatedData.height !== undefined ? Number(updatedData.height) : a.height,
+        weight: updatedData.weight !== undefined ? Number(updatedData.weight) : a.weight,
+        age: updatedData.age !== undefined ? Number(updatedData.age) : a.age
+      };
+    }));
   };
 
   const updateProfile = (data) => {
-    setProfile(prev => ({ ...prev, ...data }));
+    updateAccount(currentAccountId, data);
+  };
+
+  const createAccount = (accountData) => {
+    const newId = 'acc_' + Date.now();
+    const newAccount = {
+      id: newId,
+      name: accountData.name ? accountData.name.trim() : 'Người Dùng Mới',
+      username: accountData.username ? accountData.username.trim().toLowerCase().replace(/\s+/g, '_') : `user_${Date.now().toString().slice(-4)}`,
+      email: accountData.email ? accountData.email.trim() : '',
+      password: accountData.password || '',
+      avatar: accountData.avatar || (accountData.gender === 'Nữ' ? '👩‍💻' : '🧑‍💻'),
+      age: Number(accountData.age) || 26,
+      gender: accountData.gender || 'Nam',
+      height: Number(accountData.height) || 168,
+      weight: Number(accountData.weight) || 60,
+      activity: accountData.activity || 'Văn phòng (Ít vận động)',
+      goal: accountData.goal || 'Cân bằng',
+      allergies: Array.isArray(accountData.allergies) ? accountData.allergies : [],
+      createdAt: Date.now()
+    };
+
+    setAccounts(prev => [...prev, newAccount]);
+    setCurrentAccountId(newId);
+    setAllergies(newAccount.allergies);
+    return newAccount;
+  };
+
+  const switchAccount = (accountId) => {
+    const acc = accounts.find(a => a.id === accountId);
+    if (acc) {
+      setCurrentAccountId(accountId);
+      setAllergies(Array.isArray(acc.allergies) ? acc.allergies : []);
+    }
+  };
+
+  const deleteAccount = (accountId) => {
+    if (accounts.length <= 1) return false;
+    const remaining = accounts.filter(a => a.id !== accountId);
+    setAccounts(remaining);
+    if (currentAccountId === accountId) {
+      const nextAcc = remaining[0];
+      setCurrentAccountId(nextAcc.id);
+      setAllergies(Array.isArray(nextAcc.allergies) ? nextAcc.allergies : []);
+    }
+    return true;
+  };
+
+  const login = (accountId) => {
+    const acc = accounts.find(a => a.id === accountId);
+    if (acc) {
+      setCurrentAccountId(acc.id);
+      setAllergies(Array.isArray(acc.allergies) ? acc.allergies : []);
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setCurrentAccountId(null);
+    localStorage.removeItem('nayangi_current_account_id');
+  };
+
+  const createDemoAccount = () => {
+    return createAccount({
+      name: 'Dân Văn Phòng',
+      username: 'danvanphong',
+      email: 'vanphong@nayangi.vn',
+      password: '',
+      avatar: '🧑‍💻',
+      age: 26,
+      gender: 'Nam',
+      height: 168,
+      weight: 62,
+      activity: 'Văn phòng (Ít vận động)',
+      goal: 'Cân bằng',
+      allergies: []
+    });
   };
 
   const toggleGroupMember = (id) => {
@@ -174,6 +344,17 @@ export function useStorage() {
     toggleAllergy,
     profile,
     updateProfile,
+    accounts,
+    currentAccountId,
+    currentAccount,
+    isLoggedIn,
+    login,
+    logout,
+    createAccount,
+    createDemoAccount,
+    switchAccount,
+    updateAccount,
+    deleteAccount,
     groupMembers,
     setGroupMembers,
     toggleGroupMember,

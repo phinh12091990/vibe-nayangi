@@ -2,12 +2,12 @@ import { useState, useMemo } from 'react';
 import { useStorage, calculateBMI } from '../hooks/useStorage';
 import { 
   ShieldAlert, Activity, AlertTriangle, CheckCircle2, 
-  Trash2, Plus, Clock, Utensils, Sparkles, Heart, User
+  Trash2, Plus, Clock, Utensils, Sparkles, Heart, User, UserPlus
 } from 'lucide-react';
 
 const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
 
-export default function HistoryPage({ onOpenProfile }) {
+export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
   const { history, foods, allergies, toggleAllergy, deleteHistoryItem, clearHistory, profile } = useStorage();
   const [customAllergyInput, setCustomAllergyInput] = useState('');
 
@@ -201,18 +201,35 @@ export default function HistoryPage({ onOpenProfile }) {
 
           {/* SECTION 2: USER PROFILE & BMI SUMMARY CARD */}
           <div className="glass-panel" style={{ borderLeft: '4px solid #00e676' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <User size={18} color="#00e676" />
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Hồ Sơ Sức Khỏe ({profile.name})</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+                <div style={{ width: '38px', height: '38px', minWidth: '38px', borderRadius: '10px', background: 'rgba(0, 230, 118, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+                  {profile.avatar || '🧑‍💻'}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>Hồ Sơ Sức Khỏe ({profile.name})</h3>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>@{profile.username || 'danvanphong'}</span>
+                </div>
               </div>
-              <button 
-                className="glass-pill" 
-                style={{ padding: '4px 12px', fontSize: '0.78rem', cursor: 'pointer' }}
-                onClick={onOpenProfile}
-              >
-                Chỉnh sửa
-              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <button 
+                  className="glass-pill" 
+                  style={{ padding: '4px 10px', fontSize: '0.75rem', cursor: 'pointer', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
+                  onClick={onOpenCreateAccount}
+                  title="Tạo tài khoản mới & Khai báo thể trạng"
+                >
+                  <UserPlus size={12} /> Tạo TK
+                </button>
+                <button 
+                  className="glass-pill" 
+                  style={{ padding: '4px 12px', fontSize: '0.78rem', cursor: 'pointer' }}
+                  onClick={onOpenProfile}
+                  title="Chỉnh sửa thể trạng hiện tại"
+                >
+                  Chỉnh sửa
+                </button>
+              </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.88rem' }}>

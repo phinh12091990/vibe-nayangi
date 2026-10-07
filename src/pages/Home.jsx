@@ -8,7 +8,7 @@ import {
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
   Flame, ShieldAlert, Award, Activity, Clock, 
   Users, ExternalLink, Share2, MapPin,
-  Smartphone, Keyboard, ChevronRight, ChevronLeft
+  Smartphone, Keyboard, ChevronRight, ChevronLeft, UserPlus
 } from 'lucide-react';
 
 const getDimensions = () => {
@@ -27,7 +27,7 @@ const getTranslateForIndex = (index) => {
   return -(index * itemHeight - centerOffset);
 };
 
-export default function HomePage({ onOpenProfile }) {
+export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
   const { 
     foods, history, allergies, addHistory, profile, 
     groupMembers, toggleGroupMember, addGroupMember, removeGroupMember 
@@ -561,14 +561,22 @@ export default function HomePage({ onOpenProfile }) {
 
           {/* Slot Machine Reel */}
           <div className="reel-wrapper">
+            {/* Top Crown Header of the Reel */}
+            <div className="reel-crown-header">
+              <div className="reel-crown-title">
+                <Sparkles size={14} color="#ff9100" />
+                <span>AI ROULETTE • QUAY MÓN THÔNG MINH</span>
+              </div>
+              <div className={`reel-live-tag ${isSpinning ? 'reel-tag-pulse' : ''}`}>
+                {isSpinning ? '🔴 ĐANG QUÉT MÓN...' : (result && result.food ? '🟢 ĐÃ CHỌN ĐƯỢC' : '✨ SẴN SÀNG')}
+              </div>
+            </div>
+
             <div className={`reel-box ${result && result.food && !isSpinning ? 'winner-glow' : ''}`}>
-              
+              {/* Highlight selector frame with Cyber HUD viewfinder */}
               <div className="reel-selector-frame">
-                <div className="reel-laser-pointer left">
-                  <ChevronRight size={17} strokeWidth={3.5} />
-                </div>
-                <div className="reel-laser-pointer right">
-                  <ChevronLeft size={17} strokeWidth={3.5} />
+                <div className="reel-hud-tag">
+                  {isSpinning ? 'ĐANG QUÉT MÓN...' : (result && result.food ? 'MÓN ĐƯỢC CHỌN' : 'TÂM NGẮM LỰA CHỌN')}
                 </div>
               </div>
 
@@ -935,22 +943,51 @@ export default function HomePage({ onOpenProfile }) {
           
           {/* User Body Profile Widget */}
           <div className="glass-panel" style={{ borderLeft: '4px solid #ff7a18' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.04em' }}>
-                  Hồ Sơ Cá Nhân Hóa
+            {/* Top Bar of Profile Widget */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Activity size={15} color="#ff9100" />
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                  HỒ SƠ THỂ TRẠNG
                 </span>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {profile.name || 'Bạn'} • {profile.gender}
-                </h3>
               </div>
-              <button 
-                className="glass-pill" 
-                style={{ cursor: 'pointer', padding: '4px 10px', fontSize: '0.75rem', flexShrink: 0 }}
-                onClick={onOpenProfile}
-              >
-                Sửa thể trạng
-              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                <button 
+                  className="glass-pill" 
+                  style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem' }}
+                  onClick={onOpenProfile}
+                  title="Chỉnh sửa chiều cao, cân nặng, dị ứng"
+                >
+                  Sửa thể trạng
+                </button>
+                <button 
+                  className="glass-pill" 
+                  style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
+                  onClick={onOpenCreateAccount}
+                  title="Tạo tài khoản mới & Khai báo thể trạng"
+                >
+                  <UserPlus size={12} />
+                  <span>+ Tạo TK</span>
+                </button>
+              </div>
+            </div>
+
+            {/* User Identity Info */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+              <div style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', background: 'linear-gradient(135deg, rgba(255, 122, 24, 0.25), rgba(255, 82, 56, 0.15))', border: '1px solid rgba(255, 145, 0, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', boxShadow: '0 4px 14px rgba(255, 122, 24, 0.2)' }}>
+                {profile.avatar || '🧑‍💻'}
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#ffffff' }}>
+                  {profile.name || 'Bạn'}
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.74rem', color: 'var(--text-dim)', flexWrap: 'wrap' }}>
+                  <span>@{profile.username || 'user'}</span>
+                  <span>•</span>
+                  <span>{profile.gender}, {profile.age || 26} tuổi</span>
+                </div>
+              </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>

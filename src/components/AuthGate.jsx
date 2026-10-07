@@ -3,7 +3,8 @@ import { useStorage, calculateBMI, calculateTDEE } from '../hooks/useStorage';
 import { triggerConfetti } from '../utils/confetti';
 import { 
   Lock, Sparkles, UserPlus, LogIn, Activity, Target, 
-  ShieldAlert, Eye, EyeOff, Check, Flame, ArrowRight, UserCheck
+  ShieldAlert, Eye, EyeOff, Check, Flame, ArrowRight, UserCheck,
+  Sun, Moon
 } from 'lucide-react';
 
 const AVATARS = ['🧑‍💻', '👩‍💻', '🏃‍♂️', '🏃‍♀️', '🧘‍♂️', '🧘‍♀️', '🥗', '🍱', '🥑', '🥩', '🍲', '⚡'];
@@ -25,7 +26,7 @@ const ACTIVITIES = [
 const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
 
 export default function AuthGate() {
-  const { accounts, createAccount, loginWithCredentials } = useStorage();
+  const { accounts, createAccount, loginWithCredentials, theme, toggleTheme } = useStorage();
   const [tab, setTab] = useState('login'); // Default is 'login' per user request
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -156,19 +157,41 @@ export default function AuthGate() {
     <div className="auth-gate-screen">
       <div className={`auth-gate-card ${tab === 'login' ? 'login-mode' : ''}`}>
         
+        {/* Quick Theme Switcher on Auth Screen */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+          <button 
+            type="button" 
+            onClick={toggleTheme} 
+            className="theme-switch-pill" 
+            title="Chuyển chế độ Sáng / Tối"
+          >
+            {theme === 'light' ? (
+              <>
+                <Sun size={13} color="#ea580c" />
+                <span>☀️ Sáng</span>
+              </>
+            ) : (
+              <>
+                <Moon size={13} color="#bbf246" />
+                <span>🌙 Tối</span>
+              </>
+            )}
+          </button>
+        </div>
+
         {/* Brand & Locked App Banner */}
         <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--primary-light)', border: '1px solid rgba(187, 242, 70, 0.7)', padding: '5px 14px', borderRadius: '20px', marginBottom: '10px' }}>
             <span style={{ fontSize: '1.3rem' }}>🍲</span>
             <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--primary-dark)', letterSpacing: '0.02em' }}>NAY ĂN GÌ</span>
-            <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 6px', background: '#ffffff', color: '#1a2e05' }}>NUTRIGO AI</span>
+            <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 6px', background: 'var(--bg-card)', color: 'var(--primary-dark)' }}>NUTRIGO AI</span>
           </div>
 
           <h2 className="auth-header-title" style={{ fontWeight: 900, margin: '4px 0 8px', color: 'var(--text-main)' }}>
             {tab === 'login' ? 'Đăng Nhập Tài Khoản' : 'Thiết Lập Tài Khoản & Thể Trạng'}
           </h2>
 
-          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: tab === 'login' ? '#166534' : '#c2410c', background: tab === 'login' ? 'var(--primary-light)' : '#fff3e6', borderRadius: '10px', border: tab === 'login' ? '1px solid rgba(187,242,70,0.5)' : '1px solid rgba(255,122,24,0.3)' }}>
+          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: tab === 'login' ? '#166534' : '#c2410c', background: tab === 'login' ? 'var(--primary-light)' : 'var(--accent-orange-light)', borderRadius: '10px', border: tab === 'login' ? '1px solid rgba(187,242,70,0.5)' : '1px solid rgba(255,122,24,0.3)' }}>
             <Lock size={14} style={{ flexShrink: 0 }} />
             <span>
               {tab === 'login' 
@@ -185,7 +208,7 @@ export default function AuthGate() {
             onClick={() => { setTab('login'); setErrorMsg(''); }}
             className={`glass-pill auth-tab-btn ${tab === 'login' ? 'active' : ''}`}
             style={{
-              background: tab === 'login' ? 'var(--primary)' : '#ffffff',
+              background: tab === 'login' ? 'var(--primary)' : 'var(--bg-surface)',
               borderColor: tab === 'login' ? 'var(--primary)' : 'var(--border-color)',
               color: tab === 'login' ? 'var(--primary-dark)' : 'var(--text-secondary)',
               fontWeight: tab === 'login' ? 800 : 600,
@@ -201,7 +224,7 @@ export default function AuthGate() {
             onClick={() => { setTab('register'); setErrorMsg(''); }}
             className={`glass-pill auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
             style={{
-              background: tab === 'register' ? 'var(--primary)' : '#ffffff',
+              background: tab === 'register' ? 'var(--primary)' : 'var(--bg-surface)',
               borderColor: tab === 'register' ? 'var(--primary)' : 'var(--border-color)',
               color: tab === 'register' ? 'var(--primary-dark)' : 'var(--text-secondary)',
               fontWeight: tab === 'register' ? 800 : 600,
@@ -224,7 +247,7 @@ export default function AuthGate() {
           <form onSubmit={handleRegisterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             
             {/* 1. Account Credentials */}
-            <div className="glass-panel" style={{ padding: '16px', background: '#fbf9f4', border: '1px solid var(--border-color)' }}>
+            <div className="glass-panel" style={{ padding: '16px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#ea580c', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <UserPlus size={15} />
                 <span>1. Thông Tin Tài Khoản</span>
@@ -245,7 +268,7 @@ export default function AuthGate() {
                         minWidth: '38px',
                         borderRadius: '10px',
                         border: regForm.avatar === av ? '2px solid #bbf246' : '1px solid var(--border-color)',
-                        background: regForm.avatar === av ? '#f4fce3' : '#ffffff',
+                        background: regForm.avatar === av ? 'var(--primary-light)' : 'var(--bg-surface)',
                         fontSize: '1.25rem',
                         cursor: 'pointer',
                         display: 'flex',

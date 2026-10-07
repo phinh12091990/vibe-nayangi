@@ -133,7 +133,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
               <>
                 {/* Visual Breakdown Bar */}
                 <div style={{ marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', marginBottom: '8px' }}>
                     {stats.counts['Thịt đỏ'] > 0 && (
                       <div style={{ width: `${(stats.counts['Thịt đỏ'] / stats.total) * 100}%`, background: 'var(--nutri-red)' }} title={`Thịt đỏ: ${stats.counts['Thịt đỏ']}`} />
                     )}
@@ -263,9 +263,9 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                     style={{ 
                       padding: '6px 12px', 
                       borderRadius: 'var(--radius-full)', 
-                      background: isSelected ? 'rgba(255, 82, 56, 0.22)' : 'rgba(255, 255, 255, 0.05)',
-                      border: `1px solid ${isSelected ? '#ff5238' : 'rgba(255, 255, 255, 0.1)'}`,
-                      color: isSelected ? '#ff7a18' : 'var(--text-secondary)',
+                      background: isSelected ? 'rgba(255, 122, 24, 0.2)' : 'var(--bg-surface-secondary)',
+                      border: `1px solid ${isSelected ? '#ff7a18' : 'var(--border-color)'}`,
+                      color: isSelected ? '#ea580c' : 'var(--text-secondary)',
                       cursor: 'pointer',
                       fontWeight: isSelected ? 700 : 500,
                       fontSize: '0.85rem',

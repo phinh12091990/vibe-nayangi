@@ -6,7 +6,8 @@
    Clean, Modern, Organic Light Theme with Signature Lime Green & Tangerine Accents
    ========================================================================== */
 
-:root {
+:root,
+[data-theme="light"] {
   /* Nutrigo Signature Color Palette */
   --primary: #bbf246;                 /* Nutrigo Signature Lime / Pistachio Green */
   --primary-hover: #a8e034;
@@ -87,6 +88,116 @@
   --trans-smooth: all 0.22s ease;
 }
 
+[data-theme="dark"] {
+  /* Nutrigo Modern Dark Mode */
+  --primary: #bbf246;                 /* Glowing Neon Lime */
+  --primary-hover: #cdfc60;
+  --primary-dark: #112204;            /* Dark text on primary lime pill */
+  --primary-light: rgba(187, 242, 70, 0.16);
+  --primary-glow: rgba(187, 242, 70, 0.35);
+
+  --accent-orange: #ff8528;
+  --accent-orange-hover: #ff9b49;
+  --accent-orange-light: rgba(255, 133, 40, 0.16);
+  --accent-orange-glow: rgba(255, 133, 40, 0.35);
+
+  --accent-yellow: #fbbf24;
+  --accent-yellow-light: rgba(251, 191, 36, 0.16);
+
+  --accent-mint: #34d399;
+  --accent-mint-light: rgba(52, 211, 153, 0.16);
+
+  --accent-blue: #38bdf8;
+  --accent-blue-light: rgba(56, 189, 248, 0.16);
+
+  --accent-red: #fb7185;
+  --accent-red-light: rgba(251, 113, 133, 0.16);
+
+  /* Nutrition Group Badges */
+  --nutri-red: #fb7185;
+  --nutri-white: #fb923c;
+  --nutri-fish: #38bdf8;
+  --nutri-veg: #34d399;
+  --nutri-carb: #f59e0b;
+
+  /* Surfaces & Obsidian Dashboard (Nutrigo Dark) */
+  --bg-base: #0f1218;                 /* Deep charcoal obsidian */
+  --bg-base-gradient: linear-gradient(180deg, #131720 0%, #0b0e13 100%);
+  --bg-card: #181d27;                 /* Elevated dark slate card */
+  --bg-card-hover: #1f2533;
+  --bg-surface: #181d27;
+  --bg-surface-secondary: #222836;    /* Secondary container */
+  --bg-pill: #283042;
+  --bg-plate: #131722;
+
+  /* Glass / Overlay cards */
+  --glass-card: #181d27;
+  --glass-card-hover: #1f2533;
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-border-bright: #bbf246;
+  --glass-panel: #181d27;
+  --glass-input: #12151e;
+  --glass-nav: rgba(24, 29, 39, 0.94);
+
+  /* Borders & Shadows */
+  --border-color: rgba(255, 255, 255, 0.09);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-focus: #bbf246;
+
+  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 48px -10px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 8px 24px rgba(187, 242, 70, 0.25);
+
+  /* Typography */
+  --text-main: #f8fafc;               /* Crisp high-contrast off-white */
+  --text-secondary: #cbd5e1;          /* Soft body slate */
+  --text-muted: #8896aa;              /* Subtitles */
+  --text-dim: #64748b;
+}
+
+/* Theme Switcher Button Styles */
+.theme-switch-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--trans-smooth);
+  box-shadow: var(--shadow-xs);
+}
+
+.theme-switch-pill:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-icon-btn {
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--trans-smooth);
+}
+
+.theme-icon-btn:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -109,6 +220,15 @@ body {
   justify-content: center;
   overflow-x: hidden;
   line-height: 1.5;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+[data-theme="dark"] body {
+  background-image: 
+    radial-gradient(circle at 12% 15%, rgba(187, 242, 70, 0.1) 0%, transparent 45%),
+    radial-gradient(circle at 88% 18%, rgba(255, 122, 24, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+    var(--bg-base-gradient);
 }
 
 /* ==========================================================================
@@ -131,7 +251,7 @@ body {
     border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
     overflow-x: hidden;
-    background: #ffffff;
+    background: var(--bg-surface);
     box-shadow: 0 0 45px rgba(0, 0, 0, 0.04);
   }
 
@@ -158,7 +278,7 @@ body {
     border: 1px solid var(--border-color);
     flex-direction: row;
     overflow: hidden;
-    background: #ffffff;
+    background: var(--bg-surface);
     box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.07);
   }
 
@@ -198,7 +318,7 @@ body {
   min-width: 290px;
   max-width: 290px;
   flex-shrink: 0;
-  background: #ffffff;
+  background: var(--bg-surface);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -241,7 +361,7 @@ body {
 }
 
 .sidebar-nav-item:hover {
-  background: #f7f4ed;
+  background: var(--bg-surface-secondary);
   color: var(--text-main);
   transform: translateX(3px);
 }
@@ -268,6 +388,11 @@ body {
   overflow: hidden;
 }
 
+[data-theme="dark"] .sidebar-promo-card {
+  background: linear-gradient(135deg, rgba(255, 122, 24, 0.14) 0%, rgba(187, 242, 70, 0.08) 100%);
+  border-color: rgba(255, 122, 24, 0.35);
+}
+
 .sidebar-promo-badge {
   font-size: 0.68rem;
   font-weight: 800;
@@ -282,7 +407,7 @@ body {
 
 .sidebar-profile-card {
   margin-top: auto;
-  background: #fbf9f4;
+  background: var(--bg-surface-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -302,7 +427,7 @@ body {
   width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  background: #fdfbf7;
+  background: var(--bg-base);
 }
 
 @media (min-width: 1024px) {
@@ -397,7 +522,7 @@ h1, h2, h3, h4 {
 }
 
 .nutrigo-stat-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 14px 16px;
@@ -427,7 +552,7 @@ h1, h2, h3, h4 {
 
 /* Glass Panels & Cards in Nutrigo */
 .glass-panel {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 20px;
@@ -450,7 +575,7 @@ h1, h2, h3, h4 {
 }
 
 .glass-pill {
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   padding: 6px 14px;
@@ -582,16 +707,16 @@ h1, h2, h3, h4 {
   box-shadow: 0 3px 10px rgba(187, 242, 70, 0.3);
 }
 
-/* Secondary Button: Clean white card or light almond */
+/* Secondary Button: Clean card or light surface */
 .btn-secondary {
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--text-main);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-xs);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #f7f4ed;
+  background: var(--bg-surface-secondary);
   border-color: var(--text-muted);
   transform: translateY(-1px);
 }
@@ -620,7 +745,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
   cursor: pointer;
@@ -629,7 +754,7 @@ h1, h2, h3, h4 {
 }
 
 .btn-icon:hover {
-  background: #f7f4ed;
+  background: var(--bg-surface-secondary);
   color: var(--text-main);
   border-color: var(--primary);
   transform: scale(1.05);
@@ -685,7 +810,7 @@ h1, h2, h3, h4 {
 /* Meal Segmented Control (Nutrigo Pill Switcher) */
 .meal-selector {
   display: flex;
-  background: #f4f0e6;
+  background: var(--bg-surface-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   padding: 4px;
@@ -741,7 +866,7 @@ h1, h2, h3, h4 {
   padding: 8px 16px;
   margin-bottom: 10px;
   border-radius: var(--radius-full);
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-xs);
   box-sizing: border-box;
@@ -751,7 +876,7 @@ h1, h2, h3, h4 {
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--text-secondary);
-  background: #f7f4ed;
+  background: var(--bg-surface-secondary);
   padding: 3px 10px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
@@ -766,7 +891,7 @@ h1, h2, h3, h4 {
 .reel-box {
   position: relative;
   height: 184px;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 2px solid var(--border-color);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -816,7 +941,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f7f4ed;
+  background: var(--bg-surface-secondary);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   flex-shrink: 0;
@@ -971,10 +1096,10 @@ h1, h2, h3, h4 {
   z-index: 8;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0) 30%,
-    rgba(255, 255, 255, 0) 70%,
-    rgba(255, 255, 255, 0.95) 100%
+    var(--bg-card) 0%,
+    transparent 30%,
+    transparent 70%,
+    var(--bg-card) 100%
   );
 }
 
@@ -989,7 +1114,7 @@ h1, h2, h3, h4 {
   margin: 10px 0 6px;
   text-align: center;
   padding: 5px 14px;
-  background: #fff3e6;
+  background: var(--accent-orange-light);
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 122, 24, 0.2);
   max-width: 100%;
@@ -1002,7 +1127,7 @@ h1, h2, h3, h4 {
    ========================================================================== */
 .reason-card {
   width: 100%;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   padding: 20px;
@@ -1040,7 +1165,7 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #ea580c;
-  background: #fff3e6;
+  background: var(--accent-orange-light);
   padding: 4px 12px;
   border-radius: var(--radius-full);
   margin-bottom: 12px;
@@ -1075,7 +1200,7 @@ h1, h2, h3, h4 {
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.6;
-  background: #fbf9f4;
+  background: var(--bg-surface-secondary);
   padding: 12px 16px;
   border-radius: var(--radius-md);
   border-left: 4px solid var(--primary);
@@ -1092,7 +1217,7 @@ h1, h2, h3, h4 {
   width: 100%;
   max-width: 600px;
   height: 64px;
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--glass-nav);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid var(--border-color);
@@ -1154,7 +1279,7 @@ h1, h2, h3, h4 {
 }
 
 .modal-content {
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   width: 100%;
@@ -1186,7 +1311,7 @@ h1, h2, h3, h4 {
 }
 
 .form-input, .form-select {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 12px 16px;
@@ -1254,7 +1379,7 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--glass-nav);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 10px 0 14px 0;
@@ -1269,7 +1394,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   padding: 10px 14px;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   gap: 12px;
@@ -1289,7 +1414,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f7f4ed;
+  background: var(--bg-surface-secondary);
   border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
@@ -1331,7 +1456,7 @@ h1, h2, h3, h4 {
 }
 
 .grid-card-item {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -1428,7 +1553,7 @@ h1, h2, h3, h4 {
   width: 100%;
   max-width: 660px;
   margin: 0 auto;
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   padding: 32px 28px;

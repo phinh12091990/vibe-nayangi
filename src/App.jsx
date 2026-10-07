@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { Sparkles, Utensils, History as HistoryIcon, User, Settings, Activity, UserPlus, Users, LogOut } from 'lucide-react';
+import { Sparkles, Utensils, History as HistoryIcon, User, Settings, Activity, UserPlus, Users, LogOut, Sun, Moon } from 'lucide-react';
 import HomePage from './pages/Home';
 import MenuPage from './pages/Menu';
 import HistoryPage from './pages/History';
@@ -11,7 +11,7 @@ import { StorageProvider, useStorage, calculateBMI } from './hooks/useStorage';
 function AppLayout() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState('create');
-  const { profile, isLoggedIn, isAdmin, logout } = useStorage();
+  const { profile, isLoggedIn, isAdmin, logout, theme, toggleTheme } = useStorage();
 
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
 
@@ -54,6 +54,31 @@ function AppLayout() {
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Theme Switcher Pill in Sidebar */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 12px', background: 'var(--bg-surface-secondary)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-color)' }}>
+          <span style={{ fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-muted)' }}>
+            Giao diện
+          </span>
+          <button 
+            type="button"
+            onClick={toggleTheme}
+            className="theme-switch-pill"
+            title="Chuyển chế độ Sáng / Tối"
+          >
+            {theme === 'light' ? (
+              <>
+                <Sun size={13} color="#ea580c" />
+                <span>☀️ Sáng</span>
+              </>
+            ) : (
+              <>
+                <Moon size={13} color="#bbf246" />
+                <span>🌙 Tối</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Navigation Menu */}
@@ -174,7 +199,7 @@ function AppLayout() {
       <div className="main-content-wrapper">
         
         {/* Mobile-only Top Brand Header */}
-        <header className="mobile-only-header" style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: '#ffffff' }}>
+        <header className="mobile-only-header" style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '1.4rem' }}>🍲</span>
             <div>
@@ -204,15 +229,26 @@ function AppLayout() {
               <span style={{ color: bmiInfo.color }}>BMI {bmiInfo.bmi}</span>
             </button>
 
+            {/* Quick Mobile Theme Switcher */}
+            <button 
+              type="button"
+              onClick={toggleTheme}
+              className="theme-icon-btn"
+              title="Chuyển đổi Sáng / Tối"
+            >
+              {theme === 'light' ? <Sun size={15} color="#ea580c" /> : <Moon size={15} color="#bbf246" />}
+            </button>
+
             <button 
               onClick={logout}
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#f87171', cursor: 'pointer', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: '#f87171', cursor: 'pointer', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="Đăng xuất"
             >
               <LogOut size={14} />
             </button>
           </div>
         </header>
+
 
         {/* Dynamic Route Pages */}
         <Routes>

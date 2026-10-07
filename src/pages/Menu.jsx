@@ -267,7 +267,7 @@ export default function MenuPage() {
           </div>
 
           {/* View Mode Switcher Pills */}
-          <div style={{ display: 'flex', background: '#f4f0e6', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', background: 'var(--bg-surface-secondary)', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid var(--border-color)' }}>
             <button
               onClick={() => handleChangeViewMode('compact')}
               style={{
@@ -339,7 +339,7 @@ export default function MenuPage() {
               style={{
                 fontSize: '0.82rem',
                 padding: '6px 14px',
-                background: selectedMeal === m.id ? 'var(--primary)' : '#ffffff',
+                background: selectedMeal === m.id ? 'var(--primary)' : 'var(--bg-card)',
                 color: selectedMeal === m.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
                 borderColor: selectedMeal === m.id ? 'var(--primary)' : 'var(--border-color)',
                 fontWeight: selectedMeal === m.id ? 800 : 600,
@@ -368,7 +368,7 @@ export default function MenuPage() {
               style={{
                 fontSize: '0.78rem',
                 padding: '4px 10px',
-                background: selectedPriceTier === p.id ? '#e8f7f0' : '#ffffff',
+                background: selectedPriceTier === p.id ? 'var(--accent-mint-light)' : 'var(--bg-card)',
                 color: selectedPriceTier === p.id ? '#059669' : 'var(--text-secondary)',
                 border: selectedPriceTier === p.id ? '1px solid #10b981' : '1px solid var(--border-color)',
                 fontWeight: selectedPriceTier === p.id ? 700 : 600,
@@ -391,9 +391,9 @@ export default function MenuPage() {
               style={{
                 fontSize: '0.78rem',
                 padding: '4px 10px',
-                background: selectedNutrition === n ? '#f4fce3' : '#ffffff',
-                color: selectedNutrition === n ? '#234407' : 'var(--text-secondary)',
-                border: selectedNutrition === n ? '1px solid #bbf246' : '1px solid var(--border-color)',
+                background: selectedNutrition === n ? 'var(--primary-light)' : 'var(--bg-card)',
+                color: selectedNutrition === n ? 'var(--text-main)' : 'var(--text-secondary)',
+                border: selectedNutrition === n ? '1px solid var(--primary)' : '1px solid var(--border-color)',
                 fontWeight: selectedNutrition === n ? 700 : 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap'
@@ -409,7 +409,7 @@ export default function MenuPage() {
             style={{
               fontSize: '0.78rem',
               padding: '4px 10px',
-              background: hideInactive ? '#e8f7f0' : '#ffffff',
+              background: hideInactive ? 'var(--accent-mint-light)' : 'var(--bg-card)',
               color: hideInactive ? '#059669' : 'var(--text-muted)',
               border: hideInactive ? '1px solid #10b981' : '1px solid var(--border-color)',
               fontWeight: 700,
@@ -777,9 +777,9 @@ export default function MenuPage() {
                     value={formData.priceTier || 'standard'}
                     onChange={e => setFormData({ ...formData, priceTier: e.target.value })}
                   >
-                    <option value="budget" style={{ background: '#1b1f33', color: '#ffffff' }}>💰 Bình dân (&lt;45k)</option>
-                    <option value="standard" style={{ background: '#1b1f33', color: '#ffffff' }}>🍛 Tiêu chuẩn (45k-75k)</option>
-                    <option value="treat" style={{ background: '#1b1f33', color: '#ffffff' }}>🥩 Thưởng nóng (&gt;75k)</option>
+                    <option value="budget" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>💰 Bình dân (&lt;45k)</option>
+                    <option value="standard" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>🍛 Tiêu chuẩn (45k-75k)</option>
+                    <option value="treat" style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>🥩 Thưởng nóng (&gt;75k)</option>
                   </select>
                 </div>
 
@@ -791,7 +791,7 @@ export default function MenuPage() {
                     onChange={e => setFormData({ ...formData, nutrition: e.target.value })}
                   >
                     {NUTRITION_GROUPS.map(n => (
-                      <option key={n} value={n} style={{ background: '#1b1f33', color: '#ffffff' }}>
+                      <option key={n} value={n} style={{ background: 'var(--bg-surface)', color: 'var(--text-main)' }}>
                         {n}
                       </option>
                     ))}

@@ -113,6 +113,22 @@ function useStorageManager() {
     return savedId || null;
   });
 
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('nayangi_theme') || 'light';
+  });
+
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      localStorage.setItem('nayangi_theme', next);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   const currentAccount = accounts.find(a => a.id === currentAccountId) || null;
   const isLoggedIn = Boolean(currentAccount);
   const isAdmin = Boolean(currentAccount && (currentAccount.role === 'admin' || currentAccount.username === 'admin'));
@@ -444,7 +460,10 @@ function useStorageManager() {
     setGroupMembers,
     toggleGroupMember,
     addGroupMember,
-    removeGroupMember
+    removeGroupMember,
+    theme,
+    setTheme,
+    toggleTheme
   };
 }
 

@@ -1014,7 +1014,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           {/* User Body Profile Widget */}
           <div className="glass-panel" style={{ borderLeft: '4px solid #ff7a18' }}>
             {/* Top Bar of Profile Widget */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border-color)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Activity size={15} color="#ff9100" />
                 <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
@@ -1052,7 +1052,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#ffffff' }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)' }}>
                     {profile.name || 'Bạn'}
                   </h3>
                   {isAdmin && (
@@ -1070,14 +1070,14 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
+              <div style={{ background: 'var(--bg-surface-secondary)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Chỉ số BMI</span>
                 <div style={{ fontSize: '1.2rem', fontWeight: 800, color: bmiInfo.color }}>
                   {bmiInfo.bmi} <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>({bmiInfo.status})</span>
                 </div>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--bg-surface-secondary)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Mục tiêu dinh dưỡng</span>
                 <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffa000', marginTop: '2px' }}>
                   {profile.goal || 'Cân bằng'}

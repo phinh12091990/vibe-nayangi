@@ -244,7 +244,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
           <button 
             onClick={onClose} 
             className="btn-icon" 
-            style={{ padding: '6px', background: 'rgba(255,255,255,0.06)' }}
+            style={{ padding: '6px', background: 'var(--bg-surface-secondary)' }}
             title="Đóng"
           >
             <X size={18} />
@@ -265,9 +265,9 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
                 justifyContent: 'center',
                 textAlign: 'center',
                 cursor: 'pointer',
-                background: activeTab === 'switch' ? 'rgba(255, 193, 7, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-                borderColor: activeTab === 'switch' ? '#ffc107' : 'rgba(255, 255, 255, 0.08)',
-                color: activeTab === 'switch' ? '#ffc107' : 'var(--text-muted)'
+                background: activeTab === 'switch' ? 'rgba(255, 193, 7, 0.22)' : 'var(--bg-surface-secondary)',
+                borderColor: activeTab === 'switch' ? '#ffc107' : 'var(--border-color)',
+                color: activeTab === 'switch' ? '#b45309' : 'var(--text-muted)'
               }}
             >
               <Users size={14} />
@@ -285,9 +285,9 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
                 justifyContent: 'center',
                 textAlign: 'center',
                 cursor: 'pointer',
-                background: activeTab === 'edit' ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-                borderColor: activeTab === 'edit' ? '#10b981' : 'rgba(255, 255, 255, 0.08)',
-                color: activeTab === 'edit' ? '#34d399' : 'var(--text-muted)'
+                background: activeTab === 'edit' ? 'rgba(16, 185, 129, 0.22)' : 'var(--bg-surface-secondary)',
+                borderColor: activeTab === 'edit' ? '#10b981' : 'var(--border-color)',
+                color: activeTab === 'edit' ? '#059669' : 'var(--text-muted)'
               }}
             >
               <UserCheck size={14} />
@@ -305,9 +305,9 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
                 justifyContent: 'center',
                 textAlign: 'center',
                 cursor: 'pointer',
-                background: activeTab === 'create' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-                borderColor: activeTab === 'create' ? '#ff9100' : 'rgba(255, 255, 255, 0.08)',
-                color: activeTab === 'create' ? '#ffa726' : 'var(--text-muted)'
+                background: activeTab === 'create' ? 'rgba(255, 145, 0, 0.22)' : 'var(--bg-surface-secondary)',
+                borderColor: activeTab === 'create' ? '#ff9100' : 'var(--border-color)',
+                color: activeTab === 'create' ? '#ea580c' : 'var(--text-muted)'
               }}
             >
               <UserPlus size={14} />

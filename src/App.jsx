@@ -41,16 +41,16 @@ function AppLayout() {
       <aside className="desktop-sidebar">
         {/* Brand */}
         <div className="sidebar-logo">
-          <div style={{ width: '42px', height: '42px', minWidth: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, #ff5238, #ff9100)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(255, 82, 56, 0.4)' }}>
+          <div style={{ width: '44px', height: '44px', minWidth: '44px', borderRadius: '14px', background: 'linear-gradient(135deg, #bbf246 0%, #a3e635 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(187, 242, 70, 0.45)' }}>
             <span style={{ fontSize: '1.5rem' }}>🍲</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, overflow: 'hidden' }}>
             <div className="brand-title" style={{ fontSize: '1.35rem', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
               Nay Ăn Gì
             </div>
             <div>
-              <span className="brand-badge" style={{ fontSize: '0.65rem', padding: '2px 8px', letterSpacing: '0.04em' }}>
-                AI ASSISTANT
+              <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 8px', letterSpacing: '0.04em' }}>
+                NUTRIGO DIET • AI
               </span>
             </div>
           </div>
@@ -58,52 +58,66 @@ function AppLayout() {
 
         {/* Navigation Menu */}
         <nav className="sidebar-nav-list">
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)', margin: '8px 0 4px 8px' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', margin: '6px 0 4px 10px' }}>
             Menu Điều Hướng
           </div>
           <NavLink to="/" className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}>
-            <Sparkles size={20} />
+            <Sparkles size={19} />
             <span>Quay Món Thông Minh</span>
           </NavLink>
           <NavLink to="/menu" className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}>
-            <Utensils size={20} />
+            <Utensils size={19} />
             <span>Sổ Món Thực Đơn</span>
           </NavLink>
           <NavLink to="/history" className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}>
-            <HistoryIcon size={20} />
+            <HistoryIcon size={19} />
             <span>Nhật Ký & Thống Kê</span>
           </NavLink>
         </nav>
+
+        {/* Nutrigo Promo Card in Sidebar */}
+        <div className="sidebar-promo-card">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '1.4rem' }}>🥗</span>
+            <span className="sidebar-promo-badge">NUTRIGO AI</span>
+          </div>
+          <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.3 }}>
+            Chăm Sóc Dinh Dưỡng Chuẩn Cá Nhân Hóa
+          </div>
+          <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
+            Tối ưu calo và TDEE khoa học cho từng bữa ăn mỗi ngày.
+          </div>
+        </div>
 
         {/* Profile / Account Card in Sidebar */}
         <div className="sidebar-profile-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-              <div style={{ width: '38px', height: '38px', minWidth: '38px', borderRadius: '10px', background: isAdmin ? 'rgba(255, 193, 7, 0.2)' : 'rgba(255, 145, 0, 0.18)', border: isAdmin ? '1px solid #ffc107' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>
+              <div style={{ width: '40px', height: '40px', minWidth: '40px', borderRadius: '12px', background: isAdmin ? 'rgba(255, 193, 7, 0.2)' : 'rgba(187, 242, 70, 0.35)', border: isAdmin ? '1px solid #ffc107' : '1px solid rgba(187, 242, 70, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.35rem' }}>
                 {profile.avatar || (isAdmin ? '👑' : '🧑‍💻')}
               </div>
               <div style={{ minWidth: 0, overflow: 'hidden' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {profile.name || 'Hồ Sơ Của Bạn'}
                   </div>
                   {isAdmin && (
-                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ffc107', background: 'rgba(255, 193, 7, 0.18)', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(255, 193, 7, 0.3)' }}>
+                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#b45309', background: '#fef3c7', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                       ADMIN
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   @{profile.username || 'user'}
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {/* Only Admin can view and switch between all user accounts */}
               {isAdmin && (
                 <button 
                   onClick={openSwitchAccount}
-                  style={{ background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.3)', borderRadius: '6px', color: '#ffc107', cursor: 'pointer', padding: '4px' }}
+                  style={{ background: '#fef3c7', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '6px', color: '#b45309', cursor: 'pointer', padding: '4px' }}
                   title="👑 Quản trị tất cả tài khoản thành viên"
                 >
                   <Users size={15} />
@@ -111,10 +125,10 @@ function AppLayout() {
               )}
               <button 
                 onClick={logout}
-                style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', padding: '4px' }}
+                style={{ background: '#ffe4e6', border: '1px solid rgba(244, 63, 94, 0.25)', borderRadius: '6px', color: '#f43f5e', cursor: 'pointer', padding: '4px' }}
                 title="Đăng xuất (Khóa ứng dụng)"
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
               </button>
             </div>
           </div>
@@ -128,7 +142,7 @@ function AppLayout() {
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
             <span style={{ color: 'var(--text-muted)' }}>Mục tiêu:</span>
-            <span style={{ color: '#ffa000', fontWeight: 600 }}>
+            <span style={{ color: '#ea580c', fontWeight: 700 }}>
               {profile.goal || 'Cân bằng'}
             </span>
           </div>
@@ -160,7 +174,7 @@ function AppLayout() {
       <div className="main-content-wrapper">
         
         {/* Mobile-only Top Brand Header */}
-        <header className="mobile-only-header" style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <header className="mobile-only-header" style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: '#ffffff' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '1.4rem' }}>🍲</span>
             <div>

@@ -497,8 +497,8 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
 
                 {/* Real-Time Live Health Metrics Dashboard Card */}
                 <div style={{ 
-                  background: 'rgba(15, 19, 35, 0.75)', 
-                  border: '1px solid rgba(255, 255, 255, 0.1)', 
+                  background: '#fbf9f4', 
+                  border: '1px solid var(--border-color)', 
                   borderRadius: '12px', 
                   padding: '12px 14px', 
                   marginBottom: '12px' 
@@ -837,8 +837,8 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
 
                 {/* BMI Dashboard Panel */}
                 <div style={{ 
-                  background: 'rgba(15, 19, 35, 0.75)', 
-                  border: '1px solid rgba(255, 255, 255, 0.1)', 
+                  background: '#fbf9f4', 
+                  border: '1px solid var(--border-color)', 
                   borderRadius: '12px', 
                   padding: '12px 14px', 
                   marginBottom: '12px' 

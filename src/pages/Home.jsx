@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useStorage, calculateBMI } from '../hooks/useStorage';
+import { useStorage, calculateBMI, calculateTDEE } from '../hooks/useStorage';
 import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
@@ -76,6 +76,13 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
   }, [muted]);
 
   const bmiInfo = calculateBMI(Number(profile.weight), Number(profile.height));
+  const tdeeVal = calculateTDEE(
+    Number(profile.weight),
+    Number(profile.height),
+    Number(profile.age),
+    profile.gender,
+    profile.activity
+  );
 
   // Active Group Members & Allergies
   const activeMembers = groupMembers.filter(m => m.active);
@@ -405,10 +412,10 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1, paddingRight: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: 'clamp(1.25rem, 4.5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>Quay Chọn Món</h2>
-            <span className="brand-badge">AI LOGIC</span>
+            <span className="brand-badge">NUTRIGO AI</span>
           </div>
           <p className="app-header-desc" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0', lineHeight: 1.3 }}>
-            Gợi ý thông minh dựa theo lịch sử, BMI, hầu bao & thời tiết
+            Gợi ý thực đơn thông minh chuẩn dinh dưỡng, TDEE & vóc dáng cá nhân
           </p>
         </div>
 
@@ -418,8 +425,71 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             onClick={() => setMuted(!muted)}
             title={muted ? "Bật âm thanh" : "Tắt âm thanh"}
           >
-            {muted ? <VolumeX size={19} color="var(--text-muted)" /> : <Volume2 size={19} color="#ff9100" />}
+            {muted ? <VolumeX size={19} color="var(--text-muted)" /> : <Volume2 size={19} color="#ea580c" />}
           </button>
+        </div>
+      </div>
+
+      {/* Nutrigo Quick Stat Widgets Strip (Image 1 & 2) */}
+      <div className="nutrigo-metrics-strip">
+        <div className="nutrigo-stat-card">
+          <div className="nutrigo-stat-icon-wrap" style={{ background: '#f4fce3', color: '#3a6909' }}>
+            ⚖️
+          </div>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Cân Nặng</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.1 }}>
+              {profile.weight || 60} <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>kg</span>
+            </div>
+            <div style={{ fontSize: '0.7rem', color: '#ea580c', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Mục tiêu: {profile.goal || 'Cân bằng'}
+            </div>
+          </div>
+        </div>
+
+        <div className="nutrigo-stat-card">
+          <div className="nutrigo-stat-icon-wrap" style={{ background: '#fff3e6', color: '#ea580c' }}>
+            ⚡
+          </div>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nhu Cầu Calo</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.1 }}>
+              {tdeeVal} <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>kcal</span>
+            </div>
+            <div style={{ fontSize: '0.7rem', color: '#059669', fontWeight: 700 }}>
+              TDEE ước tính/ngày
+            </div>
+          </div>
+        </div>
+
+        <div className="nutrigo-stat-card">
+          <div className="nutrigo-stat-icon-wrap" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+            💧
+          </div>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Nước & Vận Động</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.1 }}>
+              2.0 <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>lít</span>
+            </div>
+            <div style={{ fontSize: '0.7rem', color: '#0284c7', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {profile.activity ? profile.activity.split('(')[0] : 'Văn phòng'}
+            </div>
+          </div>
+        </div>
+
+        <div className="nutrigo-stat-card">
+          <div className="nutrigo-stat-icon-wrap" style={{ background: '#e8f7f0', color: '#059669' }}>
+            🎯
+          </div>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Chỉ Số Thể Trạng</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 900, color: bmiInfo.color, lineHeight: 1.1 }}>
+              BMI {bmiInfo.bmi}
+            </div>
+            <div style={{ fontSize: '0.7rem', color: bmiInfo.color, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {bmiInfo.status}
+            </div>
+          </div>
         </div>
       </div>
 

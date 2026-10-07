@@ -208,16 +208,19 @@ export default function MenuPage() {
       {/* Top Header */}
       <div className="app-header">
         <div>
-          <h2 style={{ fontSize: '1.7rem', fontWeight: 800 }}>Sổ Món Ăn</h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Quản lý thực đơn • {foods.length} món ({activeCount} khả dụng)
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Healthy Menu</h2>
+            <span className="brand-badge">NUTRIGO</span>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
+            Sổ món ăn dinh dưỡng • {foods.length} món ({activeCount} khả dụng)
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
             className="btn btn-secondary" 
-            style={{ padding: '8px 12px', fontSize: '0.82rem' }} 
+            style={{ padding: '8px 14px', fontSize: '0.82rem' }} 
             onClick={() => {
               if (window.confirm("Khôi phục danh sách món ăn mẫu (48 món tiêu chuẩn)?")) {
                 resetFoods();
@@ -230,7 +233,7 @@ export default function MenuPage() {
 
           <button 
             className="btn btn-primary" 
-            style={{ padding: '8px 14px', fontSize: '0.85rem' }} 
+            style={{ padding: '8px 16px', fontSize: '0.85rem' }} 
             onClick={handleOpenAdd}
           >
             <Plus size={16} /> Thêm Món
@@ -264,13 +267,14 @@ export default function MenuPage() {
           </div>
 
           {/* View Mode Switcher Pills */}
-          <div style={{ display: 'flex', background: 'rgba(255, 255, 255, 0.05)', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <div style={{ display: 'flex', background: '#f4f0e6', borderRadius: 'var(--radius-sm)', padding: '3px', border: '1px solid var(--border-color)' }}>
             <button
               onClick={() => handleChangeViewMode('compact')}
               style={{
-                background: viewMode === 'compact' ? 'rgba(255, 145, 0, 0.25)' : 'transparent',
+                background: viewMode === 'compact' ? 'var(--primary)' : 'transparent',
                 border: 'none',
-                color: viewMode === 'compact' ? '#ffa000' : 'var(--text-muted)',
+                color: viewMode === 'compact' ? 'var(--primary-dark)' : 'var(--text-muted)',
+                fontWeight: viewMode === 'compact' ? 800 : 600,
                 padding: '6px 8px',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -285,9 +289,10 @@ export default function MenuPage() {
             <button
               onClick={() => handleChangeViewMode('grid')}
               style={{
-                background: viewMode === 'grid' ? 'rgba(255, 145, 0, 0.25)' : 'transparent',
+                background: viewMode === 'grid' ? 'var(--primary)' : 'transparent',
                 border: 'none',
-                color: viewMode === 'grid' ? '#ffa000' : 'var(--text-muted)',
+                color: viewMode === 'grid' ? 'var(--primary-dark)' : 'var(--text-muted)',
+                fontWeight: viewMode === 'grid' ? 800 : 600,
                 padding: '6px 8px',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -302,9 +307,10 @@ export default function MenuPage() {
             <button
               onClick={() => handleChangeViewMode('cards')}
               style={{
-                background: viewMode === 'cards' ? 'rgba(255, 145, 0, 0.25)' : 'transparent',
+                background: viewMode === 'cards' ? 'var(--primary)' : 'transparent',
                 border: 'none',
-                color: viewMode === 'cards' ? '#ffa000' : 'var(--text-muted)',
+                color: viewMode === 'cards' ? 'var(--primary-dark)' : 'var(--text-muted)',
+                fontWeight: viewMode === 'cards' ? 800 : 600,
                 padding: '6px 8px',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -332,10 +338,12 @@ export default function MenuPage() {
               className="glass-pill"
               style={{
                 fontSize: '0.82rem',
-                padding: '5px 12px',
-                background: selectedMeal === m.id ? 'linear-gradient(135deg, #ff5238, #ff9100)' : 'rgba(255,255,255,0.06)',
-                color: selectedMeal === m.id ? '#ffffff' : 'var(--text-muted)',
-                borderColor: selectedMeal === m.id ? 'transparent' : 'rgba(255,255,255,0.08)',
+                padding: '6px 14px',
+                background: selectedMeal === m.id ? 'var(--primary)' : '#ffffff',
+                color: selectedMeal === m.id ? 'var(--primary-dark)' : 'var(--text-secondary)',
+                borderColor: selectedMeal === m.id ? 'var(--primary)' : 'var(--border-color)',
+                fontWeight: selectedMeal === m.id ? 800 : 600,
+                boxShadow: selectedMeal === m.id ? '0 3px 12px var(--primary-glow)' : 'var(--shadow-xs)',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap'
               }}
@@ -358,11 +366,12 @@ export default function MenuPage() {
               onClick={() => setSelectedPriceTier(p.id)}
               className="glass-pill"
               style={{
-                fontSize: '0.76rem',
-                padding: '3px 9px',
-                background: selectedPriceTier === p.id ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255,255,255,0.03)',
-                color: selectedPriceTier === p.id ? '#10b981' : 'var(--text-muted)',
-                border: selectedPriceTier === p.id ? '1px solid rgba(16, 185, 129, 0.45)' : '1px solid rgba(255,255,255,0.06)',
+                fontSize: '0.78rem',
+                padding: '4px 10px',
+                background: selectedPriceTier === p.id ? '#e8f7f0' : '#ffffff',
+                color: selectedPriceTier === p.id ? '#059669' : 'var(--text-secondary)',
+                border: selectedPriceTier === p.id ? '1px solid #10b981' : '1px solid var(--border-color)',
+                fontWeight: selectedPriceTier === p.id ? 700 : 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap'
               }}
@@ -382,9 +391,10 @@ export default function MenuPage() {
               style={{
                 fontSize: '0.78rem',
                 padding: '4px 10px',
-                background: selectedNutrition === n ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255,255,255,0.03)',
-                color: selectedNutrition === n ? '#ffa000' : 'var(--text-muted)',
-                border: selectedNutrition === n ? '1px solid rgba(255, 145, 0, 0.45)' : '1px solid rgba(255,255,255,0.06)',
+                background: selectedNutrition === n ? '#f4fce3' : '#ffffff',
+                color: selectedNutrition === n ? '#234407' : 'var(--text-secondary)',
+                border: selectedNutrition === n ? '1px solid #bbf246' : '1px solid var(--border-color)',
+                fontWeight: selectedNutrition === n ? 700 : 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap'
               }}
@@ -399,9 +409,10 @@ export default function MenuPage() {
             style={{
               fontSize: '0.78rem',
               padding: '4px 10px',
-              background: hideInactive ? 'rgba(0, 230, 118, 0.2)' : 'rgba(255,255,255,0.03)',
-              color: hideInactive ? '#00e676' : 'var(--text-muted)',
-              border: hideInactive ? '1px solid rgba(0, 230, 118, 0.5)' : '1px solid rgba(255,255,255,0.06)',
+              background: hideInactive ? '#e8f7f0' : '#ffffff',
+              color: hideInactive ? '#059669' : 'var(--text-muted)',
+              border: hideInactive ? '1px solid #10b981' : '1px solid var(--border-color)',
+              fontWeight: 700,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
               marginLeft: 'auto'

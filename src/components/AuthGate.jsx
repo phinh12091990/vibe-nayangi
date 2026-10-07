@@ -158,17 +158,17 @@ export default function AuthGate() {
         
         {/* Brand & Locked App Banner */}
         <div style={{ textAlign: 'center', marginBottom: '18px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 145, 0, 0.12)', border: '1px solid rgba(255, 145, 0, 0.3)', padding: '5px 12px', borderRadius: '20px', marginBottom: '10px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--primary-light)', border: '1px solid rgba(187, 242, 70, 0.7)', padding: '5px 14px', borderRadius: '20px', marginBottom: '10px' }}>
             <span style={{ fontSize: '1.3rem' }}>🍲</span>
-            <span style={{ fontSize: '1rem', fontWeight: 800, color: '#ffa726', letterSpacing: '0.02em' }}>NAY ĂN GÌ</span>
-            <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 6px' }}>AI ASSISTANT</span>
+            <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--primary-dark)', letterSpacing: '0.02em' }}>NAY ĂN GÌ</span>
+            <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 6px', background: '#ffffff', color: '#1a2e05' }}>NUTRIGO AI</span>
           </div>
 
-          <h2 className="auth-header-title" style={{ fontWeight: 900, margin: '4px 0 8px', background: 'linear-gradient(135deg, #ffffff 40%, #ffb74d 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h2 className="auth-header-title" style={{ fontWeight: 900, margin: '4px 0 8px', color: 'var(--text-main)' }}>
             {tab === 'login' ? 'Đăng Nhập Tài Khoản' : 'Thiết Lập Tài Khoản & Thể Trạng'}
           </h2>
 
-          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: tab === 'login' ? '#38bdf8' : '#ffb74d', background: tab === 'login' ? 'rgba(56, 189, 248, 0.08)' : 'rgba(255, 145, 0, 0.08)', borderRadius: '10px' }}>
+          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: tab === 'login' ? '#166534' : '#c2410c', background: tab === 'login' ? 'var(--primary-light)' : '#fff3e6', borderRadius: '10px', border: tab === 'login' ? '1px solid rgba(187,242,70,0.5)' : '1px solid rgba(255,122,24,0.3)' }}>
             <Lock size={14} style={{ flexShrink: 0 }} />
             <span>
               {tab === 'login' 
@@ -185,9 +185,11 @@ export default function AuthGate() {
             onClick={() => { setTab('login'); setErrorMsg(''); }}
             className={`glass-pill auth-tab-btn ${tab === 'login' ? 'active' : ''}`}
             style={{
-              background: tab === 'login' ? 'rgba(56, 189, 248, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-              borderColor: tab === 'login' ? '#38bdf8' : 'rgba(255, 255, 255, 0.1)',
-              color: tab === 'login' ? '#38bdf8' : 'var(--text-muted)'
+              background: tab === 'login' ? 'var(--primary)' : '#ffffff',
+              borderColor: tab === 'login' ? 'var(--primary)' : 'var(--border-color)',
+              color: tab === 'login' ? 'var(--primary-dark)' : 'var(--text-secondary)',
+              fontWeight: tab === 'login' ? 800 : 600,
+              boxShadow: tab === 'login' ? '0 4px 14px var(--primary-glow)' : 'var(--shadow-xs)'
             }}
           >
             <LogIn size={16} />
@@ -199,9 +201,11 @@ export default function AuthGate() {
             onClick={() => { setTab('register'); setErrorMsg(''); }}
             className={`glass-pill auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
             style={{
-              background: tab === 'register' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
-              borderColor: tab === 'register' ? '#ff9100' : 'rgba(255, 255, 255, 0.1)',
-              color: tab === 'register' ? '#ffa726' : 'var(--text-muted)'
+              background: tab === 'register' ? 'var(--primary)' : '#ffffff',
+              borderColor: tab === 'register' ? 'var(--primary)' : 'var(--border-color)',
+              color: tab === 'register' ? 'var(--primary-dark)' : 'var(--text-secondary)',
+              fontWeight: tab === 'register' ? 800 : 600,
+              boxShadow: tab === 'register' ? '0 4px 14px var(--primary-glow)' : 'var(--shadow-xs)'
             }}
           >
             <UserPlus size={16} />
@@ -220,8 +224,8 @@ export default function AuthGate() {
           <form onSubmit={handleRegisterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             
             {/* 1. Account Credentials */}
-            <div className="glass-panel" style={{ padding: '14px', background: 'rgba(255,255,255,0.02)' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="glass-panel" style={{ padding: '16px', background: '#fbf9f4', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#ea580c', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <UserPlus size={15} />
                 <span>1. Thông Tin Tài Khoản</span>
               </div>
@@ -240,8 +244,8 @@ export default function AuthGate() {
                         height: '38px',
                         minWidth: '38px',
                         borderRadius: '10px',
-                        border: regForm.avatar === av ? '2px solid #ff7a18' : '1px solid rgba(255,255,255,0.1)',
-                        background: regForm.avatar === av ? 'rgba(255,122,24,0.25)' : 'rgba(255,255,255,0.04)',
+                        border: regForm.avatar === av ? '2px solid #bbf246' : '1px solid var(--border-color)',
+                        background: regForm.avatar === av ? '#f4fce3' : '#ffffff',
                         fontSize: '1.25rem',
                         cursor: 'pointer',
                         display: 'flex',
@@ -330,25 +334,25 @@ export default function AuthGate() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px' }}>
                 <Lock size={12} color="#10b981" />
                 <span>Mật khẩu bảo mật riêng tư, không công khai với các tài khoản khác.</span>
               </div>
             </div>
 
             {/* 2. Health & Fitness Profile Declaration */}
-            <div className="glass-panel" style={{ padding: '14px', background: 'rgba(255, 145, 0, 0.05)', borderColor: 'rgba(255, 145, 0, 0.22)' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="glass-panel" style={{ padding: '16px', background: '#ffffff', border: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#166534', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Activity size={15} />
                 <span>2. Khai Báo Hồ Sơ Sức Khỏe & Thể Trạng</span>
               </div>
 
               {/* Real-time Health Metrics Card */}
-              <div style={{ background: 'rgba(15, 19, 35, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '12px 14px', marginBottom: '12px' }}>
+              <div style={{ background: '#fbf9f4', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '14px', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Flame size={16} color="#ff9100" />
-                    <span style={{ fontSize: '0.84rem', fontWeight: 700 }}>Chỉ Số Thể Trạng Trực Tiếp:</span>
+                    <Flame size={16} color="#ea580c" />
+                    <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-main)' }}>Chỉ Số Thể Trạng Trực Tiếp:</span>
                   </div>
                   <span className="glass-pill" style={{ color: bmiInfo.color, borderColor: bmiInfo.color, fontWeight: 700, padding: '2px 8px', fontSize: '0.76rem' }}>
                     {bmiInfo.status}
@@ -361,11 +365,11 @@ export default function AuthGate() {
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '4px' }}>Điểm BMI</span>
                   </div>
                   <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                    Ước tính tiêu hao: <strong style={{ color: '#ffa726' }}>~{tdeeVal} kcal/ngày</strong>
+                    Ước tính tiêu hao: <strong style={{ color: '#ea580c' }}>~{tdeeVal} kcal/ngày</strong>
                   </div>
                 </div>
 
-                <div style={{ height: '7px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden', display: 'flex', marginTop: '8px' }}>
+                <div style={{ height: '7px', borderRadius: '4px', background: '#ede7dc', overflow: 'hidden', display: 'flex', marginTop: '8px' }}>
                   <div style={{ width: '25%', background: '#38bdf8' }} />
                   <div style={{ width: '40%', background: '#10b981' }} />
                   <div style={{ width: '20%', background: '#f59e0b' }} />
@@ -386,10 +390,10 @@ export default function AuthGate() {
                         style={{
                           flex: 1,
                           borderRadius: '8px',
-                          border: regForm.gender === g ? '1px solid #ff7a18' : '1px solid rgba(255,255,255,0.1)',
-                          background: regForm.gender === g ? 'rgba(255,122,24,0.2)' : 'rgba(255,255,255,0.04)',
-                          color: regForm.gender === g ? '#ffb74d' : 'var(--text-muted)',
-                          fontWeight: regForm.gender === g ? 700 : 500,
+                          border: regForm.gender === g ? '1.5px solid var(--primary)' : '1px solid var(--border-color)',
+                          background: regForm.gender === g ? 'var(--primary)' : '#ffffff',
+                          color: regForm.gender === g ? 'var(--primary-dark)' : 'var(--text-secondary)',
+                          fontWeight: regForm.gender === g ? 800 : 500,
                           fontSize: '0.82rem',
                           cursor: 'pointer'
                         }}
@@ -457,8 +461,8 @@ export default function AuthGate() {
                         style={{
                           padding: '10px 12px',
                           borderRadius: '10px',
-                          border: isSelected ? `2px solid ${g.color}` : '1px solid rgba(255,255,255,0.08)',
-                          background: isSelected ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)',
+                          border: isSelected ? `2px solid ${g.color}` : '1px solid var(--border-color)',
+                          background: isSelected ? '#fbf9f4' : '#ffffff',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -468,7 +472,7 @@ export default function AuthGate() {
                       >
                         <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>{g.icon}</span>
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ fontSize: '0.84rem', fontWeight: 700, color: isSelected ? g.color : '#ffffff', lineHeight: 1.3 }}>
+                          <div style={{ fontSize: '0.84rem', fontWeight: 800, color: isSelected ? g.color : 'var(--text-main)', lineHeight: 1.3 }}>
                             {g.label}
                           </div>
                           <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.3, marginTop: '2px' }}>
@@ -495,8 +499,8 @@ export default function AuthGate() {
                         style={{
                           padding: '8px 10px',
                           borderRadius: '8px',
-                          border: isSelected ? '1px solid #ff9100' : '1px solid rgba(255,255,255,0.08)',
-                          background: isSelected ? 'rgba(255,145,0,0.14)' : 'rgba(255,255,255,0.02)',
+                          border: isSelected ? '1.5px solid #16a34a' : '1px solid var(--border-color)',
+                          background: isSelected ? '#f4fce3' : '#ffffff',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -506,10 +510,10 @@ export default function AuthGate() {
                       >
                         <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>{act.icon}</span>
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ fontSize: '0.8rem', fontWeight: 600, color: isSelected ? '#ffa726' : '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? '#166534' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {act.label}
                           </div>
-                          <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {act.desc}
                           </div>
                         </div>
@@ -535,9 +539,10 @@ export default function AuthGate() {
                           padding: '3px 8px',
                           fontSize: '0.74rem',
                           cursor: 'pointer',
-                          background: isSelected ? 'rgba(239, 68, 68, 0.22)' : 'rgba(255, 255, 255, 0.03)',
-                          borderColor: isSelected ? '#ef4444' : 'rgba(255, 255, 255, 0.1)',
-                          color: isSelected ? '#fca5a5' : 'var(--text-secondary)'
+                          background: isSelected ? '#ffe4e6' : '#ffffff',
+                          borderColor: isSelected ? '#f43f5e' : 'var(--border-color)',
+                          color: isSelected ? '#f43f5e' : 'var(--text-secondary)',
+                          fontWeight: isSelected ? 700 : 500
                         }}
                       >
                         {isSelected ? `✓ ${al}` : `+ ${al}`}
@@ -558,14 +563,14 @@ export default function AuthGate() {
                 fontSize: '1rem',
                 fontWeight: 800,
                 justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(255, 82, 56, 0.5)'
+                boxShadow: '0 6px 20px var(--primary-glow)'
               }}
             >
               <Sparkles size={18} /> ĐĂNG KÝ TÀI KHOẢN & MỞ KHÓA NGAY
             </button>
 
             {/* Switch to Login Link */}
-            <div style={{ marginTop: '10px', padding: '12px', borderRadius: '12px', background: 'rgba(56, 189, 248, 0.05)', border: '1px dashed rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
+            <div style={{ marginTop: '10px', padding: '12px', borderRadius: '12px', background: '#f4fce3', border: '1px dashed rgba(187, 242, 70, 0.7)', textAlign: 'center' }}>
               <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
                 Đã có tài khoản từ trước?
               </div>
@@ -575,7 +580,7 @@ export default function AuthGate() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#38bdf8',
+                  color: '#15803d',
                   fontWeight: 800,
                   fontSize: '0.88rem',
                   cursor: 'pointer',
@@ -599,8 +604,8 @@ export default function AuthGate() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
             <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div className="glass-panel" style={{ padding: '16px 18px', background: 'rgba(255,255,255,0.02)' }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', color: '#38bdf8', letterSpacing: '0.04em', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div className="glass-panel" style={{ padding: '16px 18px', background: '#fbf9f4', border: '1px solid var(--border-color)' }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', color: '#166534', letterSpacing: '0.04em', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <LogIn size={15} />
                   <span>Thông Tin Đăng Nhập</span>
                 </div>
@@ -652,20 +657,16 @@ export default function AuthGate() {
               </button>
 
               {/* Call-to-action when user doesn't have an account */}
-              <div style={{ marginTop: '8px', padding: '14px', borderRadius: '12px', background: 'rgba(255, 145, 0, 0.06)', border: '1px dashed rgba(255, 145, 0, 0.3)', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '8px' }}>
+              <div style={{ marginTop: '8px', padding: '14px', borderRadius: '12px', background: '#fef7e9', border: '1px dashed #f59e0b', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                   Chưa có tài khoản trên hệ thống?
                 </div>
                 <button
                   type="button"
                   onClick={() => { setTab('register'); setErrorMsg(''); }}
-                  className="btn"
+                  className="btn btn-primary"
                   style={{
                     width: '100%',
-                    background: 'rgba(255, 145, 0, 0.15)',
-                    border: '1px solid rgba(255, 145, 0, 0.45)',
-                    color: '#ffa726',
-                    fontWeight: 800,
                     fontSize: '0.88rem',
                     padding: '10px 14px',
                     borderRadius: '8px',
@@ -684,7 +685,7 @@ export default function AuthGate() {
             </form>
 
             {/* Privacy Protection Note */}
-            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               <Lock size={13} color="#10b981" />
               <span>Hệ thống bảo mật dữ liệu riêng tư & an toàn tuyệt đối.</span>
             </div>

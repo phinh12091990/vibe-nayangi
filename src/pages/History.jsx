@@ -81,8 +81,11 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
       {/* Top Header */}
       <div className="app-header">
         <div>
-          <h2 style={{ fontSize: '1.7rem', fontWeight: 800 }}>Nhật Ký & Thống Kê</h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Progress & Diary</h2>
+            <span className="brand-badge">NUTRIGO</span>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
             Theo dõi dinh dưỡng 7 bữa gần nhất & quản lý thể trạng cá nhân
           </p>
         </div>

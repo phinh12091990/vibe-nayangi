@@ -1540,12 +1540,13 @@ h1, h2, h3, h4 {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  background: 
-    radial-gradient(circle at 50% 15%, rgba(187, 242, 70, 0.18) 0%, transparent 60%),
-    var(--bg-base);
-  padding: 24px 16px 60px;
+  background-color: var(--bg-base);
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(187, 242, 70, 0.12) 0%, transparent 60%),
+    var(--bg-base-gradient);
+  padding: 32px 16px;
   box-sizing: border-box;
 }
 
@@ -1563,9 +1564,13 @@ h1, h2, h3, h4 {
 }
 
 .auth-gate-card.login-mode {
-  max-width: 480px;
-  border-color: rgba(187, 242, 70, 0.6);
-  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.08), 0 0 30px var(--primary-glow);
+  max-width: 440px;
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-gate-card.login-mode:hover {
+  border-color: rgba(187, 242, 70, 0.35);
 }
 
 .auth-grid-2col {

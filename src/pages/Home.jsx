@@ -433,7 +433,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
       {/* Nutrigo Quick Stat Widgets Strip (Image 1 & 2) */}
       <div className="nutrigo-metrics-strip">
         <div className="nutrigo-stat-card">
-          <div className="nutrigo-stat-icon-wrap" style={{ background: '#f4fce3', color: '#3a6909' }}>
+          <div className="nutrigo-stat-icon-wrap" style={{ background: 'var(--primary-light)', border: '1px solid var(--border-color)' }}>
             ⚖️
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
@@ -448,7 +448,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
         </div>
 
         <div className="nutrigo-stat-card">
-          <div className="nutrigo-stat-icon-wrap" style={{ background: '#fff3e6', color: '#ea580c' }}>
+          <div className="nutrigo-stat-icon-wrap" style={{ background: 'var(--accent-orange-light)', border: '1px solid var(--border-color)' }}>
             ⚡
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
@@ -463,7 +463,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
         </div>
 
         <div className="nutrigo-stat-card">
-          <div className="nutrigo-stat-icon-wrap" style={{ background: '#e0f2fe', color: '#0284c7' }}>
+          <div className="nutrigo-stat-icon-wrap" style={{ background: 'var(--accent-blue-light)', border: '1px solid var(--border-color)' }}>
             💧
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
@@ -478,7 +478,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
         </div>
 
         <div className="nutrigo-stat-card">
-          <div className="nutrigo-stat-icon-wrap" style={{ background: '#e8f7f0', color: '#059669' }}>
+          <div className="nutrigo-stat-icon-wrap" style={{ background: 'var(--accent-mint-light)', border: '1px solid var(--border-color)' }}>
             🎯
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>

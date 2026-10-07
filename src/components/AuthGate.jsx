@@ -4,7 +4,7 @@ import { triggerConfetti } from '../utils/confetti';
 import { 
   Lock, Sparkles, UserPlus, LogIn, Activity, Target, 
   ShieldAlert, Eye, EyeOff, Check, Flame, ArrowRight, UserCheck,
-  Sun, Moon
+  Sun, Moon, User, Info
 } from 'lucide-react';
 
 const AVATARS = ['🧑‍💻', '👩‍💻', '🏃‍♂️', '🏃‍♀️', '🧘‍♂️', '🧘‍♀️', '🥗', '🍱', '🥑', '🥩', '🍲', '⚡'];
@@ -157,8 +157,37 @@ export default function AuthGate() {
     <div className="auth-gate-screen">
       <div className={`auth-gate-card ${tab === 'login' ? 'login-mode' : ''}`}>
         
-        {/* Quick Theme Switcher on Auth Screen */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+        {/* Top Utility Bar: Brand Identity & Theme Switcher */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              borderRadius: '12px', 
+              background: 'linear-gradient(135deg, #bbf246 0%, #a3e635 100%)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: '1.4rem',
+              boxShadow: '0 4px 14px rgba(187, 242, 70, 0.4)'
+            }}>
+              🍲
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+                  Nay Ăn Gì
+                </span>
+                <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '1px 6px', background: 'var(--primary-light)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
+                  NUTRIGO AI
+                </span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                Dinh dưỡng & Thực đơn chuẩn vóc dáng
+              </div>
+            </div>
+          </div>
+
           <button 
             type="button" 
             onClick={toggleTheme} 
@@ -179,73 +208,230 @@ export default function AuthGate() {
           </button>
         </div>
 
-        {/* Brand & Locked App Banner */}
-        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--primary-light)', border: '1px solid rgba(187, 242, 70, 0.7)', padding: '5px 14px', borderRadius: '20px', marginBottom: '10px' }}>
-            <span style={{ fontSize: '1.3rem' }}>🍲</span>
-            <span style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--primary-dark)', letterSpacing: '0.02em' }}>NAY ĂN GÌ</span>
-            <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 6px', background: 'var(--bg-card)', color: 'var(--primary-dark)' }}>NUTRIGO AI</span>
-          </div>
-
-          <h2 className="auth-header-title" style={{ fontWeight: 900, margin: '4px 0 8px', color: 'var(--text-main)' }}>
-            {tab === 'login' ? 'Đăng Nhập Tài Khoản' : 'Thiết Lập Tài Khoản & Thể Trạng'}
-          </h2>
-
-          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: tab === 'login' ? '#166534' : '#c2410c', background: tab === 'login' ? 'var(--primary-light)' : 'var(--accent-orange-light)', borderRadius: '10px', border: tab === 'login' ? '1px solid rgba(187,242,70,0.5)' : '1px solid rgba(255,122,24,0.3)' }}>
-            <Lock size={14} style={{ flexShrink: 0 }} />
-            <span>
-              {tab === 'login' 
-                ? 'Vui lòng đăng nhập để mở khóa thực đơn & dữ liệu cá nhân' 
-                : 'Khai báo thể trạng để AI tính toán TDEE và gợi ý món ăn chuẩn xác'}
-            </span>
-          </div>
-        </div>
-
-        {/* Tab Switcher */}
-        <div className="auth-tabs-row">
+        {/* Tab Switcher: Modern Segmented Control */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '1fr 1fr', 
+          background: 'var(--bg-surface-secondary)', 
+          padding: '4px', 
+          borderRadius: 'var(--radius-full)', 
+          border: '1px solid var(--border-color)', 
+          marginBottom: '20px' 
+        }}>
           <button
             type="button"
             onClick={() => { setTab('login'); setErrorMsg(''); }}
-            className={`glass-pill auth-tab-btn ${tab === 'login' ? 'active' : ''}`}
             style={{
-              background: tab === 'login' ? 'var(--primary)' : 'var(--bg-surface)',
-              borderColor: tab === 'login' ? 'var(--primary)' : 'var(--border-color)',
-              color: tab === 'login' ? 'var(--primary-dark)' : 'var(--text-secondary)',
+              padding: '9px 12px',
+              fontSize: '0.88rem',
               fontWeight: tab === 'login' ? 800 : 600,
-              boxShadow: tab === 'login' ? '0 4px 14px var(--primary-glow)' : 'var(--shadow-xs)'
+              borderRadius: 'var(--radius-full)',
+              border: 'none',
+              cursor: 'pointer',
+              background: tab === 'login' ? 'var(--primary)' : 'transparent',
+              color: tab === 'login' ? 'var(--primary-dark)' : 'var(--text-secondary)',
+              boxShadow: tab === 'login' ? '0 2px 10px var(--primary-glow)' : 'none',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
             }}
           >
-            <LogIn size={16} />
+            <LogIn size={15} />
             <span>Đăng Nhập</span>
           </button>
 
           <button
             type="button"
             onClick={() => { setTab('register'); setErrorMsg(''); }}
-            className={`glass-pill auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
             style={{
-              background: tab === 'register' ? 'var(--primary)' : 'var(--bg-surface)',
-              borderColor: tab === 'register' ? 'var(--primary)' : 'var(--border-color)',
-              color: tab === 'register' ? 'var(--primary-dark)' : 'var(--text-secondary)',
+              padding: '9px 12px',
+              fontSize: '0.88rem',
               fontWeight: tab === 'register' ? 800 : 600,
-              boxShadow: tab === 'register' ? '0 4px 14px var(--primary-glow)' : 'var(--shadow-xs)'
+              borderRadius: 'var(--radius-full)',
+              border: 'none',
+              cursor: 'pointer',
+              background: tab === 'register' ? 'var(--primary)' : 'transparent',
+              color: tab === 'register' ? 'var(--primary-dark)' : 'var(--text-secondary)',
+              boxShadow: tab === 'register' ? '0 2px 10px var(--primary-glow)' : 'none',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
             }}
           >
-            <UserPlus size={16} />
-            <span>Đăng Ký Tài Khoản</span>
+            <UserPlus size={15} />
+            <span>Đăng Ký</span>
           </button>
         </div>
 
         {errorMsg && (
-          <div style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.18)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#fca5a5', fontSize: '0.82rem', marginBottom: '12px', textAlign: 'center' }}>
-            {errorMsg}
+          <div style={{ 
+            padding: '10px 14px', 
+            borderRadius: '10px', 
+            background: 'rgba(239, 68, 68, 0.14)', 
+            border: '1px solid rgba(239, 68, 68, 0.35)', 
+            color: '#f87171', 
+            fontSize: '0.84rem', 
+            marginBottom: '16px', 
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px'
+          }}>
+            <ShieldAlert size={16} />
+            <span>{errorMsg}</span>
           </div>
+        )}
+
+        {/* ================= LOGIN VIEW ================= */}
+        {tab === 'login' && (
+          <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ marginBottom: '2px' }}>
+              <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 4px 0', letterSpacing: '-0.01em' }}>
+                Đăng Nhập Tài Khoản
+              </h2>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
+                Mở khóa thực đơn gợi ý thông minh và dữ liệu dinh dưỡng cá nhân.
+              </p>
+            </div>
+
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <User size={14} color="#ea580c" />
+                <span>Tên đăng nhập (Username) *</span>
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="VD: hoangnam hoặc admin"
+                value={loginUsername}
+                onChange={e => setLoginUsername(e.target.value)}
+                required
+                autoFocus
+                style={{ height: '46px', fontSize: '0.94rem' }}
+              />
+            </div>
+
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Lock size={14} color="#ea580c" />
+                <span>Mật khẩu bảo mật *</span>
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showLoginPassword ? 'text' : 'password'}
+                  className="form-input"
+                  placeholder="Nhập mật khẩu..."
+                  value={loginPassword}
+                  onChange={e => setLoginPassword(e.target.value)}
+                  required
+                  style={{ height: '46px', fontSize: '0.94rem', paddingRight: '40px', width: '100%' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                  style={{ 
+                    position: 'absolute', 
+                    right: '12px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)', 
+                    background: 'transparent', 
+                    border: 'none', 
+                    color: 'var(--text-muted)', 
+                    cursor: 'pointer', 
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                  title={showLoginPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                >
+                  {showLoginPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Helper for Admin Demo */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between', 
+              padding: '9px 12px', 
+              borderRadius: 'var(--radius-sm)', 
+              background: 'var(--bg-surface-secondary)', 
+              border: '1px solid var(--border-color)', 
+              fontSize: '0.78rem', 
+              color: 'var(--text-muted)' 
+            }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Info size={14} color="#f59e0b" /> Tài khoản Quản trị mẫu:
+              </span>
+              <span style={{ fontWeight: 800, color: 'var(--text-main)', letterSpacing: '0.02em' }}>
+                admin / admin
+              </span>
+            </div>
+
+            {/* Submit CTA Button */}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                padding: '13px',
+                fontSize: '0.98rem',
+                fontWeight: 800,
+                justifyContent: 'center',
+                boxShadow: '0 6px 20px var(--primary-glow)',
+                cursor: 'pointer',
+                marginTop: '4px'
+              }}
+            >
+              <LogIn size={18} />
+              <span>ĐĂNG NHẬP VÀO ỨNG DỤNG</span>
+            </button>
+
+            {/* Subtle Switch link */}
+            <div style={{ textAlign: 'center', fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              <span>Chưa có tài khoản? </span>
+              <button
+                type="button"
+                onClick={() => { setTab('register'); setErrorMsg(''); }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ea580c',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  padding: 0,
+                  fontSize: '0.84rem'
+                }}
+              >
+                Đăng ký tài khoản ngay &rarr;
+              </button>
+            </div>
+
+            <div style={{ textAlign: 'center', fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+              <Lock size={12} color="#10b981" />
+              <span>Hệ thống bảo mật dữ liệu thể trạng & quyền riêng tư</span>
+            </div>
+          </form>
         )}
 
         {/* ================= REGISTER VIEW ================= */}
         {tab === 'register' && (
           <form onSubmit={handleRegisterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            
+            <div style={{ marginBottom: '2px' }}>
+              <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 4px 0', letterSpacing: '-0.01em' }}>
+                Thiết Lập Tài Khoản & Thể Trạng
+              </h2>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>
+                Khai báo chỉ số cơ thể để AI tính toán TDEE và gợi ý bữa ăn chuẩn xác.
+              </p>
+            </div>
+
             {/* 1. Account Credentials */}
             <div className="glass-panel" style={{ padding: '16px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#ea580c', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -267,8 +453,8 @@ export default function AuthGate() {
                         height: '38px',
                         minWidth: '38px',
                         borderRadius: '10px',
-                        border: regForm.avatar === av ? '2px solid #bbf246' : '1px solid var(--border-color)',
-                        background: regForm.avatar === av ? 'var(--primary-light)' : 'var(--bg-surface)',
+                        border: regForm.avatar === av ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                        background: regForm.avatar === av ? 'var(--primary-light)' : 'var(--bg-card)',
                         fontSize: '1.25rem',
                         cursor: 'pointer',
                         display: 'flex',
@@ -356,47 +542,23 @@ export default function AuthGate() {
                   </div>
                 </div>
               </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px' }}>
-                <Lock size={12} color="#10b981" />
-                <span>Mật khẩu bảo mật riêng tư, không công khai với các tài khoản khác.</span>
-              </div>
             </div>
 
-            {/* 2. Health & Fitness Profile Declaration */}
-            <div className="glass-panel" style={{ padding: '16px', background: '#ffffff', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#166534', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Activity size={15} />
-                <span>2. Khai Báo Hồ Sơ Sức Khỏe & Thể Trạng</span>
-              </div>
-
-              {/* Real-time Health Metrics Card */}
-              <div style={{ background: '#fbf9f4', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '14px', marginBottom: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Flame size={16} color="#ea580c" />
-                    <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-main)' }}>Chỉ Số Thể Trạng Trực Tiếp:</span>
-                  </div>
-                  <span className="glass-pill" style={{ color: bmiInfo.color, borderColor: bmiInfo.color, fontWeight: 700, padding: '2px 8px', fontSize: '0.76rem' }}>
-                    {bmiInfo.status}
-                  </span>
+            {/* 2. Body Metrics & Live BMI */}
+            <div className="glass-panel" style={{ padding: '16px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#10b981', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Activity size={15} />
+                  <span>2. Chỉ Số Cơ Thể & Năng Lượng</span>
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '14px' }}>
-                  <div>
-                    <span style={{ fontSize: '2.2rem', fontWeight: 900, color: bmiInfo.color, lineHeight: 1 }}>{bmiInfo.bmi}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '4px' }}>Điểm BMI</span>
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                    Ước tính tiêu hao: <strong style={{ color: '#ea580c' }}>~{tdeeVal} kcal/ngày</strong>
-                  </div>
-                </div>
-
-                <div style={{ height: '7px', borderRadius: '4px', background: '#ede7dc', overflow: 'hidden', display: 'flex', marginTop: '8px' }}>
-                  <div style={{ width: '25%', background: '#38bdf8' }} />
-                  <div style={{ width: '40%', background: '#10b981' }} />
-                  <div style={{ width: '20%', background: '#f59e0b' }} />
-                  <div style={{ width: '15%', background: '#ef4444' }} />
+                
+                {/* Live BMI Pill */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-card)', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-color)', fontSize: '0.74rem' }}>
+                  <span>BMI:</span>
+                  <strong style={{ color: bmiInfo.color }}>{bmiInfo.bmi} ({bmiInfo.status})</strong>
+                  <span>•</span>
+                  <span>TDEE:</span>
+                  <strong style={{ color: '#ea580c' }}>{tdeeVal} kcal</strong>
                 </div>
               </div>
 
@@ -414,7 +576,7 @@ export default function AuthGate() {
                           flex: 1,
                           borderRadius: '8px',
                           border: regForm.gender === g ? '1.5px solid var(--primary)' : '1px solid var(--border-color)',
-                          background: regForm.gender === g ? 'var(--primary)' : '#ffffff',
+                          background: regForm.gender === g ? 'var(--primary)' : 'var(--bg-card)',
                           color: regForm.gender === g ? 'var(--primary-dark)' : 'var(--text-secondary)',
                           fontWeight: regForm.gender === g ? 800 : 500,
                           fontSize: '0.82rem',
@@ -485,7 +647,7 @@ export default function AuthGate() {
                           padding: '10px 12px',
                           borderRadius: '10px',
                           border: isSelected ? `2px solid ${g.color}` : '1px solid var(--border-color)',
-                          background: isSelected ? '#fbf9f4' : '#ffffff',
+                          background: isSelected ? 'var(--bg-surface-secondary)' : 'var(--bg-card)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -522,8 +684,8 @@ export default function AuthGate() {
                         style={{
                           padding: '8px 10px',
                           borderRadius: '8px',
-                          border: isSelected ? '1.5px solid #16a34a' : '1px solid var(--border-color)',
-                          background: isSelected ? '#f4fce3' : '#ffffff',
+                          border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border-color)',
+                          background: isSelected ? 'var(--primary-light)' : 'var(--bg-card)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
@@ -533,7 +695,7 @@ export default function AuthGate() {
                       >
                         <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>{act.icon}</span>
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? '#166534' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? 'var(--primary-dark)' : 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {act.label}
                           </div>
                           <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -562,7 +724,7 @@ export default function AuthGate() {
                           padding: '3px 8px',
                           fontSize: '0.74rem',
                           cursor: 'pointer',
-                          background: isSelected ? '#ffe4e6' : '#ffffff',
+                          background: isSelected ? 'rgba(244, 63, 94, 0.16)' : 'var(--bg-card)',
                           borderColor: isSelected ? '#f43f5e' : 'var(--border-color)',
                           color: isSelected ? '#f43f5e' : 'var(--text-secondary)',
                           fontWeight: isSelected ? 700 : 500
@@ -593,127 +755,26 @@ export default function AuthGate() {
             </button>
 
             {/* Switch to Login Link */}
-            <div style={{ marginTop: '10px', padding: '12px', borderRadius: '12px', background: '#f4fce3', border: '1px dashed rgba(187, 242, 70, 0.7)', textAlign: 'center' }}>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                Đã có tài khoản từ trước?
-              </div>
+            <div style={{ textAlign: 'center', fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+              <span>Đã có tài khoản? </span>
               <button
                 type="button"
                 onClick={() => { setTab('login'); setErrorMsg(''); }}
                 style={{
-                  background: 'transparent',
+                  background: 'none',
                   border: 'none',
-                  color: '#15803d',
+                  color: '#ea580c',
                   fontWeight: 800,
-                  fontSize: '0.88rem',
                   cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  textDecoration: 'underline'
+                  padding: 0,
+                  fontSize: '0.84rem'
                 }}
               >
-                <LogIn size={15} />
-                <span>Đăng nhập tại đây</span>
-                <ArrowRight size={14} />
+                Đăng nhập tại đây &rarr;
               </button>
             </div>
 
           </form>
-        )}
-
-        {/* ================= LOGIN VIEW ================= */}
-        {tab === 'login' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            
-            <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div className="glass-panel" style={{ padding: '16px 18px', background: '#fbf9f4', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', color: '#166534', letterSpacing: '0.04em', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <LogIn size={15} />
-                  <span>Thông Tin Đăng Nhập</span>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: '12px' }}>
-                  <label className="form-label" style={{ fontSize: '0.8rem' }}>Tên đăng nhập (Username) *</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="VD: hoangnam, admin..."
-                    value={loginUsername}
-                    onChange={e => setLoginUsername(e.target.value)}
-                    required
-                    style={{ fontSize: '0.92rem', padding: '10px 14px', height: '44px' }}
-                  />
-                </div>
-
-                <div className="form-group" style={{ marginBottom: '4px' }}>
-                  <label className="form-label" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>Mật khẩu bảo mật *</label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type={showLoginPassword ? 'text' : 'password'}
-                      className="form-input"
-                      placeholder="Nhập mật khẩu của bạn..."
-                      value={loginPassword}
-                      onChange={e => setLoginPassword(e.target.value)}
-                      required
-                      style={{ fontSize: '0.92rem', padding: '10px 40px 10px 14px', height: '44px' }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowLoginPassword(!showLoginPassword)}
-                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
-                      title={showLoginPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-                    >
-                      {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: '100%', padding: '12px', fontSize: '0.95rem', fontWeight: 800, justifyContent: 'center' }}
-              >
-                <LogIn size={18} /> ĐĂNG NHẬP VÀO ỨNG DỤNG
-              </button>
-
-              {/* Call-to-action when user doesn't have an account */}
-              <div style={{ marginTop: '8px', padding: '14px', borderRadius: '12px', background: '#fef7e9', border: '1px dashed #f59e0b', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                  Chưa có tài khoản trên hệ thống?
-                </div>
-                <button
-                  type="button"
-                  onClick={() => { setTab('register'); setErrorMsg(''); }}
-                  className="btn btn-primary"
-                  style={{
-                    width: '100%',
-                    fontSize: '0.88rem',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <UserPlus size={16} />
-                  <span>Đăng ký tài khoản & Khai báo thể trạng</span>
-                  <ArrowRight size={15} />
-                </button>
-              </div>
-            </form>
-
-            {/* Privacy Protection Note */}
-            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <Lock size={13} color="#10b981" />
-              <span>Hệ thống bảo mật dữ liệu riêng tư & an toàn tuyệt đối.</span>
-            </div>
-
-          </div>
         )}
 
       </div>

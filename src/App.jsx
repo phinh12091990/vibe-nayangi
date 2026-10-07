@@ -127,7 +127,7 @@ function AppLayout() {
                     {profile.name || 'Hồ Sơ Của Bạn'}
                   </div>
                   {isAdmin && (
-                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#b45309', background: '#fef3c7', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#f59e0b', background: 'rgba(245, 158, 11, 0.16)', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                       ADMIN
                     </span>
                   )}
@@ -142,7 +142,7 @@ function AppLayout() {
               {isAdmin && (
                 <button 
                   onClick={openSwitchAccount}
-                  style={{ background: '#fef3c7', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '6px', color: '#b45309', cursor: 'pointer', padding: '4px' }}
+                  style={{ background: 'rgba(245, 158, 11, 0.14)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '6px', color: '#f59e0b', cursor: 'pointer', padding: '4px' }}
                   title="👑 Quản trị tất cả tài khoản thành viên"
                 >
                   <Users size={15} />
@@ -150,7 +150,7 @@ function AppLayout() {
               )}
               <button 
                 onClick={logout}
-                style={{ background: '#ffe4e6', border: '1px solid rgba(244, 63, 94, 0.25)', borderRadius: '6px', color: '#f43f5e', cursor: 'pointer', padding: '4px' }}
+                style={{ background: 'rgba(244, 63, 94, 0.14)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '6px', color: '#f43f5e', cursor: 'pointer', padding: '4px' }}
                 title="Đăng xuất (Khóa ứng dụng)"
               >
                 <LogOut size={15} />

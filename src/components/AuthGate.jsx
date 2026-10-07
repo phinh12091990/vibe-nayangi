@@ -305,7 +305,7 @@ export default function AuthGate() {
               <input
                 type="text"
                 className="form-input"
-                placeholder="VD: hoangnam hoặc admin"
+                placeholder="VD: hoangnam, minhthao..."
                 value={loginUsername}
                 onChange={e => setLoginUsername(e.target.value)}
                 required
@@ -350,26 +350,6 @@ export default function AuthGate() {
                   {showLoginPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
-            </div>
-
-            {/* Quick Helper for Admin Demo */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between', 
-              padding: '9px 12px', 
-              borderRadius: 'var(--radius-sm)', 
-              background: 'var(--bg-surface-secondary)', 
-              border: '1px solid var(--border-color)', 
-              fontSize: '0.78rem', 
-              color: 'var(--text-muted)' 
-            }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Info size={14} color="#f59e0b" /> Tài khoản Quản trị mẫu:
-              </span>
-              <span style={{ fontWeight: 800, color: 'var(--text-main)', letterSpacing: '0.02em' }}>
-                admin / admin
-              </span>
             </div>
 
             {/* Submit CTA Button */}

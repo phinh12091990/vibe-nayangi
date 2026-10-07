@@ -3,14 +3,14 @@ import { RefreshCw, X, CheckCircle2, ShieldCheck, Sun, Moon, Sparkles, Trophy } 
 import { triggerConfetti } from '../utils/confetti';
 
 const FOOD_ITEMS = [
-  { id: 'pho', emoji: '🍜', nameVi: 'Phở bò', nameEn: 'Beef Pho', color: '#fed7aa', border: '#fb923c' },
-  { id: 'sushi', emoji: '🍣', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', color: '#fbcfe8', border: '#f472b6' },
-  { id: 'bento', emoji: '🍱', nameVi: 'Cơm Bento', nameEn: 'Bento Box', color: '#bbf7d0', border: '#4ade80' },
-  { id: 'pizza', emoji: '🍕', nameVi: 'Pizza phô mai', nameEn: 'Cheese Pizza', color: '#fef08a', border: '#facc15' },
-  { id: 'steak', emoji: '🥩', nameVi: 'Bò bít tết', nameEn: 'Beef Steak', color: '#fecdd3', border: '#fb7185' },
-  { id: 'salad', emoji: '🥗', nameVi: 'Salad xanh', nameEn: 'Green Salad', color: '#c7d2fe', border: '#818cf8' },
-  { id: 'avocado', emoji: '🥑', nameVi: 'Trái bơ', nameEn: 'Avocado', color: '#d9f99d', border: '#a3e635' },
-  { id: 'banhmi', emoji: '🥖', nameVi: 'Bánh mì', nameEn: 'Baguette', color: '#fed7aa', border: '#f97316' },
+  { id: 'pho', emoji: '🍜', nameVi: 'Phở bò', nameEn: 'Beef Pho', bg: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)', border: '#f97316' },
+  { id: 'sushi', emoji: '🍣', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', border: '#ec4899' },
+  { id: 'bento', emoji: '🍱', nameVi: 'Cơm Bento', nameEn: 'Bento Box', bg: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)', border: '#22c55e' },
+  { id: 'pizza', emoji: '🍕', nameVi: 'Pizza phô mai', nameEn: 'Cheese Pizza', bg: 'linear-gradient(135deg, #fef9c3 0%, #fef08a 100%)', border: '#eab308' },
+  { id: 'steak', emoji: '🥩', nameVi: 'Bò bít tết', nameEn: 'Beef Steak', bg: 'linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%)', border: '#f43f5e' },
+  { id: 'salad', emoji: '🥗', nameVi: 'Salad xanh', nameEn: 'Green Salad', bg: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', border: '#6366f1' },
+  { id: 'avocado', emoji: '🥑', nameVi: 'Trái bơ', nameEn: 'Avocado', bg: 'linear-gradient(135deg, #ecfccb 0%, #d9f99d 100%)', border: '#84cc16' },
+  { id: 'banhmi', emoji: '🥖', nameVi: 'Bánh mì', nameEn: 'Baguette', bg: 'linear-gradient(135deg, #ffedd5 0%, #fdba74 100%)', border: '#ea580c' },
 ];
 
 const TOTAL_PAIRS = 8; // Bắt buộc ghép đúng đủ tất cả 8/8 cặp mới mở khoá!
@@ -214,7 +214,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, la
                 type="button"
                 className={`captcha-tile ${isSelected ? 'selected' : ''} ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''}`}
                 style={{ 
-                  backgroundColor: isMatched ? 'rgba(16, 185, 129, 0.18)' : tile.color,
+                  background: isMatched ? 'rgba(16, 185, 129, 0.15)' : tile.bg,
                   borderColor: isSelected ? '#f59e0b' : isMatched ? '#10b981' : tile.border 
                 }}
                 onClick={() => handleTileClick(tile)}
@@ -222,6 +222,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, la
                 title={foodName}
               >
                 <span className="captcha-tile-emoji">{tile.emoji}</span>
+                <span className="captcha-tile-name">{foodName}</span>
                 {isMatched && (
                   <span className="captcha-tile-check">
                     <CheckCircle2 size={16} color="#059669" />

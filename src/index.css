@@ -2439,7 +2439,7 @@ h1, h2, h3, h4 {
 }
 
 /* ==========================================================================
-   Food CAPTCHA Modal (Matching Image 4 & 5 - Cute Stitched Card Look)
+   Food CAPTCHA Modal (Premium High-End Glassmorphism & 3D Interactive Tiles)
    ========================================================================== */
 .food-captcha-overlay {
   position: fixed;
@@ -2447,76 +2447,80 @@ h1, h2, h3, h4 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(5, 10, 20, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  animation: modalFadeIn 0.22s ease-out;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .food-captcha-modal {
   width: 100%;
-  max-width: 420px;
-  background: var(--bg-card);
+  max-width: 440px;
+  background: var(--bg-surface);
   border-radius: 28px;
-  padding: 22px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  padding: 24px;
+  box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
   box-sizing: border-box;
-  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  overflow: hidden;
 }
 
 .food-captcha-modal.cute-border {
-  border: 3px dashed rgba(16, 185, 129, 0.45);
-  background-image: radial-gradient(circle at 10% 10%, rgba(187, 242, 70, 0.08) 0%, transparent 40%);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  background: linear-gradient(165deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.55), 0 0 40px rgba(16, 185, 129, 0.12);
 }
 
 .captcha-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .captcha-lang-switch {
   display: flex;
-  background: var(--bg-surface-secondary);
-  border: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-full);
-  padding: 2px;
-  gap: 2px;
+  padding: 3px;
+  gap: 3px;
 }
 
 .captcha-lang-btn {
-  padding: 3px 8px;
-  font-size: 0.72rem;
+  padding: 4px 10px;
+  font-size: 0.74rem;
   font-weight: 700;
   border: none;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--radius-full);
+  transition: all 0.2s ease;
 }
 
 .captcha-lang-btn.active {
   background: var(--primary);
   color: var(--primary-dark);
+  box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 .captcha-theme-btn,
 .captcha-icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-surface-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
   color: var(--text-main);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2524,85 +2528,108 @@ h1, h2, h3, h4 {
 
 .captcha-theme-btn:hover,
 .captcha-icon-btn:hover {
-  background: var(--primary-light);
+  background: rgba(255, 255, 255, 0.14);
   border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .captcha-instruction-bar {
   display: flex;
   flex-direction: column;
-  padding: 10px 14px;
-  background: var(--bg-surface-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  margin-bottom: 14px;
-  font-size: 0.85rem;
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--text-main);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .captcha-progress-track {
   width: 100%;
   height: 6px;
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .captcha-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #10b981 0%, #bbf246 100%);
   border-radius: 4px;
-  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 10px rgba(187, 242, 70, 0.6);
+  transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 4x4 Grid of Cute Food Tiles */
+/* 4x4 Grid of Premium Tactile Food Tiles */
 .captcha-grid-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  background: #0f4c3a;
-  padding: 14px;
-  border-radius: 20px;
-  margin-bottom: 14px;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25);
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(8, 25, 20, 0.75) 0%, rgba(5, 18, 14, 0.85) 100%);
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  margin-bottom: 16px;
+  box-shadow: inset 0 3px 12px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .captcha-tile {
   aspect-ratio: 1;
-  border-radius: 16px;
+  border-radius: 18px;
   border: 2px solid transparent;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   cursor: pointer;
   position: relative;
   transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  outline: none;
+  padding: 4px;
 }
 
 .captcha-tile:hover:not(:disabled) {
-  transform: translateY(-2px) scale(1.06);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.captcha-tile:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
 }
 
 .captcha-tile.selected {
   border-color: #f59e0b !important;
-  transform: scale(1.1) !important;
-  box-shadow: 0 0 18px rgba(245, 158, 11, 0.9) !important;
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.7) !important;
   z-index: 2;
+  animation: pulseSelect 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseSelect {
+  0% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.6); }
+  100% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.95); }
 }
 
 .captcha-tile.matched {
-  opacity: 0.35;
+  opacity: 0.38;
   cursor: default;
-  transform: scale(0.92);
-  filter: grayscale(0.2);
+  transform: scale(0.94);
+  filter: grayscale(0.25);
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: none !important;
 }
 
 .captcha-tile.wrong {
   animation: shake 0.4s ease-in-out;
   border-color: #ef4444 !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.7) !important;
 }
 
 @keyframes shake {
@@ -2615,16 +2642,44 @@ h1, h2, h3, h4 {
   font-size: 1.85rem;
   line-height: 1;
   user-select: none;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.22));
+  transition: transform 0.2s ease;
+}
+
+.captcha-tile:hover:not(:disabled) .captcha-tile-emoji {
+  transform: scale(1.12);
+}
+
+.captcha-tile-name {
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  pointer-events: none;
+  letter-spacing: -0.01em;
 }
 
 .captcha-tile-check {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  background: #fff;
+  top: 5px;
+  right: 5px;
+  background: #ffffff;
   border-radius: 50%;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .captcha-footer-status {

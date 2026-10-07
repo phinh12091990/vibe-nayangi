@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI, calculateTDEE } from '../hooks/useStorage';
 import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
@@ -9,8 +10,66 @@ import {
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
   Flame, ShieldAlert, Award, Activity, Clock, 
   Users, ExternalLink, Share2, MapPin,
-  Smartphone, Keyboard, ChevronRight, ChevronLeft, UserPlus
+  Smartphone, Keyboard, ChevronRight, ChevronLeft, UserPlus,
+  PieChart
 } from 'lucide-react';
+
+const formatRecentTime = (timestamp) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  const timeStr = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  if (isToday) return `Hôm nay, ${timeStr}`;
+  if (isYesterday) return `Hôm qua, ${timeStr}`;
+  return `${date.getDate()}/${date.getMonth() + 1}, ${timeStr}`;
+};
+
+const getMacroBreakdown = (tdee, goal) => {
+  let proteinRatio = 0.25;
+  let carbRatio = 0.50;
+  let fatRatio = 0.25;
+
+  if (goal === 'Giảm cân') {
+    proteinRatio = 0.35;
+    carbRatio = 0.40;
+    fatRatio = 0.25;
+  } else if (goal === 'Tăng cân' || goal === 'Tăng cơ') {
+    proteinRatio = 0.30;
+    carbRatio = 0.50;
+    fatRatio = 0.20;
+  }
+
+  const proteinGrams = Math.round((tdee * proteinRatio) / 4);
+  const carbGrams = Math.round((tdee * carbRatio) / 4);
+  const fatGrams = Math.round((tdee * fatRatio) / 9);
+
+  return {
+    protein: { percent: Math.round(proteinRatio * 100), grams: proteinGrams },
+    carbs: { percent: Math.round(carbRatio * 100), grams: carbGrams },
+    fat: { percent: Math.round(fatRatio * 100), grams: fatGrams },
+  };
+};
+
+const getAiMealTip = (currentMeal, goal, bmi) => {
+  if (currentMeal === 'Sáng') {
+    return 'Bữa sáng nên tập trung đạm sạch và tinh bột tiêu hóa chậm để kích hoạt trao đổi chất & duy trì năng lượng bền bỉ.';
+  }
+  if (currentMeal === 'Trưa') {
+    if (bmi >= 23) {
+      return 'Bữa trưa chiếm 40% calo ngày. Nên ưu tiên rau xanh, canh thanh nhiệt và hạn chế đồ chiên rán để kiểm soát mỡ thừa.';
+    }
+    return 'Bữa trưa là nguồn năng lượng chính (khoảng 40% TDEE). Đừng quên bổ sung đủ nước canh & rau xanh tươi!';
+  }
+  if (currentMeal === 'Tối') {
+    return 'Bữa tối nên nhẹ nhàng (khoảng 35% calo), giảm bớt tinh bột nhanh để hệ tiêu hóa thư giãn và ngủ sâu hơn.';
+  }
+  return 'Lựa chọn món ăn đa dạng để đảm bảo cân bằng vi chất dinh dưỡng mỗi ngày.';
+};
 
 const getDimensions = () => {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
@@ -29,6 +88,7 @@ const getTranslateForIndex = (index) => {
 };
 
 export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
+  const navigate = useNavigate();
   const { 
     foods, history, allergies, addHistory, profile, isAdmin,
     groupMembers, toggleGroupMember, addGroupMember, removeGroupMember 
@@ -84,6 +144,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
     profile.gender,
     profile.activity
   );
+  const macro = getMacroBreakdown(tdeeVal, profile.goal);
 
   // Active Group Members & Allergies
   const activeMembers = groupMembers.filter(m => m.active);
@@ -995,83 +1056,153 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
         {/* ================= RIGHT COLUMN: HEALTH & INSIGHTS WIDGET (Expands on Desktop) ================= */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' }}>
           
-          {/* User Body Profile Widget */}
-          <div className="glass-panel" style={{ borderLeft: '4px solid #ff7a18' }}>
-            {/* Top Bar of Profile Widget */}
+          {/* ================= WIDGET 1: PHÂN BỔ CALO & MACRO AI (Replaces redundant profile) ================= */}
+          <div className="glass-panel" style={{ borderLeft: '4px solid var(--primary-color)' }}>
+            {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border-color)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Activity size={15} color="#ff9100" />
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#ff9100', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
-                  HỒ SƠ THỂ TRẠNG
+                <PieChart size={16} color="var(--primary-color)" />
+                <span style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-main)', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+                  PHÂN BỔ CALO & MACRO AI
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                <span style={{ 
+                  fontSize: '0.72rem', 
+                  fontWeight: 800, 
+                  color: 'var(--primary-color)', 
+                  background: 'rgba(187, 242, 70, 0.12)', 
+                  border: '1px solid rgba(187, 242, 70, 0.3)', 
+                  padding: '2px 8px', 
+                  borderRadius: 'var(--radius-full)' 
+                }}>
+                  TDEE: {tdeeVal} kcal
+                </span>
                 <button 
                   className="glass-pill" 
                   style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem' }}
                   onClick={onOpenProfile}
-                  title="Chỉnh sửa chiều cao, cân nặng, dị ứng của tôi"
+                  title="Chỉnh sửa chiều cao, cân nặng, mục tiêu calo của tôi"
                 >
-                  Sửa thể trạng
+                  Sửa chỉ số
                 </button>
-                {isAdmin && (
-                  <button 
-                    className="glass-pill" 
-                    style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem', background: 'rgba(255,145,0,0.14)', borderColor: '#ff9100', color: '#ffa726' }}
-                    onClick={onOpenCreateAccount}
-                    title="👑 Tạo tài khoản mới & Khai báo thể trạng"
+              </div>
+            </div>
+
+            {/* 3 Meals Distribution Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '12px' }}>
+              {[
+                { type: 'Sáng', ratio: 0.25, icon: '🌅', label: '25% TDEE' },
+                { type: 'Trưa', ratio: 0.40, icon: '☀️', label: '40% TDEE' },
+                { type: 'Tối', ratio: 0.35, icon: '🌙', label: '35% TDEE' },
+              ].map(meal => {
+                const isCurrent = mealType === meal.type;
+                const mealCalo = Math.round(tdeeVal * meal.ratio);
+                return (
+                  <div 
+                    key={meal.type}
+                    style={{
+                      background: isCurrent ? 'rgba(187, 242, 70, 0.12)' : 'var(--bg-surface-secondary)',
+                      border: isCurrent ? '1.5px solid var(--primary-color)' : '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: '8px 6px',
+                      textAlign: 'center',
+                      position: 'relative',
+                      transition: 'all 0.2s ease',
+                      boxShadow: isCurrent ? '0 0 12px rgba(187, 242, 70, 0.18)' : 'none'
+                    }}
                   >
-                    <UserPlus size={12} />
-                    <span>+ Tạo TK</span>
-                  </button>
-                )}
+                    {isCurrent && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '-7px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        background: 'var(--primary-color)',
+                        color: '#111827',
+                        fontSize: '0.58rem',
+                        fontWeight: 900,
+                        padding: '1px 5px',
+                        borderRadius: 'var(--radius-full)',
+                        letterSpacing: '0.02em',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        ĐANG CHỌN
+                      </span>
+                    )}
+                    <div style={{ fontSize: '0.73rem', color: isCurrent ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
+                      <span>{meal.icon}</span> Bữa {meal.type}
+                    </div>
+                    <div style={{ fontSize: '1.05rem', fontWeight: 900, color: isCurrent ? 'var(--primary-color)' : 'var(--text-main)', marginTop: '2px' }}>
+                      ~{mealCalo}
+                      <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', marginLeft: '2px' }}>kcal</span>
+                    </div>
+                    <div style={{ fontSize: '0.66rem', color: 'var(--text-dim)', marginTop: '1px' }}>
+                      {meal.label}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Macro Ratio Stacked Bar */}
+            <div style={{ marginBottom: '12px', background: 'var(--bg-surface-secondary)', padding: '10px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                  Tỷ Lệ Macro Tiêu Chuẩn ({profile.goal || 'Cân bằng'})
+                </span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
+                  Đạm / Carbs / Fat
+                </span>
+              </div>
+
+              {/* Multi-segment progress bar */}
+              <div style={{ height: '8px', width: '100%', borderRadius: '4px', overflow: 'hidden', display: 'flex', background: 'var(--bg-surface)' }}>
+                <div style={{ width: `${macro.protein.percent}%`, background: '#38bdf8', transition: 'width 0.3s ease' }} title={`Đạm (Protein): ${macro.protein.percent}%`} />
+                <div style={{ width: `${macro.carbs.percent}%`, background: '#fbbf24', transition: 'width 0.3s ease' }} title={`Tinh bột (Carbs): ${macro.carbs.percent}%`} />
+                <div style={{ width: `${macro.fat.percent}%`, background: '#f43f5e', transition: 'width 0.3s ease' }} title={`Chất béo (Fat): ${macro.fat.percent}%`} />
+              </div>
+
+              {/* Legend */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px', fontSize: '0.72rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#38bdf8' }} />
+                  <span style={{ color: 'var(--text-secondary)' }}>Đạm:</span>
+                  <strong style={{ color: '#38bdf8' }}>{macro.protein.grams}g ({macro.protein.percent}%)</strong>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#fbbf24' }} />
+                  <span style={{ color: 'var(--text-secondary)' }}>Carbs:</span>
+                  <strong style={{ color: '#fbbf24' }}>{macro.carbs.grams}g ({macro.carbs.percent}%)</strong>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#f43f5e' }} />
+                  <span style={{ color: 'var(--text-secondary)' }}>Fat:</span>
+                  <strong style={{ color: '#f43f5e' }}>{macro.fat.grams}g ({macro.fat.percent}%)</strong>
+                </div>
               </div>
             </div>
 
-            {/* User Identity Info */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <div style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', background: isAdmin ? 'rgba(255, 193, 7, 0.2)' : 'linear-gradient(135deg, rgba(255, 122, 24, 0.25), rgba(255, 82, 56, 0.15))', border: isAdmin ? '1px solid #ffc107' : '1px solid rgba(255, 145, 0, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', boxShadow: '0 4px 14px rgba(255, 122, 24, 0.2)' }}>
-                {profile.avatar || (isAdmin ? '👑' : '🧑‍💻')}
-              </div>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)' }}>
-                    {profile.name || 'Bạn'}
-                  </h3>
-                  {isAdmin && (
-                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#ffc107', background: 'rgba(255, 193, 7, 0.18)', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(255, 193, 7, 0.3)' }}>
-                      ADMIN
-                    </span>
-                  )}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.74rem', color: 'var(--text-dim)', flexWrap: 'wrap' }}>
-                  <span>@{profile.username || 'user'}</span>
-                  <span>•</span>
-                  <span>{profile.gender}, {profile.age || 26} tuổi</span>
-                </div>
+            {/* AI Meal Tip Alert */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'flex-start', 
+              gap: '8px', 
+              background: 'rgba(187, 242, 70, 0.08)', 
+              border: '1px solid rgba(187, 242, 70, 0.25)', 
+              padding: '9px 12px', 
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '0.78rem',
+              lineHeight: 1.45,
+              color: 'var(--text-secondary)'
+            }}>
+              <Sparkles size={15} color="var(--primary-color)" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div>
+                <strong style={{ color: 'var(--text-main)', marginRight: '4px' }}>Gợi ý AI Bữa {mealType}:</strong>
+                {getAiMealTip(mealType, profile.goal, bmiInfo.bmi)}
               </div>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-              <div style={{ background: 'var(--bg-surface-secondary)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Chỉ số BMI</span>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: bmiInfo.color }}>
-                  {bmiInfo.bmi} <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>({bmiInfo.status})</span>
-                </div>
-              </div>
-
-            <div style={{ background: 'var(--bg-surface-secondary)', padding: '8px 10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Mục tiêu dinh dưỡng</span>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffa000', marginTop: '2px' }}>
-                  {profile.goal || 'Cân bằng'}
-                </div>
-              </div>
-            </div>
-
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-              💡 <em>Thuật toán quay số đang ưu tiên món ăn hỗ trợ vóc dáng & năng lượng dựa trên cân nặng {profile.weight}kg, chiều cao {profile.height}cm của bạn.</em>
-            </p>
           </div>
 
           {/* Group Dining Summary Widget (Desktop Only Widget) */}
@@ -1130,34 +1261,95 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             </div>
           </div>
 
-          {/* Recent History Feed Snapshot */}
-          <div className="glass-panel">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={18} color="#ff9100" />
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Bữa Ăn Gần Đây</h4>
+          {/* ================= WIDGET: 3 BỮA ĐÃ ĂN GẦN NHẤT ================= */}
+          <div className="glass-panel" style={{ borderLeft: '4px solid #10b981' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <Clock size={16} color="#10b981" />
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 800, margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-main)' }}>
+                  3 Bữa Đã Ăn Gần Nhất
+                </h4>
               </div>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{history.length} bữa</span>
+              <button 
+                onClick={() => navigate('/history')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--primary-color)',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                  padding: '2px 4px'
+                }}
+                title="Xem toàn bộ sổ nhật ký và thống kê dinh dưỡng"
+              >
+                <span>Xem tất cả</span>
+                <ChevronRight size={14} />
+              </button>
             </div>
 
             {history.length === 0 ? (
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                Chưa có lịch sử. Khi bạn bấm "Chốt món này", kết quả sẽ tự động lưu vào đây.
-              </p>
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '16px 12px', 
+                background: 'var(--bg-surface-secondary)', 
+                borderRadius: 'var(--radius-sm)',
+                border: '1px dashed var(--border-color)',
+                fontSize: '0.8rem', 
+                color: 'var(--text-muted)' 
+              }}>
+                <div style={{ fontSize: '1.4rem', marginBottom: '4px' }}>🍱</div>
+                Chưa có bữa ăn nào được ghi lại.
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '2px' }}>
+                  Sau khi quay món, bấm <strong>"Chốt món này"</strong> để tự động lưu!
+                </div>
+              </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {history.slice(-3).reverse().map((h, idx) => {
                   const food = foods.find(f => f.id === h.foodId);
                   if (!food) return null;
                   return (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', padding: '6px 10px', borderRadius: '10px' }}>
+                    <div 
+                      key={h.id || h.timestamp || idx} 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '10px', 
+                        background: 'var(--bg-surface-secondary)', 
+                        border: '1px solid var(--border-color)', 
+                        padding: '8px 10px', 
+                        borderRadius: 'var(--radius-sm)',
+                        transition: 'background 0.2s ease'
+                      }}
+                    >
                       <FoodMedia food={food} size="xs" />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {food.name}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                          <div style={{ fontSize: '0.88rem', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)' }}>
+                            {food.name}
+                          </div>
+                          <span style={{ fontSize: '0.71rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                            {formatRecentTime(h.timestamp)}
+                          </span>
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          Bữa {h.mealType} • {food.nutrition}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px', flexWrap: 'wrap' }}>
+                          <span style={{ 
+                            fontSize: '0.68rem', 
+                            padding: '1px 6px', 
+                            borderRadius: '4px', 
+                            background: h.mealType === 'Sáng' ? 'rgba(245, 158, 11, 0.15)' : h.mealType === 'Trưa' ? 'rgba(187, 242, 70, 0.18)' : 'rgba(99, 102, 241, 0.18)',
+                            color: h.mealType === 'Sáng' ? '#f59e0b' : h.mealType === 'Trưa' ? 'var(--primary-color)' : '#818cf8',
+                            fontWeight: 700 
+                          }}>
+                            {h.mealType}
+                          </span>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                            • {food.nutrition} • {food.calories} kcal
+                          </span>
                         </div>
                       </div>
                     </div>

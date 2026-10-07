@@ -413,6 +413,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: 'clamp(1.25rem, 4.5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>Quay Chọn Món</h2>
             <span className="brand-badge">NUTRIGO AI</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 700 }}>
+              {new Date().toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' })} • Gợi ý {mealType}
+            </span>
           </div>
           <p className="app-header-desc" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0', lineHeight: 1.3 }}>
             Gợi ý thực đơn thông minh chuẩn dinh dưỡng, TDEE & vóc dáng cá nhân

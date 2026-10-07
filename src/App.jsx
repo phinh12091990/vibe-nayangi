@@ -116,66 +116,79 @@ function AppLayout() {
 
         {/* Profile / Account Card in Sidebar */}
         <div className="sidebar-profile-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-              <div style={{ width: '40px', height: '40px', minWidth: '40px', borderRadius: '12px', background: isAdmin ? 'rgba(255, 193, 7, 0.2)' : 'rgba(187, 242, 70, 0.35)', border: isAdmin ? '1px solid #ffc107' : '1px solid rgba(187, 242, 70, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.35rem' }}>
+          {/* Row 1: Avatar, Name, Role and Action buttons */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+              <div style={{ 
+                width: '42px', 
+                height: '42px', 
+                minWidth: '42px', 
+                borderRadius: '12px', 
+                background: isAdmin ? 'rgba(245, 158, 11, 0.18)' : 'rgba(187, 242, 70, 0.22)', 
+                border: isAdmin ? '1px solid rgba(245, 158, 11, 0.45)' : '1px solid rgba(187, 242, 70, 0.4)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                fontSize: '1.4rem',
+                boxShadow: 'var(--shadow-xs)'
+              }}>
                 {profile.avatar || (isAdmin ? '👑' : '🧑‍💻')}
               </div>
-              <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.25 }}>
                     {profile.name || 'Hồ Sơ Của Bạn'}
-                  </div>
+                  </span>
                   {isAdmin && (
-                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#f59e0b', background: 'rgba(245, 158, 11, 0.16)', padding: '1px 6px', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                    <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#f59e0b', background: 'rgba(245, 158, 11, 0.16)', padding: '1px 5px', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                       ADMIN
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                   @{profile.username || 'user'}
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {/* Only Admin can view and switch between all user accounts */}
+
+            {/* Quick Actions (Switch & Logout) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
               {isAdmin && (
                 <button 
                   onClick={openSwitchAccount}
-                  style={{ background: 'rgba(245, 158, 11, 0.14)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '6px', color: '#f59e0b', cursor: 'pointer', padding: '4px' }}
+                  style={{ background: 'rgba(245, 158, 11, 0.14)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '8px', color: '#f59e0b', cursor: 'pointer', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   title="👑 Quản trị tất cả tài khoản thành viên"
                 >
-                  <Users size={15} />
+                  <Users size={14} />
                 </button>
               )}
               <button 
                 onClick={logout}
-                style={{ background: 'rgba(244, 63, 94, 0.14)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '6px', color: '#f43f5e', cursor: 'pointer', padding: '4px' }}
+                style={{ background: 'rgba(244, 63, 94, 0.14)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', color: '#f43f5e', cursor: 'pointer', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 title="Đăng xuất (Khóa ứng dụng)"
               >
-                <LogOut size={15} />
+                <LogOut size={14} />
               </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Thể trạng (BMI):</span>
-            <span style={{ color: bmiInfo.color, fontWeight: 700 }}>
-              {bmiInfo.bmi} ({bmiInfo.status})
-            </span>
+          {/* Quick Metrics mini tags */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', padding: '8px 10px', background: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', fontSize: '0.74rem' }}>
+            <div>
+              <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>Thể trạng (BMI)</div>
+              <div style={{ color: bmiInfo.color, fontWeight: 800 }}>{bmiInfo.bmi} ({bmiInfo.status.split(' ')[0]})</div>
+            </div>
+            <div>
+              <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>Mục tiêu</div>
+              <div style={{ color: '#ea580c', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile.goal || 'Cân bằng'}</div>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Mục tiêu:</span>
-            <span style={{ color: '#ea580c', fontWeight: 700 }}>
-              {profile.goal || 'Cân bằng'}
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
+          {/* Action buttons */}
+          <div style={{ display: 'flex', gap: '6px', marginTop: '2px' }}>
             <button 
               className="btn btn-secondary"
-              style={{ flex: 1, padding: '7px 8px', fontSize: '0.75rem', justifyContent: 'center' }}
+              style={{ flex: 1, padding: '7px 8px', fontSize: '0.76rem', justifyContent: 'center' }}
               onClick={openEditProfile}
               title="Chỉnh sửa hồ sơ thể trạng của tôi"
             >
@@ -184,7 +197,7 @@ function AppLayout() {
             {isAdmin && (
               <button 
                 className="btn btn-primary"
-                style={{ flex: 1, padding: '7px 8px', fontSize: '0.75rem', justifyContent: 'center' }}
+                style={{ flex: 1, padding: '7px 8px', fontSize: '0.76rem', justifyContent: 'center' }}
                 onClick={openCreateAccount}
                 title="Tạo tài khoản mới & Khai báo thể trạng"
               >

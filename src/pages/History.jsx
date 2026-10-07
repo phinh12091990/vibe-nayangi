@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI } from '../hooks/useStorage';
 import { 
   ShieldAlert, Activity, AlertTriangle, CheckCircle2, 
@@ -8,6 +9,7 @@ import {
 const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
 
 export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpenSwitchAccount }) {
+  const navigate = useNavigate();
   const { history, foods, allergies, toggleAllergy, deleteHistoryItem, clearHistory, profile } = useStorage();
   const [customAllergyInput, setCustomAllergyInput] = useState('');
 
@@ -82,8 +84,8 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
       <div className="app-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Progress & Diary</h2>
-            <span className="brand-badge">NUTRIGO</span>
+            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Nhật Ký & Thống Kê Dinh Dưỡng</h2>
+            <span className="brand-badge">NUTRIGO AI</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
             Theo dõi dinh dưỡng 7 bữa gần nhất & quản lý thể trạng cá nhân
@@ -330,11 +332,25 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
           </div>
 
           {history.length === 0 ? (
-            <div className="glass-panel" style={{ textAlign: 'center', padding: '36px 20px' }}>
-              <Utensils size={40} color="var(--text-muted)" style={{ margin: '0 auto 10px', opacity: 0.5 }} />
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                Bạn chưa chốt món nào. Hãy ra màn hình <strong>Quay món</strong> để chọn món ngon cho bữa hôm nay nhé!
-              </p>
+            <div className="glass-panel" style={{ textAlign: 'center', padding: '44px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', borderRadius: 'var(--radius-lg)' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '18px', background: 'var(--primary-light)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', boxShadow: 'var(--shadow-sm)' }}>
+                🍱
+              </div>
+              <div>
+                <h4 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 6px 0', color: 'var(--text-main)' }}>
+                  Chưa có bữa ăn nào được ghi lại
+                </h4>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', maxWidth: '360px', margin: '0 auto', lineHeight: 1.5 }}>
+                  Hãy ra màn hình <strong>Quay Món</strong> để nhận gợi ý chuẩn dinh dưỡng và chốt món đầu tiên của bạn hôm nay!
+                </p>
+              </div>
+              <button 
+                onClick={() => navigate('/')}
+                className="btn btn-primary" 
+                style={{ padding: '10px 22px', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              >
+                <Sparkles size={16} /> Quay chọn món ngay
+              </button>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

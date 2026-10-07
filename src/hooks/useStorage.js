@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, createElement } from 'react';
 import { seedData } from '../data/seedData';
 
 function getSafeItem(key, fallback) {
@@ -66,7 +66,7 @@ const DEFAULT_GROUP = [
   { id: 'g3', name: 'Huy (Ăn thanh đạm/né bò)', allergies: ['Bò'], active: false }
 ];
 
-export function useStorage() {
+function useStorageManager() {
   // 1. ACCOUNTS & USER PROFILE (Enforce registration before entering the app)
   const [accounts, setAccounts] = useState(() => {
     const saved = getSafeItem('nayangi_accounts', null);
@@ -362,3 +362,19 @@ export function useStorage() {
     removeGroupMember
   };
 }
+
+const StorageContext = createContext(null);
+
+export function StorageProvider({ children }) {
+  const storage = useStorageManager();
+  return createElement(StorageContext.Provider, { value: storage }, children);
+}
+
+export function useStorage() {
+  const context = useContext(StorageContext);
+  if (!context) {
+    throw new Error('useStorage must be used within a StorageProvider');
+  }
+  return context;
+}
+

@@ -6,7 +6,7 @@ import MenuPage from './pages/Menu';
 import HistoryPage from './pages/History';
 import AccountModal from './components/AccountModal';
 import AuthGate from './components/AuthGate';
-import { useStorage, calculateBMI } from './hooks/useStorage';
+import { StorageProvider, useStorage, calculateBMI } from './hooks/useStorage';
 
 function AppLayout() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -240,8 +240,10 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppLayout />
-    </BrowserRouter>
+    <StorageProvider>
+      <BrowserRouter>
+        <AppLayout />
+      </BrowserRouter>
+    </StorageProvider>
   );
 }

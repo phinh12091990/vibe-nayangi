@@ -571,7 +571,16 @@ export default function AuthGate() {
                           </div>
                         </div>
 
-                        <button className="btn btn-primary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+                        <button 
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            login(acc.id);
+                            triggerConfetti();
+                          }}
+                          className="btn btn-primary" 
+                          style={{ padding: '6px 12px', fontSize: '0.78rem' }}
+                        >
                           Đăng nhập <ArrowRight size={13} />
                         </button>
                       </div>

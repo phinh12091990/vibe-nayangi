@@ -3,14 +3,14 @@ import { RefreshCw, X, CheckCircle2, ShieldCheck, Sun, Moon, Sparkles, Trophy } 
 import { triggerConfetti } from '../utils/confetti';
 
 const FOOD_ITEMS = [
-  { id: 'pho', emoji: '🍜', nameVi: 'Phở bò', nameEn: 'Beef Pho', bg: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)', border: '#f97316' },
-  { id: 'sushi', emoji: '🍣', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', border: '#ec4899' },
-  { id: 'bento', emoji: '🍱', nameVi: 'Cơm Bento', nameEn: 'Bento Box', bg: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)', border: '#22c55e' },
-  { id: 'pizza', emoji: '🍕', nameVi: 'Pizza phô mai', nameEn: 'Cheese Pizza', bg: 'linear-gradient(135deg, #fef9c3 0%, #fef08a 100%)', border: '#eab308' },
-  { id: 'steak', emoji: '🥩', nameVi: 'Bò bít tết', nameEn: 'Beef Steak', bg: 'linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%)', border: '#f43f5e' },
-  { id: 'salad', emoji: '🥗', nameVi: 'Salad xanh', nameEn: 'Green Salad', bg: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)', border: '#6366f1' },
-  { id: 'avocado', emoji: '🥑', nameVi: 'Trái bơ', nameEn: 'Avocado', bg: 'linear-gradient(135deg, #ecfccb 0%, #d9f99d 100%)', border: '#84cc16' },
-  { id: 'banhmi', emoji: '🥖', nameVi: 'Bánh mì', nameEn: 'Baguette', bg: 'linear-gradient(135deg, #ffedd5 0%, #fdba74 100%)', border: '#ea580c' },
+  { id: 'pho', nameVi: 'Phở bò', nameEn: 'Beef Pho', image: 'https://images.unsplash.com/photo-1503764654157-727105533973?auto=format&fit=crop&w=300&q=85', border: '#f97316' },
+  { id: 'sushi', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=300&q=85', border: '#ec4899' },
+  { id: 'bento', nameVi: 'Cơm Bento', nameEn: 'Bento Box', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=85', border: '#22c55e' },
+  { id: 'pizza', nameVi: 'Pizza phô mai', nameEn: 'Cheese Pizza', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=300&q=85', border: '#eab308' },
+  { id: 'steak', nameVi: 'Bò bít tết', nameEn: 'Beef Steak', image: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=300&q=85', border: '#f43f5e' },
+  { id: 'salad', nameVi: 'Salad xanh', nameEn: 'Green Salad', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=85', border: '#6366f1' },
+  { id: 'burger', nameVi: 'Burger phô mai', nameEn: 'Cheese Burger', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=85', border: '#84cc16' },
+  { id: 'banhmi', nameVi: 'Bánh mì', nameEn: 'Baguette', image: 'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?auto=format&fit=crop&w=300&q=85', border: '#ea580c' },
 ];
 
 const TOTAL_PAIRS = 8; // Bắt buộc ghép đúng đủ tất cả 8/8 cặp mới mở khoá!
@@ -212,20 +212,23 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, la
               <button
                 key={tile.uniqueId}
                 type="button"
-                className={`captcha-tile ${isSelected ? 'selected' : ''} ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''}`}
+                className={`captcha-tile photo-tile ${isSelected ? 'selected' : ''} ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''}`}
                 style={{ 
-                  background: isMatched ? 'rgba(16, 185, 129, 0.15)' : tile.bg,
-                  borderColor: isSelected ? '#f59e0b' : isMatched ? '#10b981' : tile.border 
+                  borderColor: isSelected ? '#f59e0b' : isMatched ? '#10b981' : 'rgba(255, 255, 255, 0.12)' 
                 }}
                 onClick={() => handleTileClick(tile)}
                 disabled={isMatched || isCompleted}
                 title={foodName}
               >
-                <span className="captcha-tile-emoji">{tile.emoji}</span>
-                <span className="captcha-tile-name">{foodName}</span>
+                <img 
+                  src={tile.image} 
+                  alt={foodName} 
+                  className="captcha-tile-img" 
+                  loading="eager"
+                />
                 {isMatched && (
                   <span className="captcha-tile-check">
-                    <CheckCircle2 size={16} color="#059669" />
+                    <CheckCircle2 size={18} color="#059669" />
                   </span>
                 )}
               </button>

@@ -2580,48 +2580,48 @@ h1, h2, h3, h4 {
 
 .captcha-tile {
   aspect-ratio: 1;
-  border-radius: 18px;
-  border: 2px solid transparent;
+  border-radius: 16px;
+  border: 2.5px solid transparent;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
   cursor: pointer;
   position: relative;
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   outline: none;
-  padding: 4px;
+  padding: 0;
+  overflow: hidden;
+  background: #1e293b;
 }
 
 .captcha-tile:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
 }
 
 .captcha-tile:active:not(:disabled) {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.97);
 }
 
 .captcha-tile.selected {
   border-color: #f59e0b !important;
   transform: translateY(-4px) scale(1.08) !important;
-  box-shadow: 0 0 22px rgba(245, 158, 11, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.85) !important;
   z-index: 2;
   animation: pulseSelect 1.5s infinite alternate ease-in-out;
 }
 
 @keyframes pulseSelect {
   0% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.6); }
-  100% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.95); }
+  100% { box-shadow: 0 0 26px rgba(245, 158, 11, 0.95); }
 }
 
 .captcha-tile.matched {
-  opacity: 0.38;
+  opacity: 0.35;
   cursor: default;
-  transform: scale(0.94);
-  filter: grayscale(0.25);
+  transform: scale(0.93);
+  filter: grayscale(0.4);
   border-color: rgba(16, 185, 129, 0.5) !important;
   box-shadow: none !important;
 }
@@ -2629,7 +2629,7 @@ h1, h2, h3, h4 {
 .captcha-tile.wrong {
   animation: shake 0.4s ease-in-out;
   border-color: #ef4444 !important;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.7) !important;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.8) !important;
 }
 
 @keyframes shake {
@@ -2638,30 +2638,19 @@ h1, h2, h3, h4 {
   40%, 80% { transform: translateX(5px); }
 }
 
-.captcha-tile-emoji {
-  font-size: 1.85rem;
-  line-height: 1;
-  user-select: none;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.22));
-  transition: transform 0.2s ease;
-}
-
-.captcha-tile:hover:not(:disabled) .captcha-tile-emoji {
-  transform: scale(1.12);
-}
-
-.captcha-tile-name {
-  font-size: 0.64rem;
-  font-weight: 800;
-  color: #1e293b;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+/* Realistic culinary photo styling */
+.captcha-tile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
   pointer-events: none;
-  letter-spacing: -0.01em;
+  transition: transform 0.35s ease, filter 0.25s ease;
+  border-radius: 13px;
+}
+
+.captcha-tile:hover:not(:disabled) .captcha-tile-img {
+  transform: scale(1.12);
 }
 
 .captcha-tile-check {
@@ -2673,8 +2662,9 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 3;
 }
 
 @keyframes popIn {

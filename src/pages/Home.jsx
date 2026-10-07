@@ -512,14 +512,20 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
       <div className="app-header" style={{ width: '100%', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1, paddingRight: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <h2 style={{ fontSize: 'clamp(1.25rem, 4.5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>Quay Chọn Món</h2>
-            <span className="brand-badge">TRỢ LÝ BỮA ĂN • AI</span>
+            <h2 style={{ fontSize: 'clamp(1.25rem, 4.5vw, 1.7rem)', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
+              {lang === 'vi' ? 'Quay Chọn Món' : 'Smart Meal Spinner'}
+            </h2>
+            <span className="brand-badge">
+              {lang === 'vi' ? 'TRỢ LÝ BỮA ĂN • AI' : 'AI MEAL ASSISTANT'}
+            </span>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', padding: '2px 8px', borderRadius: 'var(--radius-full)', fontWeight: 700 }}>
-              {new Date().toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' })} • Gợi ý {mealType}
+              {new Date().toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-US', { weekday: 'short', day: '2-digit', month: '2-digit' })} • {lang === 'vi' ? `Gợi ý ${mealType}` : `Suggest ${mealType === 'Sáng' ? 'Breakfast' : mealType === 'Trưa' ? 'Lunch' : 'Dinner'}`}
             </span>
           </div>
           <p className="app-header-desc" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0', lineHeight: 1.3 }}>
-            Gợi ý thực đơn thông minh chuẩn dinh dưỡng, TDEE & vóc dáng cá nhân
+            {lang === 'vi' 
+              ? 'Gợi ý thực đơn thông minh chuẩn dinh dưỡng, TDEE & vóc dáng cá nhân' 
+              : 'Smart nutritional suggestions tailored to your TDEE, body metrics & goals'}
           </p>
         </div>
 
@@ -527,7 +533,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           <button 
             className="btn-icon"
             onClick={() => setMuted(!muted)}
-            title={muted ? "Bật âm thanh" : "Tắt âm thanh"}
+            title={lang === 'vi' ? (muted ? "Bật âm thanh" : "Tắt âm thanh") : (muted ? "Unmute sound" : "Mute sound")}
           >
             {muted ? <VolumeX size={19} color="var(--text-muted)" /> : <Volume2 size={19} color="#ea580c" />}
           </button>
@@ -541,12 +547,19 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             ⚖️
           </div>
           <div style={{ minWidth: 0, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>Cân Nặng</div>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              {lang === 'vi' ? 'Cân Nặng' : 'Body Weight'}
+            </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.1 }}>
               {profile.weight || 60} <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>kg</span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#ea580c', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              Mục tiêu: {profile.goal || 'Cân bằng'}
+              {lang === 'vi' ? 'Mục tiêu: ' : 'Goal: '}
+              {profile.goal 
+                ? (lang === 'vi' 
+                    ? profile.goal 
+                    : profile.goal === 'Giảm cân' ? 'Fat Loss' : profile.goal === 'Tăng cân' ? 'Weight Gain' : profile.goal === 'Tăng cơ' ? 'Muscle Gain' : profile.goal === 'Thanh lọc' ? 'Detox' : 'Balanced')
+                : (lang === 'vi' ? 'Cân bằng' : 'Balanced')}
             </div>
           </div>
         </div>
@@ -580,7 +593,14 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               2.0 <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>{lang === 'vi' ? 'lít' : 'liters'}</span>
             </div>
             <div style={{ fontSize: '0.7rem', color: '#0284c7', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {profile.activity ? (lang === 'vi' ? profile.activity.split('(')[0] : 'Office') : 'Office'}
+              {profile.activity 
+                ? (lang === 'vi' 
+                    ? profile.activity.split('(')[0].trim() 
+                    : profile.activity.includes('nhiều') || profile.activity.includes('Gym') ? 'Heavy Workout'
+                      : profile.activity.includes('vừa') || profile.activity.includes('thao') ? 'Moderate'
+                      : profile.activity.includes('nhẹ') || profile.activity.includes('bộ') ? 'Light Active'
+                      : 'Sedentary')
+                : (lang === 'vi' ? 'Văn phòng' : 'Sedentary')}
             </div>
           </div>
         </div>
@@ -597,7 +617,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               BMI {bmiInfo.bmi}
             </div>
             <div style={{ fontSize: '0.7rem', color: bmiInfo.color, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {bmiInfo.status}
+              {lang === 'vi' 
+                ? bmiInfo.status 
+                : bmiInfo.bmi < 18.5 ? 'Underweight' : bmiInfo.bmi < 23 ? 'Optimal Balance' : bmiInfo.bmi < 25 ? 'Pre-overweight' : 'Overweight'}
             </div>
           </div>
         </div>
@@ -641,10 +663,10 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             {/* Weather & Mood Selector (Grid 4 cột hiển thị trọn vẹn 100% không bị tràn) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', width: '100%', boxSizing: 'border-box' }}>
               {[
-                { id: 'normal', label: '🌤️ Chuẩn', fullLabel: '🌤️ Bình thường' },
-                { id: 'rain', label: '🌧️ Mưa lạnh', fullLabel: '🌧️ Mưa / Lạnh' },
-                { id: 'hot', label: '☀️ Nắng nóng', fullLabel: '☀️ Nắng nóng' },
-                { id: 'quick', label: '⚡ Ăn vội', fullLabel: '⚡ Ăn vội <15p' }
+                { id: 'normal', label: lang === 'vi' ? '🌤️ Chuẩn' : '🌤️ Standard', fullLabel: lang === 'vi' ? '🌤️ Bình thường' : '🌤️ Standard Mood' },
+                { id: 'rain', label: lang === 'vi' ? '🌧️ Mưa lạnh' : '🌧️ Rainy/Cold', fullLabel: lang === 'vi' ? '🌧️ Mưa / Lạnh' : '🌧️ Rainy or Cold' },
+                { id: 'hot', label: lang === 'vi' ? '☀️ Nắng nóng' : '☀️ Hot Sunny', fullLabel: lang === 'vi' ? '☀️ Nắng nóng' : '☀️ Hot Weather' },
+                { id: 'quick', label: lang === 'vi' ? '⚡ Ăn vội' : '⚡ Quick <15m', fullLabel: lang === 'vi' ? '⚡ Ăn vội <15p' : '⚡ Quick Fast Meal <15m' }
               ].map(w => (
                 <button
                   key={w.id}
@@ -677,9 +699,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               {/* Budget Tier Pills */}
               <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                 {[
-                  { id: 'ALL', label: 'Mọi giá' },
-                  { id: 'budget', label: '💰 Ví mỏng (<45k)' },
-                  { id: 'treat', label: '🥩 Xoã (>75k)' }
+                  { id: 'ALL', label: lang === 'vi' ? 'Mọi giá' : 'All Prices' },
+                  { id: 'budget', label: lang === 'vi' ? '💰 Ví mỏng (<45k)' : '💰 Budget (<$2)' },
+                  { id: 'treat', label: lang === 'vi' ? '🥩 Xoã (>75k)' : '🥩 Treat (>$3.5)' }
                 ].map(b => (
                   <button
                     key={b.id}
@@ -718,10 +740,14 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   borderColor: isGroupActive ? '#38bdf8' : 'rgba(255, 255, 255, 0.1)',
                   color: isGroupActive ? '#38bdf8' : 'var(--text-secondary)'
                 }}
-                title="Chọn đồng nghiệp cùng đi ăn"
+                title={lang === 'vi' ? "Chọn đồng nghiệp cùng đi ăn" : "Choose dining group members"}
               >
                 <Users size={13} />
-                <span>{isGroupActive ? `Nhóm (${activeMembers.length})` : 'Đi cùng ai?'}</span>
+                <span>
+                  {isGroupActive 
+                    ? (lang === 'vi' ? `Nhóm (${activeMembers.length})` : `Group (${activeMembers.length})`) 
+                    : (lang === 'vi' ? 'Đi cùng ai?' : 'Dine Together?')}
+                </span>
               </button>
             </div>
 
@@ -733,7 +759,8 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               <div className="glass-panel" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#ffb74d' }}>
                 <ShieldAlert size={16} />
                 <span>
-                  Đang né dị ứng: <strong>{Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).join(', ')}</strong>
+                  {lang === 'vi' ? 'Đang né dị ứng: ' : 'Filtering allergens: '}
+                  <strong>{Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).join(', ')}</strong>
                 </span>
               </div>
             )}
@@ -745,10 +772,16 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             <div className="reel-crown-header">
               <div className="reel-crown-title">
                 <Sparkles size={14} color="#ff9100" />
-                <span>AI ROULETTE • QUAY MÓN THÔNG MINH</span>
+                <span>
+                  {lang === 'vi' ? 'AI ROULETTE • QUAY MÓN THÔNG MINH' : 'AI ROULETTE • SMART MEAL SPINNER'}
+                </span>
               </div>
               <div className={`reel-live-tag ${isSpinning ? 'reel-tag-pulse' : ''}`}>
-                {isSpinning ? '🔴 ĐANG QUÉT MÓN...' : (result && result.food ? '🟢 ĐÃ CHỌN ĐƯỢC' : '✨ SẴN SÀNG')}
+                {isSpinning 
+                  ? (lang === 'vi' ? '🔴 ĐANG QUÉT MÓN...' : '🔴 SCANNING MEALS...') 
+                  : (result && result.food 
+                      ? (lang === 'vi' ? '🟢 ĐÃ CHỌN ĐƯỢC' : '🟢 DISH SELECTED') 
+                      : (lang === 'vi' ? '✨ SẴN SÀNG' : '✨ READY'))}
               </div>
             </div>
 
@@ -756,7 +789,11 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               {/* Highlight selector frame with Cyber HUD viewfinder */}
               <div className="reel-selector-frame">
                 <div className="reel-hud-tag">
-                  {isSpinning ? 'ĐANG QUÉT MÓN...' : (result && result.food ? 'MÓN ĐƯỢC CHỌN' : 'TÂM NGẮM LỰA CHỌN')}
+                  {isSpinning 
+                    ? (lang === 'vi' ? 'ĐANG QUÉT MÓN...' : 'SCANNING MEALS...') 
+                    : (result && result.food 
+                        ? (lang === 'vi' ? 'MÓN ĐƯỢC CHỌN' : 'SELECTED DISH') 
+                        : (lang === 'vi' ? 'TÂM NGẮM LỰA CHỌN' : 'SELECTION CROSSHAIR'))}
                 </div>
               </div>
 
@@ -822,10 +859,10 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   <div className="reason-card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <div className="reason-card-badge">
-                        <Sparkles size={14} /> LỰA CHỌN TỐI ƯU CỦA AI
+                        <Sparkles size={14} /> {lang === 'vi' ? 'LỰA CHỌN TỐI ƯU CỦA AI' : 'AI OPTIMAL RECOMMENDATION'}
                       </div>
                       <span style={{ fontSize: '0.72rem', color: '#4ade80', fontWeight: 700, background: 'rgba(34, 197, 94, 0.15)', padding: '2px 8px', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
-                        ✓ Khớp 100% Tiêu Chí
+                        {lang === 'vi' ? '✓ Khớp 100% Tiêu Chí' : '✓ 100% Criteria Matched'}
                       </span>
                     </div>
                     
@@ -846,7 +883,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                       <button
                         onClick={() => handleShareStory(result.food)}
                         className="btn-icon"
-                        title="Chia sẻ tấm thẻ món ăn này"
+                        title={lang === 'vi' ? "Chia sẻ tấm thẻ món ăn này" : "Share this meal card"}
                         style={{ padding: '8px' }}
                       >
                         <Share2 size={18} color="#38bdf8" />
@@ -856,13 +893,16 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                     {/* AI Factor Breakdown Badges */}
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '8px 0 10px 0' }}>
                       <span style={{ fontSize: '0.72rem', color: '#ffb74d', background: 'rgba(255, 145, 0, 0.12)', padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(255, 145, 0, 0.25)', fontWeight: 600 }}>
-                        🎯 Bữa {mealType}
+                        🎯 {lang === 'vi' ? `Bữa ${mealType}` : `${mealType === 'Sáng' ? 'Breakfast' : mealType === 'Trưa' ? 'Lunch' : 'Dinner'}`}
                       </span>
                       <span style={{ fontSize: '0.72rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.12)', padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.25)', fontWeight: 600 }}>
-                        ⚖️ BMI {bmiInfo.bmi} ({bmiInfo.status})
+                        ⚖️ BMI {bmiInfo.bmi} ({lang === 'vi' ? bmiInfo.status : bmiInfo.bmi < 18.5 ? 'Underweight' : bmiInfo.bmi < 23 ? 'Optimal' : bmiInfo.bmi < 25 ? 'Pre-overweight' : 'Overweight'})
                       </span>
                       <span style={{ fontSize: '0.72rem', color: '#4ade80', background: 'rgba(74, 222, 128, 0.12)', padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(74, 222, 128, 0.25)', fontWeight: 600 }}>
-                        💡 Mục tiêu: {profile.goal || 'Cân bằng'}
+                        💡 {lang === 'vi' ? 'Mục tiêu: ' : 'Goal: '}
+                        {profile.goal 
+                          ? (lang === 'vi' ? profile.goal : profile.goal === 'Giảm cân' ? 'Fat Loss' : profile.goal === 'Tăng cân' ? 'Gain Weight' : profile.goal === 'Tăng cơ' ? 'Muscle' : profile.goal === 'Thanh lọc' ? 'Detox' : 'Balanced') 
+                          : (lang === 'vi' ? 'Cân bằng' : 'Balanced')}
                       </span>
                     </div>
 
@@ -874,9 +914,11 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                     <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                         <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                          🛵 ĐẶT MÓN & TÌM QUÁN ĂN NGAY:
+                          {lang === 'vi' ? '🛵 ĐẶT MÓN & TÌM QUÁN ĂN NGAY:' : '🛵 ORDER & FIND RESTAURANTS NOW:'}
                         </span>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Tự động tìm kiếm</span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
+                          {lang === 'vi' ? 'Tự động tìm kiếm' : 'Auto Search'}
+                        </span>
                       </div>
                       
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
@@ -884,7 +926,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                           href={getShopeeFoodLink(result.food.name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          title="Tìm quán bán món này trên hệ thống ShopeeFood / Foody"
+                          title={lang === 'vi' ? "Tìm quán bán món này trên hệ thống ShopeeFood / Foody" : "Find dish on ShopeeFood"}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -909,7 +951,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                           href={getGrabFoodLink(result.food.name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          title="Tìm quán trên GrabFood"
+                          title={lang === 'vi' ? "Tìm quán trên GrabFood" : "Find dish on GrabFood"}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -953,7 +995,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                         }}
                       >
                         <MapPin size={14} color="#60a5fa" />
-                        <span>Xem Quán Gần Tôi (Google Maps)</span>
+                        <span>{lang === 'vi' ? 'Xem Quán Gần Tôi (Google Maps)' : 'Find Nearby on Google Maps'}</span>
                         <ExternalLink size={13} />
                       </a>
                     </div>
@@ -979,7 +1021,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                           borderColor: 'rgba(34, 197, 94, 0.4)'
                         }}
                       >
-                        <Award size={20} /> Đã chốt & lưu vào Nhật ký!
+                        <Award size={20} /> {lang === 'vi' ? 'Đã chốt & lưu vào Nhật ký!' : 'Confirmed & Saved to Meal Log!'}
                       </div>
                     ) : (
                       <button 
@@ -996,7 +1038,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                         }}
                       >
                         <Check size={18} /> 
-                        <span>CHỐT MÓN</span>
+                        <span>{lang === 'vi' ? 'CHỐT MÓN' : 'CONFIRM MEAL'}</span>
                         <span style={{ fontSize: '0.68rem', opacity: 0.8, padding: '2px 6px', background: 'rgba(0,0,0,0.25)', borderRadius: '4px' }}>
                           [Enter]
                         </span>
@@ -1008,7 +1050,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                       onClick={handleSpin}
                       style={{ flex: 1, padding: '12px 10px', fontSize: '0.9rem' }}
                     >
-                      <RefreshCw size={16} /> Quay lại
+                      <RefreshCw size={16} /> {lang === 'vi' ? 'Quay lại' : 'Spin again'}
                     </button>
                   </div>
                 </>
@@ -1107,7 +1149,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <PieChart size={16} color="var(--primary-color)" />
                 <span style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-main)', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
-                  PHÂN BỔ CALO & MACRO AI
+                  {lang === 'vi' ? 'PHÂN BỔ CALO & MACRO AI' : 'CALORIE & MACRO DISTRIBUTION'}
                 </span>
               </div>
 
@@ -1127,9 +1169,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   className="glass-pill" 
                   style={{ cursor: 'pointer', padding: '3px 8px', fontSize: '0.72rem' }}
                   onClick={onOpenProfile}
-                  title="Chỉnh sửa chiều cao, cân nặng, mục tiêu calo của tôi"
+                  title={lang === 'vi' ? "Chỉnh sửa chiều cao, cân nặng, mục tiêu calo của tôi" : "Edit my health and target metrics"}
                 >
-                  Sửa chỉ số
+                  {lang === 'vi' ? 'Sửa chỉ số' : 'Edit Stats'}
                 </button>
               </div>
             </div>
@@ -1137,9 +1179,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             {/* 3 Meals Distribution Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '12px' }}>
               {[
-                { type: 'Sáng', ratio: 0.25, icon: '🌅', label: '25% TDEE' },
-                { type: 'Trưa', ratio: 0.40, icon: '☀️', label: '40% TDEE' },
-                { type: 'Tối', ratio: 0.35, icon: '🌙', label: '35% TDEE' },
+                { type: 'Sáng', ratio: 0.25, icon: '🌅', label: '25% TDEE', nameEn: 'Breakfast', nameVi: 'Bữa Sáng' },
+                { type: 'Trưa', ratio: 0.40, icon: '☀️', label: '40% TDEE', nameEn: 'Lunch', nameVi: 'Bữa Trưa' },
+                { type: 'Tối', ratio: 0.35, icon: '🌙', label: '35% TDEE', nameEn: 'Dinner', nameVi: 'Bữa Tối' },
               ].map(meal => {
                 const isCurrent = mealType === meal.type;
                 const mealCalo = Math.round(tdeeVal * meal.ratio);
@@ -1172,11 +1214,11 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                         letterSpacing: '0.02em',
                         whiteSpace: 'nowrap'
                       }}>
-                        ĐANG CHỌN
+                        {lang === 'vi' ? 'ĐANG CHỌN' : 'SELECTED'}
                       </span>
                     )}
                     <div style={{ fontSize: '0.73rem', color: isCurrent ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px' }}>
-                      <span>{meal.icon}</span> Bữa {meal.type}
+                      <span>{meal.icon}</span> {lang === 'vi' ? meal.nameVi : meal.nameEn}
                     </div>
                     <div style={{ fontSize: '1.05rem', fontWeight: 900, color: isCurrent ? 'var(--primary-color)' : 'var(--text-main)', marginTop: '2px' }}>
                       ~{mealCalo}
@@ -1194,25 +1236,27 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             <div style={{ marginBottom: '12px', background: 'var(--bg-surface-secondary)', padding: '10px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                  Tỷ Lệ Macro Tiêu Chuẩn ({profile.goal || 'Cân bằng'})
+                  {lang === 'vi' 
+                    ? `Tỷ Lệ Macro Tiêu Chuẩn (${profile.goal || 'Cân bằng'})` 
+                    : `Standard Macro Split (${profile.goal ? (profile.goal === 'Giảm cân' ? 'Fat Loss' : profile.goal === 'Tăng cân' ? 'Weight Gain' : profile.goal === 'Tăng cơ' ? 'Muscle' : profile.goal === 'Thanh lọc' ? 'Detox' : 'Balanced') : 'Balanced'})`}
                 </span>
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-                  Đạm / Carbs / Fat
+                  {lang === 'vi' ? 'Đạm / Carbs / Fat' : 'Protein / Carbs / Fat'}
                 </span>
               </div>
 
               {/* Multi-segment progress bar */}
               <div style={{ height: '8px', width: '100%', borderRadius: '4px', overflow: 'hidden', display: 'flex', background: 'var(--bg-surface)' }}>
-                <div style={{ width: `${macro.protein.percent}%`, background: '#38bdf8', transition: 'width 0.3s ease' }} title={`Đạm (Protein): ${macro.protein.percent}%`} />
-                <div style={{ width: `${macro.carbs.percent}%`, background: '#fbbf24', transition: 'width 0.3s ease' }} title={`Tinh bột (Carbs): ${macro.carbs.percent}%`} />
-                <div style={{ width: `${macro.fat.percent}%`, background: '#f43f5e', transition: 'width 0.3s ease' }} title={`Chất béo (Fat): ${macro.fat.percent}%`} />
+                <div style={{ width: `${macro.protein.percent}%`, background: '#38bdf8', transition: 'width 0.3s ease' }} title={`Protein: ${macro.protein.percent}%`} />
+                <div style={{ width: `${macro.carbs.percent}%`, background: '#fbbf24', transition: 'width 0.3s ease' }} title={`Carbs: ${macro.carbs.percent}%`} />
+                <div style={{ width: `${macro.fat.percent}%`, background: '#f43f5e', transition: 'width 0.3s ease' }} title={`Fat: ${macro.fat.percent}%`} />
               </div>
 
               {/* Legend */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px', fontSize: '0.72rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#38bdf8' }} />
-                  <span style={{ color: 'var(--text-secondary)' }}>Đạm:</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>{lang === 'vi' ? 'Đạm:' : 'Protein:'}</span>
                   <strong style={{ color: '#38bdf8' }}>{macro.protein.grams}g ({macro.protein.percent}%)</strong>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1243,8 +1287,10 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             }}>
               <Sparkles size={15} color="var(--primary-color)" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
-                <strong style={{ color: 'var(--text-main)', marginRight: '4px' }}>Gợi ý AI Bữa {mealType}:</strong>
-                {getAiMealTip(mealType, profile.goal, bmiInfo.bmi)}
+                <strong style={{ color: 'var(--text-main)', marginRight: '4px' }}>
+                  {lang === 'vi' ? `Gợi ý AI Bữa ${mealType}:` : `AI Tip for ${mealType === 'Sáng' ? 'Breakfast' : mealType === 'Trưa' ? 'Lunch' : 'Dinner'}:`}
+                </strong>
+                {getAiMealTip(mealType, profile.goal, bmiInfo.bmi, lang)}
               </div>
             </div>
           </div>
@@ -1254,21 +1300,27 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                 <Users size={18} color="#38bdf8" style={{ flexShrink: 0 }} />
-                <h4 style={{ fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap' }}>Chế Độ Ăn Nhóm</h4>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                  {lang === 'vi' ? 'Chế Độ Ăn Nhóm' : 'Group Dining Mode'}
+                </h4>
               </div>
               <button 
                 onClick={() => setGroupModalOpen(true)}
                 className="glass-pill"
                 style={{ padding: '3px 10px', fontSize: '0.74rem', cursor: 'pointer', flexShrink: 0 }}
               >
-                Cài đặt nhóm
+                {lang === 'vi' ? 'Cài đặt nhóm' : 'Group settings'}
               </button>
             </div>
             
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
               {isGroupActive 
-                ? `Đang bật chế độ nhóm cùng ${activeMembers.length} người. Thuật toán tự động né các món gây dị ứng cho bất kỳ thành viên nào.`
-                : 'Bạn đang chọn món cho cá nhân. Bấm "Cài đặt nhóm" nếu hôm nay đi ăn cùng đồng nghiệp phòng ban!'}
+                ? (lang === 'vi' 
+                    ? `Đang bật chế độ nhóm cùng ${activeMembers.length} người. Thuật toán tự động né các món gây dị ứng cho bất kỳ thành viên nào.`
+                    : `Active dining with ${activeMembers.length} colleagues. The algorithm automatically avoids allergens for every member.`)
+                : (lang === 'vi' 
+                    ? 'Bạn đang chọn món cho cá nhân. Bấm "Cài đặt nhóm" nếu hôm nay đi ăn cùng đồng nghiệp phòng ban!'
+                    : 'Currently spinning for yourself. Click "Group settings" if dining out with department colleagues!')}
             </p>
           </div>
 
@@ -1276,30 +1328,36 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
           <div className="glass-panel">
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <Activity size={18} color="#00e676" style={{ flexShrink: 0 }} />
-              <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Trạng Thái Cân Bằng 5 Bữa Gần Nhất</h4>
+              <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>
+                {lang === 'vi' ? 'Trạng Thái Cân Bằng 5 Bữa Gần Nhất' : 'Recent 5-Meal Nutritional Balance'}
+              </h4>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Bổ sung rau xanh:</span>
+                <span style={{ color: 'var(--text-muted)' }}>{lang === 'vi' ? 'Bổ sung rau xanh:' : 'Green Vegetables:'}</span>
                 <span style={{ color: missingVeggie ? '#ef4444' : '#10b981', fontWeight: 700, textAlign: 'right' }}>
-                  {missingVeggie ? '⚠️ Đang thiếu rau củ' : '✓ Đã đủ rau củ'}
+                  {missingVeggie 
+                    ? (lang === 'vi' ? '⚠️ Đang thiếu rau củ' : '⚠️ Lacking vegetables') 
+                    : (lang === 'vi' ? '✓ Đã đủ rau củ' : '✓ Sufficient vegetables')}
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Bổ sung cá / hải sản:</span>
+                <span style={{ color: 'var(--text-muted)' }}>{lang === 'vi' ? 'Bổ sung cá / hải sản:' : 'Fish & Seafood:'}</span>
                 <span style={{ color: missingFish ? '#00b4d8' : '#10b981', fontWeight: 700, textAlign: 'right' }}>
-                  {missingFish ? '⚡ Đang ưu tiên nạp cá' : '✓ Đã nạp hải sản'}
+                  {missingFish 
+                    ? (lang === 'vi' ? '⚡ Đang ưu tiên nạp cá' : '⚡ Prioritizing seafood') 
+                    : (lang === 'vi' ? '✓ Đã nạp hải sản' : '✓ Sufficient seafood')}
                 </span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Dị ứng đang lọc cứng:</span>
+                <span style={{ color: 'var(--text-muted)' }}>{lang === 'vi' ? 'Dị ứng đang lọc cứng:' : 'Active Allergen Filters:'}</span>
                 <span style={{ color: (allergies.length > 0 || (isGroupActive && groupAllergies.length > 0)) ? '#ff7a18' : 'var(--text-dim)', fontWeight: 600, textAlign: 'right' }}>
                   {Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).length > 0 
                     ? `${Array.from(new Set([...allergies, ...(isGroupActive ? groupAllergies : [])])).join(', ')}` 
-                    : 'Không có'}
+                    : (lang === 'vi' ? 'Không có' : 'None')}
                 </span>
               </div>
             </div>
@@ -1311,7 +1369,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
               <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
                 <Clock size={16} color="#10b981" />
                 <h4 style={{ fontSize: '0.88rem', fontWeight: 800, margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--text-main)' }}>
-                  3 Bữa Đã Ăn Gần Nhất
+                  {lang === 'vi' ? '3 Bữa Đã Ăn Gần Nhất' : 'Recent 3 Meals Logged'}
                 </h4>
               </div>
               <button 
@@ -1328,9 +1386,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   gap: '2px',
                   padding: '2px 4px'
                 }}
-                title="Xem toàn bộ sổ nhật ký và thống kê dinh dưỡng"
+                title={lang === 'vi' ? "Xem toàn bộ sổ nhật ký và thống kê dinh dưỡng" : "View full meal log & statistics"}
               >
-                <span>Xem tất cả</span>
+                <span>{lang === 'vi' ? 'Xem tất cả' : 'View all'}</span>
                 <ChevronRight size={14} />
               </button>
             </div>
@@ -1346,9 +1404,9 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                 color: 'var(--text-muted)' 
               }}>
                 <div style={{ fontSize: '1.4rem', marginBottom: '4px' }}>🍱</div>
-                Chưa có bữa ăn nào được ghi lại.
+                {lang === 'vi' ? 'Chưa có bữa ăn nào được ghi lại.' : 'No meal logs recorded yet.'}
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '2px' }}>
-                  Sau khi quay món, bấm <strong>"Chốt món này"</strong> để tự động lưu!
+                  {lang === 'vi' ? 'Sau khi quay món, bấm "Chốt món này" để tự động lưu!' : 'After spinning, click "Confirm Meal" to auto save!'}
                 </div>
               </div>
             ) : (
@@ -1377,7 +1435,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                             {food.name}
                           </div>
                           <span style={{ fontSize: '0.71rem', color: 'var(--text-muted)', flexShrink: 0 }}>
-                            {formatRecentTime(h.timestamp)}
+                            {formatRecentTime(h.timestamp, lang)}
                           </span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px', flexWrap: 'wrap' }}>
@@ -1389,7 +1447,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                             color: h.mealType === 'Sáng' ? '#f59e0b' : h.mealType === 'Trưa' ? 'var(--primary-color)' : '#818cf8',
                             fontWeight: 700 
                           }}>
-                            {h.mealType}
+                            {lang === 'vi' ? h.mealType : (h.mealType === 'Sáng' ? 'Breakfast' : h.mealType === 'Trưa' ? 'Lunch' : 'Dinner')}
                           </span>
                           <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                             • {food.nutrition} • {food.calories} kcal

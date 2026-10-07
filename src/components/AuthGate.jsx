@@ -146,9 +146,7 @@ export default function AuthGate() {
       return;
     }
     const res = loginWithCredentials(uname, pwd);
-    if (res.success) {
-      triggerConfetti();
-    } else {
+    if (!res.success) {
       setErrorMsg(res.message || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
     }
   };

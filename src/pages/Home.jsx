@@ -198,17 +198,18 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
       setResult({ food, reason });
       setStatusMessage('✨ ĐÃ TÌM THẤY MÓN PHÙ HỢP!');
       soundFx.playWin();
-      triggerConfetti();
       try { if (navigator.vibrate) navigator.vibrate([80, 40, 120]); } catch {}
     }, 2550);
     timerRefs.current.push(endTimeout);
   };
 
-  const handleAccept = () => {
+  const handleAccept = (e) => {
     if (result && result.food) {
       addHistory(result.food.id, mealType);
       setAccepted(true);
-      triggerConfetti();
+      const rect = e?.currentTarget?.getBoundingClientRect?.();
+      const origin = rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : null;
+      triggerConfetti(origin);
       try { if (navigator.vibrate) navigator.vibrate(60); } catch {}
     }
   };

@@ -5,12 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/index.js",
+    "db:init": "node -e 'import(\"./server/db.js\").then(m => m.initDbSchema()).then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); })'",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
     "lucide-react": "^1.47.0",
+    "pg": "^8.23.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.4"

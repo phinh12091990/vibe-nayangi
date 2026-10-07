@@ -158,7 +158,13 @@ function AppLayout() {
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.25 }}>
-                    {profile.name || 'Hồ Sơ Của Bạn'}
+                    {profile.name 
+                      ? (profile.name === 'Quản Trị Viên' 
+                          ? (lang === 'vi' ? 'Quản Trị Viên' : 'Administrator') 
+                          : profile.name === 'Dân Văn Phòng' 
+                            ? (lang === 'vi' ? 'Dân Văn Phòng' : 'Office Professional')
+                            : profile.name) 
+                      : (lang === 'vi' ? 'Hồ Sơ Của Bạn' : 'Your Profile')}
                   </span>
                   {isAdmin && (
                     <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#f59e0b', background: 'rgba(245, 158, 11, 0.16)', padding: '1px 5px', borderRadius: '4px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
@@ -178,7 +184,7 @@ function AppLayout() {
                 <button 
                   onClick={openSwitchAccount}
                   style={{ background: 'rgba(245, 158, 11, 0.14)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '8px', color: '#f59e0b', cursor: 'pointer', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  title="👑 Quản trị tất cả tài khoản thành viên"
+                  title={t.manageAccounts}
                 >
                   <Users size={14} />
                 </button>
@@ -186,7 +192,7 @@ function AppLayout() {
               <button 
                 onClick={logout}
                 style={{ background: 'rgba(244, 63, 94, 0.14)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', color: '#f43f5e', cursor: 'pointer', padding: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                title="Đăng xuất (Khóa ứng dụng)"
+                title={t.logoutFull}
               >
                 <LogOut size={14} />
               </button>
@@ -197,11 +203,19 @@ function AppLayout() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', padding: '8px 10px', background: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', fontSize: '0.74rem' }}>
             <div>
               <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>{t.bodyBMI}</div>
-              <div style={{ color: bmiInfo.color, fontWeight: 800 }}>{bmiInfo.bmi} ({bmiInfo.status.split(' ')[0]})</div>
+              <div style={{ color: bmiInfo.color, fontWeight: 800 }}>
+                {bmiInfo.bmi} ({lang === 'vi' ? bmiInfo.status.split(' ')[0] : (bmiInfo.bmi < 18.5 ? 'Lean' : bmiInfo.bmi < 23 ? 'Fit' : bmiInfo.bmi < 25 ? 'Pre-over' : 'Over')})
+              </div>
             </div>
             <div>
               <div style={{ color: 'var(--text-dim)', fontSize: '0.68rem', marginBottom: '1px' }}>{t.targetGoal}</div>
-              <div style={{ color: '#ea580c', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile.goal || 'Cân bằng'}</div>
+              <div style={{ color: '#ea580c', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {profile.goal 
+                  ? (lang === 'vi' 
+                      ? profile.goal 
+                      : (profile.goal === 'Giảm cân' ? 'Fat Loss' : profile.goal === 'Tăng cân' ? 'Gain Wt' : profile.goal === 'Tăng cơ' ? 'Muscle' : profile.goal === 'Thanh lọc' ? 'Detox' : 'Balanced')) 
+                  : (lang === 'vi' ? 'Cân bằng' : 'Balanced')}
+              </div>
             </div>
           </div>
 

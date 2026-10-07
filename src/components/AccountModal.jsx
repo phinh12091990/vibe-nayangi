@@ -28,7 +28,7 @@ const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Tr�
 export default function AccountModal({ isOpen, onClose, initialTab = 'create' }) {
   const { 
     accounts, currentAccountId, currentAccount, profile, isAdmin,
-    createAccount, switchAccount, updateAccount, deleteAccount 
+    createAccount, switchAccount, updateAccount, deleteAccount, lang = 'vi'
   } = useStorage();
 
   const [activeTab, setActiveTab] = useState(!isAdmin ? 'edit' : initialTab); // 'create' | 'edit' | 'switch'
@@ -227,16 +227,22 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
-                  {activeTab === 'create' ? 'Tạo Tài Khoản Mới' : (activeTab === 'edit' ? 'Hồ Sơ Sức Khỏe & Thể Trạng' : 'Quản Lý Tài Khoản')}
+                  {activeTab === 'create' 
+                    ? (lang === 'vi' ? 'Tạo Tài Khoản Mới' : 'Create New Account') 
+                    : (activeTab === 'edit' 
+                        ? (lang === 'vi' ? 'Hồ Sơ Sức Khỏe & Thể Trạng' : 'Health & Physical Profile') 
+                        : (lang === 'vi' ? 'Quản Lý Tài Khoản' : 'Account Management'))}
                 </h3>
                 <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '1px 6px' }}>
-                  {activeTab === 'create' ? 'KHAI BÁO THỂ TRẠNG' : 'CÁ NHÂN HÓA'}
+                  {activeTab === 'create' 
+                    ? (lang === 'vi' ? 'KHAI BÁO THỂ TRẠNG' : 'METRIC DECLARATION') 
+                    : (lang === 'vi' ? 'CÁ NHÂN HÓA' : 'PERSONALIZATION')}
                 </span>
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
                 {activeTab === 'create' 
-                  ? 'Đăng ký tài khoản và khai báo chỉ số cơ thể để AI gợi ý món ăn tối ưu'
-                  : 'Tối ưu hóa các gợi ý món ăn chuẩn xác theo mục tiêu dinh dưỡng'}
+                  ? (lang === 'vi' ? 'Đăng ký tài khoản và khai báo chỉ số cơ thể để AI gợi ý món ăn tối ưu' : 'Register account and configure body metrics for optimal AI meal plans')
+                  : (lang === 'vi' ? 'Tối ưu hóa các gợi ý món ăn chuẩn xác theo mục tiêu dinh dưỡng' : 'Fine-tune accurate meal suggestions based on nutritional targets')}
               </p>
             </div>
           </div>
@@ -245,7 +251,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
             onClick={onClose} 
             className="btn-icon" 
             style={{ padding: '6px', background: 'var(--bg-surface-secondary)' }}
-            title="Đóng"
+            title={lang === 'vi' ? "Đóng" : "Close"}
           >
             <X size={18} />
           </button>
@@ -271,7 +277,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
               }}
             >
               <Users size={14} />
-              <span>👑 Quản trị TV ({accounts.length})</span>
+              <span>{lang === 'vi' ? `👑 Quản trị TV (${accounts.length})` : `👑 Manage (${accounts.length})`}</span>
             </button>
 
             <button
@@ -291,7 +297,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
               }}
             >
               <UserCheck size={14} />
-              <span>Sửa thể trạng</span>
+              <span>{lang === 'vi' ? 'Sửa thể trạng' : 'Edit Health'}</span>
             </button>
 
             <button
@@ -311,13 +317,13 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
               }}
             >
               <UserPlus size={14} />
-              <span>+ Thêm TV mới</span>
+              <span>{lang === 'vi' ? '+ Thêm TV mới' : '+ Add User'}</span>
             </button>
           </div>
         ) : (
           <div style={{ padding: '8px 12px', background: 'rgba(255, 145, 0, 0.08)', border: '1px solid rgba(255, 145, 0, 0.2)', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '0.82rem', color: '#ffb74d', fontWeight: 700 }}>
-              🔒 Hồ Sơ Cá Nhân Riêng Tư (Chỉ bạn có quyền truy cập)
+              {lang === 'vi' ? '🔒 Hồ Sơ Cá Nhân Riêng Tư (Chỉ bạn có quyền truy cập)' : '🔒 Private Personal Profile (Only you have access)'}
             </span>
             <span style={{ fontSize: '0.74rem', color: 'var(--text-dim)' }}>
               @{profile.username}

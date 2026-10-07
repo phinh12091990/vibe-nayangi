@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useStorage } from '../hooks/useStorage';
+import { getLocalizedAllergen } from '../utils/dishTranslations';
 import { Users, X, Plus, Trash2, ShieldAlert, Check } from 'lucide-react';
 
 const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
@@ -6,6 +8,7 @@ const COMMON_ALLERGIES = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Tr�
 export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupMember, addGroupMember, removeGroupMember }) {
   const [newMemberName, setNewMemberName] = useState('');
   const [newMemberAllergies, setNewMemberAllergies] = useState([]);
+  const { lang = 'vi' } = useStorage();
 
   if (!isOpen) return null;
 
@@ -37,13 +40,15 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
               <Users size={20} color="#38bdf8" />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Ăn Cùng Đồng Nghiệp</h3>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>
+                {lang === 'vi' ? 'Ăn Cùng Đồng Nghiệp' : 'Group Dining with Colleagues'}
+              </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Dung hòa kiêng cữ & tìm món an toàn cho cả nhóm
+                {lang === 'vi' ? 'Dung hòa kiêng cữ & tìm món an toàn cho cả nhóm' : 'Harmonize dietary restrictions & select safe dishes for everyone'}
               </p>
             </div>
           </div>
-          <button className="btn-icon" onClick={onClose} style={{ padding: '6px' }}>
+          <button className="btn-icon" onClick={onClose} style={{ padding: '6px' }} title={lang === 'vi' ? "Đóng" : "Close"}>
             <X size={18} />
           </button>
         </div>
@@ -51,17 +56,19 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
         {/* Group Summary Box */}
         <div className="glass-panel" style={{ padding: '12px 14px', marginBottom: '16px', background: 'rgba(56, 189, 248, 0.08)', borderColor: 'rgba(56, 189, 248, 0.25)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
-            <span style={{ fontWeight: 600 }}>Thành viên đi ăn ({activeMembers.length} người):</span>
+            <span style={{ fontWeight: 600 }}>
+              {lang === 'vi' ? `Thành viên đi ăn (${activeMembers.length} người):` : `Dining members (${activeMembers.length} people):`}
+            </span>
             <span style={{ color: '#38bdf8', fontWeight: 700 }}>
-              {activeMembers.map(m => m.name.split(' ')[0]).join(', ') || 'Chỉ mình bạn'}
+              {activeMembers.map(m => m.name.split(' ')[0]).join(', ') || (lang === 'vi' ? 'Chỉ mình bạn' : 'Only you')}
             </span>
           </div>
           <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: combinedGroupAllergies.length > 0 ? '#ffb74d' : 'var(--text-muted)' }}>
             <ShieldAlert size={15} />
             <span>
               {combinedGroupAllergies.length > 0 
-                ? `Kiêng cữ chung cần né: ${combinedGroupAllergies.join(', ')}`
-                : 'Cả nhóm không có kiêng cữ dị ứng đặc biệt'}
+                ? (lang === 'vi' ? `Kiêng cữ chung cần né: ${combinedGroupAllergies.join(', ')}` : `Filtered allergens: ${combinedGroupAllergies.join(', ')}`)
+                : (lang === 'vi' ? 'Cả nhóm không có kiêng cữ dị ứng đặc biệt' : 'No special dietary restrictions for this group')}
             </span>
           </div>
         </div>
@@ -69,7 +76,7 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
         {/* Members List */}
         <div style={{ marginBottom: '18px' }}>
           <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            DANH SÁCH ĐỒNG NGHIỆP (Tích chọn ai đi ăn hôm nay):
+            {lang === 'vi' ? 'DANH SÁCH ĐỒNG NGHIỆP (Tích chọn ai đi ăn hôm nay):' : 'COLLEAGUES LIST (Select who joins dining today):'}
           </label>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px' }}>
@@ -109,7 +116,8 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
                     </div>
                     {member.allergies && member.allergies.length > 0 && (
                       <div style={{ fontSize: '0.75rem', color: '#ffb74d' }}>
-                        Né: {member.allergies.join(', ')}
+                        {lang === 'vi' ? 'Né: ' : 'Avoids: '}
+                        {member.allergies.map(a => getLocalizedAllergen(a, lang)).join(', ')}
                       </div>
                     )}
                   </div>
@@ -122,7 +130,7 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
                       removeGroupMember(member.id);
                     }}
                     style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', padding: '4px' }}
-                    title="Xóa bạn này"
+                    title={lang === 'vi' ? "Xóa bạn này" : "Remove member"}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -135,24 +143,26 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
         {/* Add New Member Form */}
         <form onSubmit={handleAddMember} style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
           <span style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            + Thêm đồng nghiệp mới:
+            {lang === 'vi' ? '+ Thêm đồng nghiệp mới:' : '+ Add new colleague:'}
           </span>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <input 
-              type="text"
-              className="form-input"
-              placeholder="Tên đồng nghiệp (VD: Lan Marketing)"
+              type="text" 
+              className="form-input" 
+              placeholder={lang === 'vi' ? "Tên đồng nghiệp (VD: Lan Marketing)" : "Colleague name (e.g. Alex Marketing)"}
               value={newMemberName}
               onChange={e => setNewMemberName(e.target.value)}
               style={{ flex: 1, padding: '8px 12px', fontSize: '0.85rem' }}
             />
             <button type="submit" className="btn btn-secondary" style={{ padding: '8px 14px', fontSize: '0.85rem' }}>
-              <Plus size={16} /> Thêm
+              <Plus size={16} /> {lang === 'vi' ? 'Thêm' : 'Add'}
             </button>
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginRight: '4px' }}>Kiêng món:</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginRight: '4px' }}>
+              {lang === 'vi' ? 'Kiêng món:' : 'Dietary restrictions:'}
+            </span>
             {COMMON_ALLERGIES.map(a => (
               <button
                 key={a}
@@ -167,7 +177,7 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
                 }}
                 onClick={() => handleToggleNewAllergy(a)}
               >
-                {a}
+                {getLocalizedAllergen(a, lang)}
               </button>
             ))}
           </div>
@@ -176,7 +186,7 @@ export default function GroupModal({ isOpen, onClose, groupMembers, toggleGroupM
         {/* Modal Actions */}
         <div style={{ marginTop: '18px', display: 'flex', justifyContent: 'flex-end' }}>
           <button className="btn btn-primary" onClick={onClose} style={{ width: '100%', padding: '12px' }}>
-            Hoàn tất & Áp dụng
+            {lang === 'vi' ? 'Hoàn tất & Áp dụng' : 'Done & Apply Settings'}
           </button>
         </div>
 

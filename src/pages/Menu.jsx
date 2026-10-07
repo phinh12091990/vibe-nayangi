@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useStorage } from '../hooks/useStorage';
 import { translations } from '../utils/i18n';
+import { getLocalizedDishName, getLocalizedNutrition, getLocalizedAllergen, getLocalizedCategory } from '../utils/dishTranslations';
 import FoodMedia from '../components/FoodMedia';
 import { 
   Plus, Eye, EyeOff, Search, Trash2, Edit3, X, Check, RotateCcw, 
@@ -568,6 +569,11 @@ export default function MenuPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {displayedFoods.map(food => {
                 const allergens = food.allergies || food.allergens || [];
+                const localizedName = getLocalizedDishName(food.name, lang);
+                const localizedNutri = getLocalizedNutrition(food.nutrition, lang);
+                const localizedCats = food.categories.map(c => getLocalizedCategory(c, lang)).join('/');
+                const localizedAllergenList = allergens.map(a => getLocalizedAllergen(a, lang)).join(', ');
+
                 return (
                   <div 
                     key={food.id}
@@ -577,22 +583,22 @@ export default function MenuPage() {
                     <FoodMedia food={food} size="sm" showBadge />
                     
                     <div className="compact-food-info">
-                      <div className="compact-food-name" title={food.name}>
-                        {food.name}
+                      <div className="compact-food-name" title={localizedName}>
+                        {localizedName}
                       </div>
                       <div className="compact-food-meta">
                         <span className={getNutritionBadgeClass(food.nutrition)} style={{ fontSize: '0.68rem', padding: '1px 6px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-                          {food.nutrition}
+                          {localizedNutri}
                         </span>
                         <span style={{ fontSize: '0.68rem', color: food.priceTier === 'budget' ? '#10b981' : food.priceTier === 'treat' ? '#ec4899' : '#38bdf8', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                          {food.priceTier === 'budget' ? '💰 <45k' : food.priceTier === 'treat' ? '🥩 >75k' : '🍛 45-75k'}
+                          {food.priceTier === 'budget' ? (lang === 'vi' ? '💰 <45k' : '💰 <$2') : food.priceTier === 'treat' ? (lang === 'vi' ? '🥩 >75k' : '🥩 >$3.5') : (lang === 'vi' ? '🍛 45-75k' : '🍛 $2-$3.5')}
                         </span>
                         <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-                          • {food.categories.join('/')}
+                          • {localizedCats}
                         </span>
                         {allergens.length > 0 && (
-                          <span style={{ color: '#f87171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }} title={allergens.join(', ')}>
-                            • ⚠️ {allergens.join(', ')}
+                          <span style={{ color: '#f87171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }} title={localizedAllergenList}>
+                            • ⚠️ {localizedAllergenList}
                           </span>
                         )}
                       </div>
@@ -603,7 +609,7 @@ export default function MenuPage() {
                         onClick={() => toggleFoodStatus(food.id)}
                         className="btn-icon"
                         style={{ width: '30px', height: '30px' }}
-                        title={food.hidden ? "Hiện món" : "Ẩn món"}
+                        title={food.hidden ? (lang === 'vi' ? "Hiện món" : "Show dish") : (lang === 'vi' ? "Ẩn món" : "Hide dish")}
                       >
                         {food.hidden ? <EyeOff size={15} color="var(--text-dim)" /> : <Eye size={15} color="#00e676" />}
                       </button>
@@ -611,17 +617,18 @@ export default function MenuPage() {
                         onClick={() => handleOpenEdit(food)}
                         className="btn-icon"
                         style={{ width: '30px', height: '30px' }}
-                        title="Sửa món"
+                        title={lang === 'vi' ? "Sửa món" : "Edit dish"}
                       >
                         <Edit3 size={14} color="var(--text-secondary)" />
                       </button>
                       <button 
                         onClick={() => {
-                          if (window.confirm(`Xoá món "${food.name}"?`)) deleteFood(food.id);
+                          const confirmMsg = lang === 'vi' ? `Xoá món "${food.name}"?` : `Delete dish "${localizedName}"?`;
+                          if (window.confirm(confirmMsg)) deleteFood(food.id);
                         }}
                         className="btn-icon"
                         style={{ width: '30px', height: '30px' }}
-                        title="Xoá món"
+                        title={lang === 'vi' ? "Xoá món" : "Delete dish"}
                       >
                         <Trash2 size={14} color="#f87171" />
                       </button>
@@ -637,6 +644,11 @@ export default function MenuPage() {
             <div className="mobile-grid-2col">
               {displayedFoods.map(food => {
                 const allergens = food.allergies || food.allergens || [];
+                const localizedName = getLocalizedDishName(food.name, lang);
+                const localizedNutri = getLocalizedNutrition(food.nutrition, lang);
+                const localizedCats = food.categories.map(c => getLocalizedCategory(c, lang)).join('/');
+                const localizedAllergenList = allergens.map(a => getLocalizedAllergen(a, lang)).join(', ');
+
                 return (
                   <div 
                     key={food.id}
@@ -649,26 +661,26 @@ export default function MenuPage() {
                         onClick={() => toggleFoodStatus(food.id)}
                         className="btn-icon"
                         style={{ width: '28px', height: '28px' }}
-                        title={food.hidden ? "Hiện món" : "Ẩn món"}
+                        title={food.hidden ? (lang === 'vi' ? "Hiện món" : "Show dish") : (lang === 'vi' ? "Ẩn món" : "Hide dish")}
                       >
                         {food.hidden ? <EyeOff size={14} color="var(--text-dim)" /> : <Eye size={14} color="#00e676" />}
                       </button>
                     </div>
 
-                    <div className="grid-card-name">{food.name}</div>
+                    <div className="grid-card-name">{localizedName}</div>
 
                     <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                       <span className={getNutritionBadgeClass(food.nutrition)} style={{ fontSize: '0.68rem', padding: '1px 6px' }}>
-                        {food.nutrition}
+                        {localizedNutri}
                       </span>
                       <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        {food.categories.join('/')}
+                        {localizedCats}
                       </span>
                     </div>
 
                     {allergens.length > 0 && (
                       <div style={{ fontSize: '0.7rem', color: '#f87171', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        ⚠️ {allergens.join(', ')}
+                        ⚠️ {localizedAllergenList}
                       </div>
                     )}
 
@@ -677,17 +689,18 @@ export default function MenuPage() {
                         onClick={() => handleOpenEdit(food)}
                         className="btn-icon"
                         style={{ width: '28px', height: '28px' }}
-                        title="Sửa món"
+                        title={lang === 'vi' ? "Sửa món" : "Edit dish"}
                       >
                         <Edit3 size={13} color="var(--text-secondary)" />
                       </button>
                       <button 
                         onClick={() => {
-                          if (window.confirm(`Xoá món "${food.name}"?`)) deleteFood(food.id);
+                          const confirmMsg = lang === 'vi' ? `Xoá món "${food.name}"?` : `Delete dish "${localizedName}"?`;
+                          if (window.confirm(confirmMsg)) deleteFood(food.id);
                         }}
                         className="btn-icon"
                         style={{ width: '28px', height: '28px' }}
-                        title="Xoá món"
+                        title={lang === 'vi' ? "Xoá món" : "Delete dish"}
                       >
                         <Trash2 size={13} color="#f87171" />
                       </button>
@@ -703,6 +716,11 @@ export default function MenuPage() {
             <div className="grid-menu-cards">
               {displayedFoods.map(food => {
                 const allergens = food.allergies || food.allergens || [];
+                const localizedName = getLocalizedDishName(food.name, lang);
+                const localizedNutri = getLocalizedNutrition(food.nutrition, lang);
+                const localizedCats = food.categories.map(c => getLocalizedCategory(c, lang)).join(', ');
+                const localizedAllergenList = allergens.map(a => getLocalizedAllergen(a, lang)).join(', ');
+
                 return (
                   <div 
                     key={food.id} 
@@ -722,19 +740,19 @@ export default function MenuPage() {
                     <div style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
                         <h3 style={{ margin: 0, fontSize: '1.12rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                          {food.name}
+                          {localizedName}
                         </h3>
                         <span className={getNutritionBadgeClass(food.nutrition)}>
-                          {food.nutrition}
+                          {localizedNutri}
                         </span>
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        <span>Buổi: {food.categories.join(', ')}</span>
+                        <span>{lang === 'vi' ? `Buổi: ${localizedCats}` : `Meal: ${localizedCats}`}</span>
                         {allergens.length > 0 && (
                           <>
                             <span>•</span>
-                            <span style={{ color: '#f87171' }}>Dị ứng: {allergens.join(', ')}</span>
+                            <span style={{ color: '#f87171' }}>{lang === 'vi' ? `Dị ứng: ${localizedAllergenList}` : `Allergens: ${localizedAllergenList}`}</span>
                           </>
                         )}
                       </div>
@@ -743,31 +761,32 @@ export default function MenuPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <button 
                         onClick={() => toggleFoodStatus(food.id)}
-                        className="btn-icon"
+                        className="btn-icon" 
                         style={{ width: '36px', height: '36px' }}
-                        title={food.hidden ? "Hiện món" : "Ẩn món"}
+                        title={food.hidden ? (lang === 'vi' ? "Hiện món" : "Show dish") : (lang === 'vi' ? "Ẩn món" : "Hide dish")}
                       >
                         {food.hidden ? <EyeOff size={18} color="var(--text-dim)" /> : <Eye size={18} color="#00e676" />}
                       </button>
 
                       <button 
                         onClick={() => handleOpenEdit(food)}
-                        className="btn-icon"
+                        className="btn-icon" 
                         style={{ width: '36px', height: '36px' }}
-                        title="Chỉnh sửa món"
+                        title={lang === 'vi' ? "Chỉnh sửa món" : "Edit dish"}
                       >
                         <Edit3 size={17} color="var(--text-secondary)" />
                       </button>
 
                       <button 
                         onClick={() => {
-                          if (window.confirm(`Xoá món "${food.name}" khỏi thực đơn?`)) {
+                          const confirmMsg = lang === 'vi' ? `Xoá món "${food.name}" khỏi thực đơn?` : `Delete dish "${localizedName}" from menu?`;
+                          if (window.confirm(confirmMsg)) {
                             deleteFood(food.id);
                           }
                         }}
-                        className="btn-icon"
+                        className="btn-icon" 
                         style={{ width: '36px', height: '36px' }}
-                        title="Xoá món"
+                        title={lang === 'vi' ? "Xoá món" : "Delete dish"}
                       >
                         <Trash2 size={17} color="#f87171" />
                       </button>

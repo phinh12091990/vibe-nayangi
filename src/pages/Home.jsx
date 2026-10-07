@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI, calculateTDEE } from '../hooks/useStorage';
 import { translations } from '../utils/i18n';
+import { getLocalizedDishName, getLocalizedNutrition, getLocalizedAllergen } from '../utils/dishTranslations';
 import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
@@ -810,6 +811,10 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   const nutriTheme = getNutritionTheme(item.nutrition);
                   const priceInfo = getPriceTierLabel(item.priceTier);
                   const allergens = item.allergies || item.allergens || [];
+                  const localizedName = getLocalizedDishName(item.name, lang);
+                  const localizedNutri = getLocalizedNutrition(item.nutrition, lang);
+                  const localizedAllergens = allergens.map(a => getLocalizedAllergen(a, lang));
+
                   return (
                     <div 
                       key={`${item.id}-${idx}`} 
@@ -820,17 +825,17 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                     >
                       <FoodMedia food={item} size="md" showBadge style={{ width: 'clamp(54px, 6.5vw, 70px)', height: 'clamp(54px, 6.5vw, 70px)', minWidth: 'clamp(54px, 6.5vw, 70px)' }} />
                       <div className="reel-item-info">
-                        <div className="reel-item-name">{item.name}</div>
+                        <div className="reel-item-name">{localizedName}</div>
                         <div className="reel-item-meta">
                           <span className={getNutritionBadgeClass(item.nutrition)}>
-                            {item.nutrition}
+                            {localizedNutri}
                           </span>
                           <span className="price-tag-badge" style={{ color: priceInfo.color, borderColor: `${priceInfo.color}50`, background: `${priceInfo.color}15` }}>
                             {priceInfo.label}
                           </span>
                           {allergens.length > 0 && (
                             <span className="allergen-tag-badge">
-                              ⚠️ {allergens.join(', ')}
+                              ⚠️ {localizedAllergens.join(', ')}
                             </span>
                           )}
                         </div>
@@ -869,10 +874,10 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                     <div className="reason-card-title">
                       <FoodMedia food={result.food} size="lg" showBadge />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div className="reason-card-foodname">{result.food.name}</div>
+                        <div className="reason-card-foodname">{getLocalizedDishName(result.food.name, lang)}</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
                           <span className={getNutritionBadgeClass(result.food.nutrition)}>
-                            {result.food.nutrition}
+                            {getLocalizedNutrition(result.food.nutrition, lang)}
                           </span>
                           <span className="glass-pill" style={{ padding: '2px 8px', fontSize: '0.75rem', color: getPriceTierLabel(result.food.priceTier).color }}>
                             {getPriceTierLabel(result.food.priceTier).label}
@@ -1432,7 +1437,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
                           <div style={{ fontSize: '0.88rem', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)' }}>
-                            {food.name}
+                            {getLocalizedDishName(food.name, lang)}
                           </div>
                           <span style={{ fontSize: '0.71rem', color: 'var(--text-muted)', flexShrink: 0 }}>
                             {formatRecentTime(h.timestamp, lang)}
@@ -1450,7 +1455,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                             {lang === 'vi' ? h.mealType : (h.mealType === 'Sáng' ? 'Breakfast' : h.mealType === 'Trưa' ? 'Lunch' : 'Dinner')}
                           </span>
                           <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
-                            • {food.nutrition} • {food.calories} kcal
+                            • {getLocalizedNutrition(food.nutrition, lang)} • {food.calories} kcal
                           </span>
                         </div>
                       </div>

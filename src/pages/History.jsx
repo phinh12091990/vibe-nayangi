@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI } from '../hooks/useStorage';
 import { translations } from '../utils/i18n';
+import { getLocalizedDishName } from '../utils/dishTranslations';
 import FoodMedia from '../components/FoodMedia';
 import { 
   ShieldAlert, Activity, AlertTriangle, CheckCircle2, 
@@ -476,7 +477,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                       <div style={{ minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                           <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#ffffff' }}>
-                            {food.name}
+                            {getLocalizedDishName(food.name, lang)}
                           </h4>
                           <span className={getNutritionBadgeClass(food.nutrition)}>
                             {getNutritionLabel(food.nutrition)}

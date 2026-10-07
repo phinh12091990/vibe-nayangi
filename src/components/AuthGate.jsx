@@ -195,8 +195,12 @@ function AuthLandscape({ theme, lang }) {
 
       {/* Floating Nutrition Tags (Top Left) */}
       <div className="landscape-badges">
-        <span className="floating-badge fb1">🥗 Calo chuẩn</span>
-        <span className="floating-badge fb2">🥑 Dinh dưỡng AI</span>
+        <span className="floating-badge fb1">
+          {lang === 'vi' ? '🥗 Calo chuẩn' : '🥗 Calorie Goal'}
+        </span>
+        <span className="floating-badge fb2">
+          {lang === 'vi' ? '🥑 Dinh dưỡng AI' : '🥑 AI Nutrition'}
+        </span>
       </div>
 
       {/* Overlay Description Content matching sample */}
@@ -619,18 +623,50 @@ export default function AuthGate() {
               <BrandLogo size={40} />
               <div>
                 <span style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--text-main)' }}>Nay Ăn Gì</span>
-                <span className="brand-badge" style={{ fontSize: '0.6rem', padding: '1px 6px', marginLeft: '6px' }}>ĐĂNG KÝ HỒ SƠ</span>
+                <span className="brand-badge" style={{ fontSize: '0.6rem', padding: '1px 6px', marginLeft: '6px' }}>
+                  {lang === 'vi' ? 'ĐĂNG KÝ HỒ SƠ' : 'CREATE PROFILE'}
+                </span>
               </div>
             </div>
 
-            <button 
-              type="button" 
-              onClick={toggleTheme} 
-              className="theme-switch-pill" 
-              title="Chuyển chế độ Sáng / Tối"
-            >
-              {theme === 'light' ? <Sun size={13} color="#ea580c" /> : <Moon size={13} color="#bbf246" />}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Language Switch Pills */}
+              <div className="auth-lang-pills">
+                <button
+                  type="button"
+                  className={`auth-lang-pill ${lang === 'vi' ? 'active' : ''}`}
+                  onClick={() => setLang('vi')}
+                >
+                  🇻🇳 Tiếng Việt
+                </button>
+                <button
+                  type="button"
+                  className={`auth-lang-pill ${lang === 'en' ? 'active' : ''}`}
+                  onClick={() => setLang('en')}
+                >
+                  🇬🇧 English
+                </button>
+              </div>
+
+              <button 
+                type="button" 
+                onClick={toggleTheme} 
+                className="theme-switch-pill" 
+                title={lang === 'vi' ? 'Chuyển chế độ Sáng / Tối' : 'Toggle Light / Dark mode'}
+              >
+                {theme === 'light' ? (
+                  <>
+                    <Sun size={13} color="#ea580c" />
+                    <span>{lang === 'vi' ? '☀️ Sáng' : '☀️ Light'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon size={13} color="#bbf246" />
+                    <span>{lang === 'vi' ? '🌙 Tối' : '🌙 Dark'}</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {errorMsg && (
@@ -657,12 +693,14 @@ export default function AuthGate() {
             <div className="glass-panel" style={{ padding: '14px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#ea580c', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <UserPlus size={15} />
-                <span>1. Thông Tin Tài Khoản</span>
+                <span>{lang === 'vi' ? '1. Thông Tin Tài Khoản' : '1. Account Credentials'}</span>
               </div>
 
               {/* Avatar Selector */}
               <div style={{ marginBottom: '12px' }}>
-                <label className="form-label" style={{ fontSize: '0.76rem', marginBottom: '5px' }}>Chọn Avatar của bạn:</label>
+                <label className="form-label" style={{ fontSize: '0.76rem', marginBottom: '5px' }}>
+                  {lang === 'vi' ? 'Chọn Avatar của bạn:' : 'Choose your Avatar:'}
+                </label>
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
                   {AVATARS.map(av => (
                     <button
@@ -692,11 +730,13 @@ export default function AuthGate() {
 
               <div className="auth-grid-2col" style={{ marginBottom: '10px' }}>
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.76rem' }}>Họ và tên hiển thị *</label>
+                  <label className="form-label" style={{ fontSize: '0.76rem' }}>
+                    {lang === 'vi' ? 'Họ và tên hiển thị *' : 'Display Full Name *'}
+                  </label>
                   <input 
                     type="text" 
                     className="form-input" 
-                    placeholder="VD: Nguyễn Hoàng Nam" 
+                    placeholder={lang === 'vi' ? 'VD: Nguyễn Hoàng Nam' : 'e.g. Alex Johnson'} 
                     value={regForm.name} 
                     onChange={e => setRegForm(prev => ({ ...prev, name: e.target.value }))}
                     required
@@ -704,11 +744,13 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.76rem' }}>Tên đăng nhập (Username) *</label>
+                  <label className="form-label" style={{ fontSize: '0.76rem' }}>
+                    {lang === 'vi' ? 'Tên đăng nhập (Username) *' : 'Username *'}
+                  </label>
                   <input 
                     type="text" 
                     className="form-input" 
-                    placeholder="VD: hoangnam (viết liền)" 
+                    placeholder={lang === 'vi' ? 'VD: hoangnam (viết liền)' : 'e.g. alexj (no spaces)'} 
                     value={regForm.username} 
                     onChange={e => setRegForm(prev => ({ ...prev, username: e.target.value }))}
                     required
@@ -718,12 +760,14 @@ export default function AuthGate() {
 
               <div className="auth-grid-2col">
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.76rem' }}>Mật khẩu bảo mật *</label>
+                  <label className="form-label" style={{ fontSize: '0.76rem' }}>
+                    {lang === 'vi' ? 'Mật khẩu bảo mật *' : 'Password *'}
+                  </label>
                   <div style={{ position: 'relative' }}>
                     <input 
                       type={showPassword ? 'text' : 'password'} 
                       className="form-input" 
-                      placeholder="Ít nhất 4 ký tự..." 
+                      placeholder={lang === 'vi' ? 'Ít nhất 4 ký tự...' : 'At least 4 characters...'} 
                       value={regForm.password} 
                       onChange={e => setRegForm(prev => ({ ...prev, password: e.target.value }))}
                       required
@@ -740,12 +784,14 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.76rem' }}>Xác nhận mật khẩu *</label>
+                  <label className="form-label" style={{ fontSize: '0.76rem' }}>
+                    {lang === 'vi' ? 'Xác nhận mật khẩu *' : 'Confirm Password *'}
+                  </label>
                   <div style={{ position: 'relative' }}>
                     <input 
                       type={showConfirmPassword ? 'text' : 'password'} 
                       className="form-input" 
-                      placeholder="Nhập lại mật khẩu..." 
+                      placeholder={lang === 'vi' ? 'Nhập lại mật khẩu...' : 'Re-enter password...'} 
                       value={confirmPassword} 
                       onChange={e => setConfirmPassword(e.target.value)}
                       required
@@ -767,12 +813,14 @@ export default function AuthGate() {
             <div className="glass-panel" style={{ padding: '14px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#10b981', letterSpacing: '0.04em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Activity size={15} />
-                <span>2. Chỉ Số Cơ Thể & Thể Trạng AI</span>
+                <span>{lang === 'vi' ? '2. Chỉ Số Cơ Thể & Thể Trạng AI' : '2. Body Metrics & AI Health'}</span>
               </div>
 
               <div className="auth-metrics-grid" style={{ marginBottom: '10px' }}>
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.74rem' }}>Tuổi</label>
+                  <label className="form-label" style={{ fontSize: '0.74rem' }}>
+                    {lang === 'vi' ? 'Tuổi' : 'Age'}
+                  </label>
                   <input 
                     type="number" 
                     className="form-input" 
@@ -785,19 +833,23 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.74rem' }}>Giới tính</label>
+                  <label className="form-label" style={{ fontSize: '0.74rem' }}>
+                    {lang === 'vi' ? 'Giới tính' : 'Gender'}
+                  </label>
                   <select 
                     className="form-input" 
                     value={regForm.gender} 
                     onChange={e => setRegForm(prev => ({ ...prev, gender: e.target.value }))}
                   >
-                    <option value="Nam">Nam</option>
-                    <option value="Nữ">Nữ</option>
+                    <option value="Nam">{lang === 'vi' ? 'Nam' : 'Male'}</option>
+                    <option value="Nữ">{lang === 'vi' ? 'Nữ' : 'Female'}</option>
                   </select>
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.74rem' }}>Cao (cm)</label>
+                  <label className="form-label" style={{ fontSize: '0.74rem' }}>
+                    {lang === 'vi' ? 'Cao (cm)' : 'Height (cm)'}
+                  </label>
                   <input 
                     type="number" 
                     className="form-input" 
@@ -810,7 +862,9 @@ export default function AuthGate() {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label className="form-label" style={{ fontSize: '0.74rem' }}>Nặng (kg)</label>
+                  <label className="form-label" style={{ fontSize: '0.74rem' }}>
+                    {lang === 'vi' ? 'Nặng (kg)' : 'Weight (kg)'}
+                  </label>
                   <input 
                     type="number" 
                     className="form-input" 
@@ -830,7 +884,7 @@ export default function AuthGate() {
                   <span style={{ fontSize: '0.74rem', color: bmiInfo.color, fontWeight: 700 }}>({bmiInfo.label})</span>
                 </div>
                 <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#ff7a18' }}>
-                  🔥 TDEE: {tdeeVal} kcal/ngày
+                  🔥 TDEE: {tdeeVal} {lang === 'vi' ? 'kcal/ngày' : 'kcal/day'}
                 </div>
               </div>
             </div>
@@ -848,12 +902,12 @@ export default function AuthGate() {
                 boxShadow: '0 6px 20px var(--primary-glow)'
               }}
             >
-              <Sparkles size={16} /> HOÀN TẤT ĐĂNG KÝ HỒ SƠ
+              <Sparkles size={16} /> {lang === 'vi' ? 'HOÀN TẤT ĐĂNG KÝ HỒ SƠ' : 'COMPLETE REGISTRATION'}
             </button>
 
             {/* Switch Back to Login */}
             <div style={{ textAlign: 'center', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-              <span>Đã có tài khoản? </span>
+              <span>{lang === 'vi' ? 'Đã có tài khoản? ' : 'Already have an account? '}</span>
               <button
                 type="button"
                 onClick={() => { setTab('login'); setErrorMsg(''); }}
@@ -867,7 +921,7 @@ export default function AuthGate() {
                   fontSize: '0.84rem'
                 }}
               >
-                Đăng nhập tại đây &rarr;
+                {lang === 'vi' ? 'Đăng nhập tại đây →' : 'Sign in here →'}
               </button>
             </div>
 
@@ -883,6 +937,8 @@ export default function AuthGate() {
           onClose={() => setShowCaptcha(false)}
           theme={theme}
           toggleTheme={toggleTheme}
+          lang={lang}
+          onLangChange={setLang}
         />
       )}
 

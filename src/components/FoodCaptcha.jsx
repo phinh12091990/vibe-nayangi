@@ -3,14 +3,14 @@ import { RefreshCw, X, CheckCircle2, ShieldCheck, Sun, Moon, Sparkles, Trophy } 
 import { triggerConfetti } from '../utils/confetti';
 
 const FOOD_ITEMS = [
-  { id: 'pho', emoji: '🍜', name: 'Phở bò', color: '#fed7aa', border: '#fb923c' },
-  { id: 'sushi', emoji: '🍣', name: 'Sushi cá hồi', color: '#fbcfe8', border: '#f472b6' },
-  { id: 'bento', emoji: '🍱', name: 'Cơm Bento', color: '#bbf7d0', border: '#4ade80' },
-  { id: 'pizza', emoji: '🍕', name: 'Pizza phô mai', color: '#fef08a', border: '#facc15' },
-  { id: 'steak', emoji: '🥩', name: 'Bò bít tết', color: '#fecdd3', border: '#fb7185' },
-  { id: 'salad', emoji: '🥗', name: 'Salad xanh', color: '#c7d2fe', border: '#818cf8' },
-  { id: 'avocado', emoji: '🥑', name: 'Trái bơ', color: '#d9f99d', border: '#a3e635' },
-  { id: 'banhmi', emoji: '🥖', name: 'Bánh mì', color: '#fed7aa', border: '#f97316' },
+  { id: 'pho', emoji: '🍜', nameVi: 'Phở bò', nameEn: 'Beef Pho', color: '#fed7aa', border: '#fb923c' },
+  { id: 'sushi', emoji: '🍣', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', color: '#fbcfe8', border: '#f472b6' },
+  { id: 'bento', emoji: '🍱', nameVi: 'Cơm Bento', nameEn: 'Bento Box', color: '#bbf7d0', border: '#4ade80' },
+  { id: 'pizza', emoji: '🍕', nameVi: 'Pizza phô mai', nameEn: 'Cheese Pizza', color: '#fef08a', border: '#facc15' },
+  { id: 'steak', emoji: '🥩', nameVi: 'Bò bít tết', nameEn: 'Beef Steak', color: '#fecdd3', border: '#fb7185' },
+  { id: 'salad', emoji: '🥗', nameVi: 'Salad xanh', nameEn: 'Green Salad', color: '#c7d2fe', border: '#818cf8' },
+  { id: 'avocado', emoji: '🥑', nameVi: 'Trái bơ', nameEn: 'Avocado', color: '#d9f99d', border: '#a3e635' },
+  { id: 'banhmi', emoji: '🥖', nameVi: 'Bánh mì', nameEn: 'Baguette', color: '#fed7aa', border: '#f97316' },
 ];
 
 const TOTAL_PAIRS = 8; // Bắt buộc ghép đúng đủ tất cả 8/8 cặp mới mở khoá!
@@ -30,14 +30,23 @@ function generateCaptchaTiles() {
   return deck;
 }
 
-export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) {
+export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, lang: parentLang = 'vi', onLangChange }) {
   const [tiles, setTiles] = useState(generateCaptchaTiles);
   const [selectedTiles, setSelectedTiles] = useState([]);
   const [matchedIds, setMatchedIds] = useState(new Set());
   const [wrongTiles, setWrongTiles] = useState([]);
   const [matchedCount, setMatchedCount] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [lang, setLang] = useState('vi'); // 'vi' | 'en'
+  const [lang, setLang] = useState(parentLang);
+
+  useEffect(() => {
+    if (parentLang) setLang(parentLang);
+  }, [parentLang]);
+
+  const handleLangToggle = (newLang) => {
+    setLang(newLang);
+    if (onLangChange) onLangChange(newLang);
+  };
 
   const handleReset = () => {
     setTiles(generateCaptchaTiles());
@@ -122,16 +131,16 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
         <div className="captcha-top-bar">
           <div className="captcha-lang-switch">
             <button 
-              type="button"
+              type="button" 
               className={`captcha-lang-btn ${lang === 'vi' ? 'active' : ''}`}
-              onClick={() => setLang('vi')}
+              onClick={() => handleLangToggle('vi')}
             >
               🇻🇳 Tiếng Việt
             </button>
             <button 
-              type="button"
+              type="button" 
               className={`captcha-lang-btn ${lang === 'en' ? 'active' : ''}`}
-              onClick={() => setLang('en')}
+              onClick={() => handleLangToggle('en')}
             >
               🇬🇧 English
             </button>
@@ -143,7 +152,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
                 type="button"
                 onClick={toggleTheme}
                 className="captcha-theme-btn"
-                title="Đổi giao diện Sáng / Tối"
+                title={lang === 'vi' ? 'Đổi giao diện Sáng / Tối' : 'Toggle Light / Dark mode'}
               >
                 {theme === 'light' ? <Sun size={14} color="#ea580c" /> : <Moon size={14} color="#bbf246" />}
               </button>
@@ -163,7 +172,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
                 type="button"
                 onClick={onClose}
                 className="captcha-icon-btn"
-                title="Đóng"
+                title={lang === 'vi' ? 'Đóng' : 'Close'}
               >
                 <X size={15} />
               </button>
@@ -197,6 +206,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
             const isSelected = selectedTiles.some(t => t.uniqueId === tile.uniqueId);
             const isMatched = matchedIds.has(tile.id);
             const isWrong = wrongTiles.includes(tile.uniqueId);
+            const foodName = lang === 'vi' ? tile.nameVi : tile.nameEn;
 
             return (
               <button
@@ -209,7 +219,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme }) 
                 }}
                 onClick={() => handleTileClick(tile)}
                 disabled={isMatched || isCompleted}
-                title={tile.name}
+                title={foodName}
               >
                 <span className="captcha-tile-emoji">{tile.emoji}</span>
                 {isMatched && (

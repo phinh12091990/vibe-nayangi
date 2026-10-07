@@ -153,81 +153,48 @@ export default function AuthGate() {
   };
 
   return (
-    <div className="auth-gate-screen" style={{
-      width: '100%',
-      minHeight: '100%',
-      maxHeight: '100%',
-      overflowY: 'auto',
-      display: 'flex',
-      alignItems: 'flex-start',
-      justifyContent: 'center',
-      background: 'radial-gradient(ellipse at 50% 10%, rgba(255, 122, 24, 0.15) 0%, rgba(10, 13, 24, 0.98) 70%)',
-      padding: '24px 16px 48px',
-      boxSizing: 'border-box'
-    }}>
-      <div style={{
-        width: '100%',
-        maxWidth: '680px',
-        margin: 'auto 0',
-        background: 'linear-gradient(180deg, rgba(20, 25, 46, 0.95) 0%, rgba(13, 16, 30, 0.98) 100%)',
-        backdropFilter: 'blur(28px)',
-        WebkitBackdropFilter: 'blur(28px)',
-        border: '1px solid rgba(255, 145, 0, 0.3)',
-        borderRadius: '24px',
-        padding: '28px 24px',
-        boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 122, 24, 0.18)',
-        boxSizing: 'border-box'
-      }}>
+    <div className="auth-gate-screen">
+      <div className="auth-gate-card">
         
         {/* Brand & Locked App Banner */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'rgba(255, 145, 0, 0.12)', border: '1px solid rgba(255, 145, 0, 0.3)', padding: '6px 14px', borderRadius: '20px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '1.4rem' }}>🍲</span>
-            <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffa726', letterSpacing: '0.02em' }}>NAY ĂN GÌ</span>
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 145, 0, 0.12)', border: '1px solid rgba(255, 145, 0, 0.3)', padding: '5px 12px', borderRadius: '20px', marginBottom: '10px' }}>
+            <span style={{ fontSize: '1.3rem' }}>🍲</span>
+            <span style={{ fontSize: '1rem', fontWeight: 800, color: '#ffa726', letterSpacing: '0.02em' }}>NAY ĂN GÌ</span>
             <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 6px' }}>AI ASSISTANT</span>
           </div>
 
-          <h2 style={{ fontSize: 'clamp(1.4rem, 4vw, 1.85rem)', fontWeight: 900, margin: '6px 0', lineHeight: 1.25, background: 'linear-gradient(135deg, #ffffff 40%, #ffb74d 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h2 className="auth-header-title" style={{ fontWeight: 900, margin: '4px 0 8px', background: 'linear-gradient(135deg, #ffffff 40%, #ffb74d 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             Thiết Lập Tài Khoản & Khai Báo Thể Trạng
           </h2>
 
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffb74d', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(255, 145, 0, 0.08)', padding: '6px 12px', borderRadius: '10px', marginTop: '4px' }}>
-            <Lock size={15} />
+          <div className="auth-header-desc" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ffb74d', background: 'rgba(255, 145, 0, 0.08)', borderRadius: '10px' }}>
+            <Lock size={14} style={{ flexShrink: 0 }} />
             <span>Vui lòng đăng ký tài khoản để mở khóa gợi ý thực đơn & dữ liệu dinh dưỡng</span>
           </div>
         </div>
 
         {/* Tab Switcher */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '18px' }}>
+        <div className="auth-tabs-row">
           <button
             type="button"
             onClick={() => { setTab('register'); setErrorMsg(''); }}
-            className={`glass-pill ${tab === 'register' ? 'active' : ''}`}
+            className={`glass-pill auth-tab-btn ${tab === 'register' ? 'active' : ''}`}
             style={{
-              padding: '10px',
-              fontSize: '0.88rem',
-              fontWeight: 800,
-              justifyContent: 'center',
-              cursor: 'pointer',
               background: tab === 'register' ? 'rgba(255, 145, 0, 0.22)' : 'rgba(255, 255, 255, 0.04)',
               borderColor: tab === 'register' ? '#ff9100' : 'rgba(255, 255, 255, 0.1)',
               color: tab === 'register' ? '#ffa726' : 'var(--text-muted)'
             }}
           >
             <UserPlus size={16} />
-            <span>Đăng Ký Tài Khoản Mới</span>
+            <span>Đăng Ký Tài Khoản</span>
           </button>
 
           <button
             type="button"
             onClick={() => { setTab('login'); setErrorMsg(''); }}
-            className={`glass-pill ${tab === 'login' ? 'active' : ''}`}
+            className={`glass-pill auth-tab-btn ${tab === 'login' ? 'active' : ''}`}
             style={{
-              padding: '10px',
-              fontSize: '0.88rem',
-              fontWeight: 800,
-              justifyContent: 'center',
-              cursor: 'pointer',
               background: tab === 'login' ? 'rgba(56, 189, 248, 0.22)' : 'rgba(255, 255, 255, 0.04)',
               borderColor: tab === 'login' ? '#38bdf8' : 'rgba(255, 255, 255, 0.1)',
               color: tab === 'login' ? '#38bdf8' : 'var(--text-muted)'
@@ -285,7 +252,7 @@ export default function AuthGate() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px', marginBottom: '10px' }}>
+              <div className="auth-grid-2col" style={{ marginBottom: '10px' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label" style={{ fontSize: '0.78rem' }}>Họ và tên hiển thị *</label>
                   <input 
@@ -311,7 +278,7 @@ export default function AuthGate() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className="auth-grid-2col">
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label" style={{ fontSize: '0.78rem' }}>Mật khẩu bảo mật *</label>
                   <div style={{ position: 'relative' }}>
@@ -403,7 +370,7 @@ export default function AuthGate() {
               </div>
 
               {/* Gender, Age, Height & Weight in 4 columns */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '12px' }}>
+              <div className="auth-metrics-grid" style={{ marginBottom: '12px' }}>
                 <div className="form-group" style={{ margin: 0 }}>
                   <label className="form-label" style={{ fontSize: '0.78rem' }}>Giới tính</label>
                   <div style={{ display: 'flex', gap: '4px', height: '40px' }}>
@@ -476,7 +443,7 @@ export default function AuthGate() {
               {/* Nutrition Goal */}
               <div style={{ marginBottom: '12px' }}>
                 <label className="form-label" style={{ fontSize: '0.78rem', marginBottom: '6px' }}>Mục tiêu dinh dưỡng & vóc dáng:</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <div className="auth-goals-grid">
                   {GOALS.map(g => {
                     const isSelected = regForm.goal === g.id;
                     return (
@@ -484,26 +451,27 @@ export default function AuthGate() {
                         key={g.id}
                         onClick={() => setRegForm(prev => ({ ...prev, goal: g.id }))}
                         style={{
-                          padding: '8px 10px',
-                          borderRadius: '8px',
+                          padding: '10px 12px',
+                          borderRadius: '10px',
                           border: isSelected ? `2px solid ${g.color}` : '1px solid rgba(255,255,255,0.08)',
                           background: isSelected ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '8px'
+                          gap: '10px',
+                          boxSizing: 'border-box'
                         }}
                       >
-                        <span style={{ fontSize: '1.3rem' }}>{g.icon}</span>
+                        <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>{g.icon}</span>
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: isSelected ? g.color : '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '0.84rem', fontWeight: 700, color: isSelected ? g.color : '#ffffff', lineHeight: 1.3 }}>
                             {g.label}
                           </div>
-                          <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.3, marginTop: '2px' }}>
                             {g.desc}
                           </div>
                         </div>
-                        {isSelected && <Check size={14} color={g.color} />}
+                        {isSelected && <Check size={16} color={g.color} style={{ flexShrink: 0 }} />}
                       </div>
                     );
                   })}
@@ -513,7 +481,7 @@ export default function AuthGate() {
               {/* Activity Level */}
               <div style={{ marginBottom: '12px' }}>
                 <label className="form-label" style={{ fontSize: '0.78rem', marginBottom: '6px' }}>Mức độ vận động:</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <div className="auth-activities-grid">
                   {ACTIVITIES.map(act => {
                     const isSelected = regForm.activity === act.id;
                     return (
@@ -521,18 +489,26 @@ export default function AuthGate() {
                         key={act.id}
                         onClick={() => setRegForm(prev => ({ ...prev, activity: act.id }))}
                         style={{
-                          padding: '7px 10px',
+                          padding: '8px 10px',
                           borderRadius: '8px',
                           border: isSelected ? '1px solid #ff9100' : '1px solid rgba(255,255,255,0.08)',
                           background: isSelected ? 'rgba(255,145,0,0.14)' : 'rgba(255,255,255,0.02)',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '8px'
+                          gap: '8px',
+                          boxSizing: 'border-box'
                         }}
                       >
-                        <span style={{ fontSize: '1.1rem' }}>{act.icon}</span>
-                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: isSelected ? '#ffa726' : '#ffffff' }}>{act.label}</span>
+                        <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>{act.icon}</span>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 600, color: isSelected ? '#ffa726' : '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {act.label}
+                          </div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {act.desc}
+                          </div>
+                        </div>
                       </div>
                     );
                   })}

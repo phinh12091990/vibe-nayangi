@@ -122,8 +122,17 @@ body {
 
   #root:has(.auth-gate-screen) {
     overflow-y: auto;
-    max-height: calc(100vh - 40px);
+    min-height: 100vh;
+    max-height: none;
     display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .bottom-nav {
@@ -1365,3 +1374,130 @@ h1, h2, h3, h4 {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* =========================================
+   Auth Gate & Mobile Responsive System
+   ========================================= */
+.auth-gate-screen {
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 10%, rgba(255, 122, 24, 0.15) 0%, rgba(10, 13, 24, 0.98) 70%);
+  padding: 24px 16px 60px;
+  box-sizing: border-box;
+}
+
+.auth-gate-card {
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(20, 25, 46, 0.96) 0%, rgba(13, 16, 30, 0.98) 100%);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 145, 0, 0.3);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 122, 24, 0.18);
+  box-sizing: border-box;
+}
+
+.auth-grid-2col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.auth-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.auth-goals-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.auth-activities-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.auth-tabs-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.auth-tab-btn {
+  padding: 10px 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Mobile optimizations (<= 640px) */
+@media (max-width: 640px) {
+  .auth-gate-screen {
+    padding: 12px 8px 48px !important;
+  }
+
+  .auth-gate-card {
+    padding: 16px 12px !important;
+    border-radius: 18px !important;
+    border-color: rgba(255, 145, 0, 0.22) !important;
+  }
+
+  .auth-header-title {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .auth-header-desc {
+    font-size: 0.76rem !important;
+    padding: 6px 10px !important;
+    line-height: 1.35 !important;
+  }
+
+  .auth-tab-btn {
+    font-size: 0.78rem !important;
+    padding: 9px 4px !important;
+  }
+
+  /* Stack credential inputs so labels are never clipped */
+  .auth-grid-2col {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* 2x2 grid for metrics on mobile so inputs are roomy and easy to tap */
+  .auth-metrics-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* 1-column layout for goals so descriptions never overflow off-screen */
+  .auth-goals-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* 1-column layout for activities on mobile */
+  .auth-activities-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+}
+

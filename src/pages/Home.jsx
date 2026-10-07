@@ -4,6 +4,7 @@ import { spin } from '../utils/logicEngine';
 import { soundFx } from '../utils/audio';
 import { triggerConfetti } from '../utils/confetti';
 import GroupModal from '../components/GroupModal';
+import FoodMedia from '../components/FoodMedia';
 import { 
   RefreshCw, Check, Sparkles, Volume2, VolumeX, AlertTriangle, 
   Flame, ShieldAlert, Award, Activity, Clock, 
@@ -675,16 +676,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                         filter: isSpinning ? 'blur(0.35px)' : 'none'
                       }}
                     >
-                      <div 
-                        className="reel-item-emoji"
-                        style={{
-                          background: nutriTheme.bg,
-                          borderColor: nutriTheme.border,
-                          boxShadow: `0 4px 14px ${nutriTheme.glow}`
-                        }}
-                      >
-                        {item.emoji}
-                      </div>
+                      <FoodMedia food={item} size="md" showBadge />
                       <div className="reel-item-info">
                         <div className="reel-item-name">{item.name}</div>
                         <div className="reel-item-meta">
@@ -733,19 +725,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                     </div>
                     
                     <div className="reason-card-title">
-                      <div 
-                        className="reel-item-emoji" 
-                        style={{ 
-                          width: '52px', 
-                          height: '52px', 
-                          fontSize: '2.4rem',
-                          background: getNutritionTheme(result.food.nutrition).bg,
-                          borderColor: getNutritionTheme(result.food.nutrition).border,
-                          boxShadow: `0 6px 18px ${getNutritionTheme(result.food.nutrition).glow}`
-                        }}
-                      >
-                        {result.food.emoji}
-                      </div>
+                      <FoodMedia food={result.food} size="lg" showBadge />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div className="reason-card-foodname">{result.food.name}</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
@@ -1170,8 +1150,8 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                   const food = foods.find(f => f.id === h.foodId);
                   if (!food) return null;
                   return (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.02)', padding: '6px 10px', borderRadius: '8px' }}>
-                      <span style={{ fontSize: '1.4rem' }}>{food.emoji}</span>
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-surface-secondary)', border: '1px solid var(--border-color)', padding: '6px 10px', borderRadius: '10px' }}>
+                      <FoodMedia food={food} size="xs" />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {food.name}

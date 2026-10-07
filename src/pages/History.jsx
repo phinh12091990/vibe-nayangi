@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage, calculateBMI } from '../hooks/useStorage';
+import FoodMedia from '../components/FoodMedia';
 import { 
   ShieldAlert, Activity, AlertTriangle, CheckCircle2, 
   Trash2, Plus, Clock, Utensils, Sparkles, Heart, User, UserPlus
@@ -372,9 +373,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0, flex: 1 }}>
-                      <div style={{ fontSize: '2.2rem', minWidth: '46px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {food.emoji}
-                      </div>
+                      <FoodMedia food={food} size="sm" showBadge />
 
                       <div style={{ minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>

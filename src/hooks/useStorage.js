@@ -170,6 +170,7 @@ function useStorageManager() {
       const matchSeed = seedData.find(s => s.id === f.id || s.name === f.name);
       return {
         ...f,
+        image: f.image || (matchSeed ? matchSeed.image : null),
         priceTier: f.priceTier || (matchSeed ? matchSeed.priceTier : 'standard'),
         mood: Array.isArray(f.mood) ? f.mood : (matchSeed ? matchSeed.mood : ['hot']),
         allergies: Array.isArray(f.allergies) ? f.allergies : (Array.isArray(f.allergens) ? f.allergens : []),
@@ -209,6 +210,7 @@ function useStorageManager() {
       ...food,
       id: Date.now().toString(),
       hidden: false,
+      image: food.image || null,
       priceTier: food.priceTier || 'standard',
       mood: food.mood || ['hot'],
       allergies: food.allergies || [],

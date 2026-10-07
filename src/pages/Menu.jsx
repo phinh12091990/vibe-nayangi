@@ -1,13 +1,29 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useStorage } from '../hooks/useStorage';
+import FoodMedia from '../components/FoodMedia';
 import { 
   Plus, Eye, EyeOff, Search, Trash2, Edit3, X, Check, RotateCcw, 
-  UtensilsCrossed, LayoutList, LayoutGrid, Rows3, ArrowUp
+  UtensilsCrossed, LayoutList, LayoutGrid, Rows3, ArrowUp, Image as ImageIcon
 } from 'lucide-react';
 
 const COMMON_EMOJIS = ['🍜', '🍲', '🍛', '🍚', '🥖', '🥗', '🐟', '🥩', '🍗', '🥘', '🥣', '🍳', '🥟', '🥪', '🌯', '🥞'];
 const NUTRITION_GROUPS = ['Thịt đỏ', 'Thịt trắng', 'Cá', 'Rau củ', 'Tinh bột'];
 const COMMON_ALLERGENS = ['Bò', 'Tôm', 'Mực', 'Cua', 'Đậu phộng', 'Trứng', 'Đậu nành', 'Sữa'];
+
+const PRESET_FOOD_IMAGES = [
+  { label: 'Phở bò', url: 'https://images.unsplash.com/photo-1503764654157-727105533973?auto=format&fit=crop&w=400&q=80', emoji: '🍜' },
+  { label: 'Bún bò Huế', url: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=400&q=80', emoji: '🍲' },
+  { label: 'Cơm tấm', url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80', emoji: '🍛' },
+  { label: 'Bánh mì', url: 'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?auto=format&fit=crop&w=400&q=80', emoji: '🥖' },
+  { label: 'Salad', url: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80', emoji: '🥗' },
+  { label: 'Cơm gà', url: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=400&q=80', emoji: '🍗' },
+  { label: 'Cá hồi', url: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=400&q=80', emoji: '🐟' },
+  { label: 'Gỏi cuốn', url: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80', emoji: '🌯' },
+  { label: 'Bò bít tết', url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80', emoji: '🥩' },
+  { label: 'Cơm chiên', url: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=400&q=80', emoji: '🍚' },
+  { label: 'Bánh xèo', url: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80', emoji: '🥞' },
+  { label: 'Lẩu', url: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=400&q=80', emoji: '🥘' }
+];
 
 export default function MenuPage() {
   const { foods, addFood, updateFood, deleteFood, resetFoods, toggleFoodStatus } = useStorage();
@@ -37,6 +53,7 @@ export default function MenuPage() {
   const [formData, setFormData] = useState({
     name: '',
     emoji: '🍜',
+    image: '',
     nutrition: 'Thịt đỏ',
     priceTier: 'standard',
     categories: ['Trưa', 'Tối'],
@@ -117,6 +134,7 @@ export default function MenuPage() {
     setFormData({
       name: '',
       emoji: '🍜',
+      image: '',
       nutrition: 'Thịt đỏ',
       priceTier: 'standard',
       categories: ['Trưa', 'Tối'],
@@ -130,6 +148,7 @@ export default function MenuPage() {
     setFormData({
       name: food.name,
       emoji: food.emoji || '🍜',
+      image: food.image || '',
       nutrition: food.nutrition || 'Thịt đỏ',
       priceTier: food.priceTier || 'standard',
       categories: [...food.categories],
@@ -209,11 +228,11 @@ export default function MenuPage() {
       <div className="app-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Healthy Menu</h2>
-            <span className="brand-badge">NUTRIGO</span>
+            <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Sổ Món Thực Đơn</h2>
+            <span className="brand-badge">NUTRIGO AI</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
-            Sổ món ăn dinh dưỡng • {foods.length} món ({activeCount} khả dụng)
+            Kho thực đơn dinh dưỡng cá nhân hoá • {foods.length} món ({activeCount} khả dụng)
           </p>
         </div>
 
@@ -446,7 +465,7 @@ export default function MenuPage() {
                     className="compact-food-item"
                     style={{ opacity: food.hidden ? 0.45 : 1 }}
                   >
-                    <div className="compact-food-emoji">{food.emoji}</div>
+                    <FoodMedia food={food} size="sm" showBadge />
                     
                     <div className="compact-food-info">
                       <div className="compact-food-name" title={food.name}>
@@ -514,7 +533,7 @@ export default function MenuPage() {
                     style={{ opacity: food.hidden ? 0.45 : 1 }}
                   >
                     <div className="grid-card-top">
-                      <span style={{ fontSize: '1.9rem' }}>{food.emoji}</span>
+                      <FoodMedia food={food} size="md" showBadge />
                       <button 
                         onClick={() => toggleFoodStatus(food.id)}
                         className="btn-icon"
@@ -582,30 +601,16 @@ export default function MenuPage() {
                       alignItems: 'center', 
                       padding: '14px 18px', 
                       opacity: food.hidden ? 0.45 : 1,
-                      background: food.hidden ? 'rgba(15, 18, 30, 0.4)' : 'var(--glass-card)',
-                      transition: 'all 0.2s ease'
+                      background: food.hidden ? 'rgba(15, 18, 30, 0.4)' : 'var(--bg-card)',
+                      transition: 'all 0.2s ease',
+                      gap: '14px'
                     }}
                   >
-                    <div 
-                      style={{ 
-                        fontSize: '2.2rem', 
-                        minWidth: '56px', 
-                        height: '56px', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: 'var(--radius-md)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        marginRight: '14px'
-                      }}
-                    >
-                      {food.emoji}
-                    </div>
+                    <FoodMedia food={food} size="lg" showBadge />
 
                     <div style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                        <h3 style={{ margin: 0, fontSize: '1.12rem', fontWeight: 700, color: '#ffffff' }}>
+                        <h3 style={{ margin: 0, fontSize: '1.12rem', fontWeight: 800, color: 'var(--text-main)' }}>
                           {food.name}
                         </h3>
                         <span className={getNutritionBadgeClass(food.nutrition)}>
@@ -716,23 +721,65 @@ export default function MenuPage() {
 
             <form onSubmit={handleSaveModal}>
               
-              {/* Emoji Picker */}
-              <div className="form-group">
-                <label className="form-label">Chọn biểu tượng Emoji</label>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                  <div style={{ fontSize: '2rem', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.06)', borderRadius: '12px' }}>
-                    {formData.emoji}
+              {/* Food Media Preview & Custom Image / Preset */}
+              <div className="form-group" style={{ background: 'var(--bg-surface-secondary)', padding: '12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', gap: '14px', alignItems: 'center', marginBottom: '12px' }}>
+                  <FoodMedia food={formData} size="lg" showBadge />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <label className="form-label" style={{ margin: '0 0 4px 0', fontSize: '0.82rem' }}>
+                      Hình ảnh món ăn (URL hoặc chọn sẵn)
+                    </label>
+                    <input 
+                      type="url" 
+                      className="form-input" 
+                      placeholder="Dán link ảnh online (https://...)..."
+                      value={formData.image || ''}
+                      onChange={e => setFormData({ ...formData, image: e.target.value })}
+                      style={{ fontSize: '0.8rem', padding: '6px 10px' }}
+                    />
+                    {formData.image && (
+                      <button 
+                        type="button" 
+                        onClick={() => setFormData({ ...formData, image: '' })}
+                        style={{ background: 'none', border: 'none', color: '#f87171', fontSize: '0.72rem', cursor: 'pointer', padding: 0, marginTop: '3px' }}
+                      >
+                        ✕ Xoá ảnh, dùng icon emoji
+                      </button>
+                    )}
                   </div>
-                  <input 
-                    type="text" 
-                    className="form-input" 
-                    style={{ width: '80px', textAlign: 'center', fontSize: '1.2rem' }}
-                    value={formData.emoji}
-                    maxLength={4}
-                    onChange={e => setFormData({ ...formData, emoji: e.target.value || '🍲' })}
-                  />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>hoặc bấm chọn bên dưới:</span>
                 </div>
+
+                {/* Quick Presets */}
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>
+                  Gợi ý ảnh chụp món ăn chuẩn đẹp:
+                </div>
+                <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
+                  {PRESET_FOOD_IMAGES.map(pre => (
+                    <button
+                      key={pre.label}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image: pre.url, emoji: pre.emoji })}
+                      className="glass-pill"
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '0.73rem',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        background: formData.image === pre.url ? 'var(--primary)' : 'var(--bg-card)',
+                        color: formData.image === pre.url ? 'var(--primary-dark)' : 'var(--text-secondary)',
+                        borderColor: formData.image === pre.url ? 'var(--primary)' : 'var(--border-color)',
+                        fontWeight: formData.image === pre.url ? 800 : 600
+                      }}
+                    >
+                      <span>{pre.emoji}</span> {pre.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Emoji Picker fallback */}
+              <div className="form-group">
+                <label className="form-label" style={{ fontSize: '0.82rem' }}>Biểu tượng Emoji phụ trợ</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {COMMON_EMOJIS.map(em => (
                     <button
@@ -740,12 +787,12 @@ export default function MenuPage() {
                       type="button"
                       onClick={() => setFormData({ ...formData, emoji: em })}
                       style={{
-                        fontSize: '1.3rem',
-                        width: '38px',
-                        height: '38px',
+                        fontSize: '1.2rem',
+                        width: '36px',
+                        height: '36px',
                         borderRadius: '8px',
-                        border: formData.emoji === em ? '2px solid #ff7a18' : '1px solid rgba(255,255,255,0.1)',
-                        background: formData.emoji === em ? 'rgba(255,122,24,0.2)' : 'rgba(255,255,255,0.04)',
+                        border: formData.emoji === em ? '2px solid #ff7a18' : '1px solid var(--border-color)',
+                        background: formData.emoji === em ? 'rgba(255,122,24,0.2)' : 'var(--bg-surface-secondary)',
                         cursor: 'pointer'
                       }}
                     >

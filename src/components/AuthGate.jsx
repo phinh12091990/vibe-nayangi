@@ -177,7 +177,7 @@ export default function AuthGate() {
                   Nay Ăn Gì
                 </span>
                 <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '1px 6px', background: 'var(--primary-light)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
-                  NUTRIGO AI
+                  TRỢ LÝ BỮA ĂN • AI
                 </span>
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>

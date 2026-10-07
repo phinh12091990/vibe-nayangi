@@ -229,7 +229,7 @@ export default function MenuPage() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Sổ Món Thực Đơn</h2>
-            <span className="brand-badge">NUTRIGO AI</span>
+            <span className="brand-badge">TRỢ LÝ BỮA ĂN • AI</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
             Kho thực đơn dinh dưỡng cá nhân hoá • {foods.length} món ({activeCount} khả dụng)

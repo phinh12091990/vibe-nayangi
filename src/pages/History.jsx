@@ -86,7 +86,7 @@ export default function HistoryPage({ onOpenProfile, onOpenCreateAccount, onOpen
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h2 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0 }}>Nhật Ký & Thống Kê Dinh Dưỡng</h2>
-            <span className="brand-badge">NUTRIGO AI</span>
+            <span className="brand-badge">TRỢ LÝ BỮA ĂN • AI</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '3px 0 0' }}>
             Theo dõi dinh dưỡng 7 bữa gần nhất & quản lý thể trạng cá nhân

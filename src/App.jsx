@@ -50,7 +50,7 @@ function AppLayout() {
             </div>
             <div>
               <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 8px', letterSpacing: '0.04em' }}>
-                NUTRIGO DIET • AI
+                TRỢ LÝ BỮA ĂN • AI
               </span>
             </div>
           </div>
@@ -100,11 +100,11 @@ function AppLayout() {
           </NavLink>
         </nav>
 
-        {/* Nutrigo Promo Card in Sidebar */}
+        {/* Sidebar Promo Card */}
         <div className="sidebar-promo-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.4rem' }}>🥗</span>
-            <span className="sidebar-promo-badge">NUTRIGO AI</span>
+            <span className="sidebar-promo-badge">TRỢ LÝ AI</span>
           </div>
           <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.3 }}>
             Chăm Sóc Dinh Dưỡng Chuẩn Cá Nhân Hóa

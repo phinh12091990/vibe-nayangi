@@ -152,23 +152,6 @@ export default function AuthGate() {
     }
   };
 
-  const handleAdminAutofill = () => {
-    setLoginUsername('admin');
-    setLoginPassword('admin');
-    setErrorMsg('');
-  };
-
-  const handleAdminQuickLogin = () => {
-    setLoginUsername('admin');
-    setLoginPassword('admin');
-    const res = loginWithCredentials('admin', 'admin');
-    if (res.success) {
-      triggerConfetti();
-    } else {
-      setErrorMsg(res.message || 'Đăng nhập Quản trị viên không thành công.');
-    }
-  };
-
   return (
     <div className="auth-gate-screen" style={{
       width: '100%',
@@ -708,106 +691,10 @@ export default function AuthGate() {
               </div>
             </form>
 
-            {/* CỔNG QUẢN TRỊ VIÊN (ADMIN) - USER: admin / PASSWORD: admin */}
-            <div 
-              className="glass-panel" 
-              style={{ 
-                padding: '16px', 
-                border: '1px solid rgba(255, 193, 7, 0.45)',
-                background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(20, 25, 46, 0.9) 100%)',
-                borderRadius: '16px',
-                marginTop: '4px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '1.4rem' }}>👑</span>
-                  <div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#ffc107' }}>
-                      Cổng Quản Trị Viên (Admin)
-                    </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                      Toàn quyền xem tất cả thành viên & quản lý hệ thống
-                    </div>
-                  </div>
-                </div>
-                <span className="glass-pill" style={{ color: '#ffc107', borderColor: '#ffc107', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px' }}>
-                  HỆ THỐNG
-                </span>
-              </div>
-
-              {/* Default Admin Info Card */}
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '1fr 1fr', 
-                gap: '8px', 
-                background: 'rgba(0, 0, 0, 0.35)', 
-                padding: '10px 12px', 
-                borderRadius: '10px',
-                marginBottom: '12px',
-                fontSize: '0.8rem',
-                border: '1px solid rgba(255, 193, 7, 0.15)'
-              }}>
-                <div>
-                  <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>User mặc định:</span>
-                  <div style={{ fontWeight: 800, color: '#38bdf8', fontFamily: 'monospace', fontSize: '0.92rem', letterSpacing: '0.04em' }}>
-                    admin
-                  </div>
-                </div>
-                <div>
-                  <span style={{ color: 'var(--text-dim)', fontSize: '0.72rem' }}>Password mặc định:</span>
-                  <div style={{ fontWeight: 800, color: '#ffc107', fontFamily: 'monospace', fontSize: '0.92rem', letterSpacing: '0.04em' }}>
-                    admin
-                  </div>
-                </div>
-              </div>
-
-              {/* Admin Actions */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                <button
-                  type="button"
-                  onClick={handleAdminAutofill}
-                  className="glass-pill"
-                  style={{
-                    padding: '8px 10px',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    justifyContent: 'center',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    borderColor: 'rgba(255, 255, 255, 0.15)',
-                    color: '#ffffff',
-                    cursor: 'pointer'
-                  }}
-                  title="Điền tự động user: admin / password: admin vào form"
-                >
-                  📝 Điền mẫu Admin
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAdminQuickLogin}
-                  className="glass-pill"
-                  style={{
-                    padding: '8px 10px',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                    justifyContent: 'center',
-                    background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.3) 0%, rgba(255, 152, 0, 0.3) 100%)',
-                    borderColor: '#ffc107',
-                    color: '#ffc107',
-                    cursor: 'pointer'
-                  }}
-                  title="Đăng nhập ngay lập tức với quyền Quản trị viên"
-                >
-                  ⚡ Đăng nhập Admin ➔
-                </button>
-              </div>
-            </div>
-
             {/* Privacy Protection Note */}
-            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+            <div style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--text-dim)', marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               <Lock size={13} color="#10b981" />
-              <span>Dữ liệu từng tài khoản được lưu trữ độc lập, bảo mật riêng tư.</span>
+              <span>Hệ thống bảo mật dữ liệu riêng tư & an toàn tuyệt đối.</span>
             </div>
 
           </div>

@@ -1877,3 +1877,724 @@ h1, h2, h3, h4 {
   object-fit: cover;
   transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+
+/* ==========================================================================
+   Modern Split-View Auth Gate & Food CAPTCHA (Images 1, 2, 3, 4, 5)
+   ========================================================================== */
+
+/* Split Card Container */
+.auth-gate-split-card {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1.08fr;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Left Side: Landscape Card */
+.auth-split-left {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-landscape-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: background 0.4s ease;
+}
+
+.auth-landscape-card.night {
+  background: linear-gradient(180deg, #090e1a 0%, #0f172a 50%, #1e293b 100%);
+  color: #f8fafc;
+}
+
+.auth-landscape-card.day {
+  background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 45%, #ecfdf5 100%);
+  color: #0f172a;
+}
+
+.landscape-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Celestial Bodies: Moon (Dark) & Sun (Light) */
+.landscape-celestial {
+  position: absolute;
+  top: 36px;
+  right: 40px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  transition: all 0.4s ease;
+}
+
+.landscape-celestial.moon .moon-sphere {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 75%, #94a3b8 100%);
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 0 0 70px rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.moon-crater {
+  position: absolute;
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 50%;
+}
+.moon-crater.c1 { width: 14px; height: 14px; top: 12px; left: 16px; }
+.moon-crater.c2 { width: 8px; height: 8px; top: 32px; left: 14px; }
+.moon-crater.c3 { width: 10px; height: 10px; top: 22px; right: 14px; }
+
+.landscape-celestial.sun .sun-sphere {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fef08a 0%, #facc15 60%, #eab308 100%);
+  box-shadow: 0 0 45px rgba(250, 204, 21, 0.85), 0 0 90px rgba(250, 204, 21, 0.4);
+}
+
+/* Stars */
+.landscape-stars {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 120px;
+  height: 160px;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+.landscape-stars .star {
+  position: absolute;
+  animation: starTwinkle 3s infinite ease-in-out;
+}
+.landscape-stars .s1 { top: 15px; left: 25px; font-size: 14px; animation-delay: 0s; }
+.landscape-stars .s2 { top: 40px; left: 80px; font-size: 18px; animation-delay: 1.2s; }
+.landscape-stars .s3 { top: 85px; left: 35px; font-size: 13px; animation-delay: 0.6s; }
+.landscape-stars .s4 { top: 110px; left: 95px; font-size: 16px; animation-delay: 1.8s; }
+.landscape-stars .s5 { top: 25px; left: 140px; font-size: 14px; animation-delay: 0.9s; }
+.landscape-stars .s6 { top: 75px; left: 170px; font-size: 17px; animation-delay: 2.1s; }
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* Mountains SVG & Foreground Trees */
+.landscape-mountains {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  pointer-events: none;
+}
+
+.landscape-trees {
+  position: absolute;
+  bottom: 75px;
+  left: 24px;
+  display: flex;
+  gap: 6px;
+  font-size: 1.3rem;
+  opacity: 0.65;
+  color: #042f2e;
+}
+
+.auth-landscape-card.night .landscape-trees {
+  color: #020617;
+}
+
+/* Floating Nutrition Badges */
+.landscape-badges {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.floating-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.auth-landscape-card.night .floating-badge {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #38bdf8;
+}
+
+.auth-landscape-card.day .floating-badge {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #059669;
+}
+
+/* Landscape Content Overlay */
+.landscape-content-overlay {
+  position: relative;
+  z-index: 5;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.landscape-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.landscape-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.auth-landscape-card.night .landscape-title {
+  color: #fff;
+}
+
+.auth-landscape-card.day .landscape-title {
+  color: #0f172a;
+}
+
+.landscape-desc {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* Right Side: Login Form */
+.auth-split-right {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background: var(--bg-surface);
+}
+
+.auth-top-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.auth-lang-pills {
+  display: flex;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  gap: 2px;
+}
+
+.auth-lang-pill {
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-lang-pill.active {
+  background: var(--primary);
+  color: var(--primary-dark);
+  box-shadow: 0 1px 4px var(--primary-glow);
+}
+
+.auth-main-heading {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.auth-error-banner {
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  font-size: 0.82rem;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+}
+
+/* Input Fields */
+.auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all 0.22s ease;
+  overflow: hidden;
+}
+
+.auth-input-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.auth-text-input {
+  width: 100%;
+  height: 46px;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0 14px 0 38px;
+  font-size: 0.92rem;
+  color: var(--text-main);
+  box-sizing: border-box;
+}
+
+/* FLASHLIGHT BEAM INTERACTION (Images 1 & 2) */
+.password-flashlight-field {
+  position: relative;
+}
+
+.password-flashlight-field.beam-on {
+  border-color: #f59e0b;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.28);
+}
+
+.flashlight-beam-light {
+  position: absolute;
+  top: 0;
+  right: 42px;
+  bottom: 0;
+  left: 32px;
+  background: linear-gradient(270deg, rgba(254, 240, 138, 0.45) 0%, rgba(254, 240, 138, 0.22) 40%, rgba(254, 240, 138, 0.05) 85%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 1;
+}
+
+.password-flashlight-field.beam-on .flashlight-beam-light {
+  opacity: 1;
+}
+
+.btn-flashlight-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.btn-flashlight-toggle:hover {
+  background: rgba(254, 240, 138, 0.2);
+}
+
+.btn-flashlight-toggle.illuminated {
+  color: #f59e0b;
+}
+
+.btn-flashlight-toggle.illuminated .flashlight-svg {
+  filter: drop-shadow(0 0 6px #f59e0b);
+}
+
+/* Options Row (Remember Me & Forgot Password) */
+.auth-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 0 2px;
+}
+
+.auth-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.auth-link-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.auth-link-btn:hover {
+  color: var(--primary-dark);
+}
+
+.auth-hint-card {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px dashed rgba(245, 158, 11, 0.35);
+  font-size: 0.74rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Food CAPTCHA Status Pill */
+.captcha-status-pill {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(234, 88, 12, 0.08);
+  border: 1px dashed rgba(234, 88, 12, 0.35);
+  color: #ea580c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.captcha-status-pill:hover {
+  background: rgba(234, 88, 12, 0.16);
+  transform: translateY(-1px);
+}
+
+.captcha-status-pill.verified {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #059669;
+}
+
+/* Submit CTA */
+.btn-auth-submit {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--primary-dark);
+  border: none;
+  font-size: 0.96rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--primary-glow);
+  transition: all 0.22s ease;
+  margin-top: 4px;
+}
+
+.btn-auth-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.auth-switch-footer {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.auth-switch-link {
+  background: none;
+  border: none;
+  color: #ea580c;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.82rem;
+}
+
+.auth-switch-link:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Food CAPTCHA Modal (Matching Image 5)
+   ========================================================================== */
+.food-captcha-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.22s ease-out;
+}
+
+.food-captcha-modal {
+  width: 100%;
+  max-width: 410px;
+  background: var(--bg-card);
+  border: 2px dashed rgba(16, 185, 129, 0.4);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
+  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.captcha-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.captcha-lang-switch {
+  display: flex;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  gap: 2px;
+}
+
+.captcha-lang-btn {
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+}
+
+.captcha-lang-btn.active {
+  background: var(--primary);
+  color: var(--primary-dark);
+}
+
+.captcha-theme-btn,
+.captcha-icon-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.captcha-theme-btn:hover,
+.captcha-icon-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.captcha-instruction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  background: var(--bg-surface-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-align: center;
+}
+
+/* 4x4 Grid of Cute Food Tiles */
+.captcha-grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: #0d4a3e;
+  padding: 12px;
+  border-radius: 18px;
+  margin-bottom: 14px;
+}
+
+.captcha-tile {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.captcha-tile:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.captcha-tile.selected {
+  border-color: #f59e0b;
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.8);
+  z-index: 2;
+}
+
+.captcha-tile.matched {
+  opacity: 0.45;
+  cursor: default;
+  transform: scale(0.95);
+}
+
+.captcha-tile.wrong {
+  animation: shake 0.4s ease-in-out;
+  border-color: #ef4444;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.captcha-tile-emoji {
+  font-size: 1.8rem;
+  line-height: 1;
+  user-select: none;
+}
+
+.captcha-tile-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.captcha-footer-status {
+  text-align: center;
+  min-height: 24px;
+}
+
+.captcha-success-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #10b981;
+  animation: bounceSuccess 0.4s ease;
+}
+
+@keyframes bounceSuccess {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.captcha-tip-text {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* Responsive Stacking for Split Card on Mobile */
+@media (max-width: 768px) {
+  .auth-gate-split-card {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+  }
+
+  .auth-landscape-card {
+    min-height: 190px;
+    padding: 16px;
+  }
+
+  .landscape-celestial {
+    top: 18px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .landscape-mountains {
+    height: 120px;
+  }
+
+  .landscape-trees {
+    bottom: 40px;
+    font-size: 1rem;
+  }
+
+  .auth-split-right {
+    padding: 20px 18px;
+  }
+}

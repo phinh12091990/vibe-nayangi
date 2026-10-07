@@ -3,14 +3,14 @@ import { RefreshCw, X, CheckCircle2, ShieldCheck, Sun, Moon, Sparkles, Trophy } 
 import { triggerConfetti } from '../utils/confetti';
 
 const FOOD_ITEMS = [
-  { id: 'pho', nameVi: 'Phở bò', nameEn: 'Beef Pho', image: 'https://images.unsplash.com/photo-1503764654157-727105533973?auto=format&fit=crop&w=300&q=85', border: '#f97316' },
-  { id: 'sushi', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=300&q=85', border: '#ec4899' },
-  { id: 'bento', nameVi: 'Cơm Bento', nameEn: 'Bento Box', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=85', border: '#22c55e' },
-  { id: 'pizza', nameVi: 'Pizza phô mai', nameEn: 'Cheese Pizza', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=300&q=85', border: '#eab308' },
-  { id: 'steak', nameVi: 'Bò bít tết', nameEn: 'Beef Steak', image: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=300&q=85', border: '#f43f5e' },
-  { id: 'salad', nameVi: 'Salad xanh', nameEn: 'Green Salad', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=85', border: '#6366f1' },
-  { id: 'burger', nameVi: 'Burger phô mai', nameEn: 'Cheese Burger', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=85', border: '#84cc16' },
-  { id: 'banhmi', nameVi: 'Bánh mì', nameEn: 'Baguette', image: 'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?auto=format&fit=crop&w=300&q=85', border: '#ea580c' },
+  { id: 'pho', nameVi: 'Phở bò tái nạm', nameEn: 'Beef Pho', image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=400&q=80', border: '#f97316' },
+  { id: 'sushi', nameVi: 'Sushi cá hồi', nameEn: 'Salmon Sushi', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80', border: '#ec4899' },
+  { id: 'pizza', nameVi: 'Pizza nướng phô mai', nameEn: 'Cheese Pizza', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=400&q=80', border: '#eab308' },
+  { id: 'burger', nameVi: 'Burger bò phô mai', nameEn: 'Cheeseburger', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80', border: '#84cc16' },
+  { id: 'steak', nameVi: 'Bò bít tết áp chảo', nameEn: 'Beef Steak', image: 'https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=400&q=80', border: '#f43f5e' },
+  { id: 'salad', nameVi: 'Salad rau củ tươi', nameEn: 'Fresh Salad', image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=400&q=80', border: '#10b981' },
+  { id: 'banhmi', nameVi: 'Bánh mì giòn', nameEn: 'Crispy Baguette', image: 'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?auto=format&fit=crop&w=400&q=80', border: '#ea580c' },
+  { id: 'pasta', nameVi: 'Mì Ý sốt cà chua', nameEn: 'Pasta Spaghetti', image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=400&q=80', border: '#6366f1' },
 ];
 
 const TOTAL_PAIRS = 8; // Bắt buộc ghép đúng đủ tất cả 8/8 cặp mới mở khoá!
@@ -200,7 +200,7 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, la
           </div>
         </div>
 
-        {/* 4x4 Grid of Cute Food Tiles (Matching Image 5 layout: pastel colors & cute frame) */}
+        {/* 4x4 Grid of Cute Food Tiles */}
         <div className="captcha-grid-container">
           {tiles.map((tile) => {
             const isSelected = selectedTiles.some(t => t.uniqueId === tile.uniqueId);
@@ -214,7 +214,12 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, la
                 type="button"
                 className={`captcha-tile photo-tile ${isSelected ? 'selected' : ''} ${isMatched ? 'matched' : ''} ${isWrong ? 'wrong' : ''}`}
                 style={{ 
-                  borderColor: isSelected ? '#f59e0b' : isMatched ? '#10b981' : 'rgba(255, 255, 255, 0.12)' 
+                  borderColor: isSelected ? '#f59e0b' : isMatched ? '#10b981' : 'rgba(255, 255, 255, 0.14)',
+                  boxShadow: isSelected 
+                    ? '0 0 20px rgba(245, 158, 11, 0.75)' 
+                    : isMatched 
+                      ? '0 0 16px rgba(16, 185, 129, 0.5)' 
+                      : '0 4px 12px rgba(0, 0, 0, 0.4)'
                 }}
                 onClick={() => handleTileClick(tile)}
                 disabled={isMatched || isCompleted}
@@ -222,10 +227,30 @@ export default function FoodCaptcha({ onSuccess, onClose, theme, toggleTheme, la
               >
                 <img 
                   src={tile.image} 
-                  alt={foodName} 
+                  alt="" 
                   className="captcha-tile-img" 
                   loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    if (e.currentTarget.nextElementSibling) {
+                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                    }
+                  }}
                 />
+                <div 
+                  className="captcha-fallback-icon"
+                  style={{ 
+                    display: 'none', 
+                    width: '100%', 
+                    height: '100%', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    fontSize: '1.8rem',
+                    background: 'var(--bg-surface-secondary)'
+                  }}
+                >
+                  🍲
+                </div>
                 {isMatched && (
                   <span className="captcha-tile-check">
                     <CheckCircle2 size={18} color="#059669" />

@@ -6,6 +6,7 @@ import MenuPage from './pages/Menu';
 import HistoryPage from './pages/History';
 import AccountModal from './components/AccountModal';
 import AuthGate from './components/AuthGate';
+import BrandLogo from './components/BrandLogo';
 import { StorageProvider, useStorage, calculateBMI } from './hooks/useStorage';
 
 function AppLayout() {
@@ -41,17 +42,18 @@ function AppLayout() {
       <aside className="desktop-sidebar">
         {/* Brand */}
         <div className="sidebar-logo">
-          <div style={{ width: '44px', height: '44px', minWidth: '44px', borderRadius: '14px', background: 'linear-gradient(135deg, #bbf246 0%, #a3e635 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 14px rgba(187, 242, 70, 0.45)' }}>
-            <span style={{ fontSize: '1.5rem' }}>🍲</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, overflow: 'hidden' }}>
-            <div className="brand-title" style={{ fontSize: '1.35rem', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
-              Nay Ăn Gì
-            </div>
-            <div>
-              <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 8px', letterSpacing: '0.04em' }}>
+          <BrandLogo size={44} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div className="brand-title" style={{ fontSize: '1.25rem', lineHeight: 1.15, whiteSpace: 'nowrap' }}>
+                Nay Ăn Gì
+              </div>
+              <span className="brand-badge" style={{ fontSize: '0.6rem', padding: '2px 7px', letterSpacing: '0.04em' }}>
                 TRỢ LÝ BỮA ĂN • AI
               </span>
+            </div>
+            <div style={{ fontSize: '0.71rem', color: 'var(--text-muted)', lineHeight: 1.25, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Dinh dưỡng & Thực đơn chuẩn vóc dáng
             </div>
           </div>
         </div>
@@ -212,11 +214,17 @@ function AppLayout() {
       <div className="main-content-wrapper">
         
         {/* Mobile-only Top Brand Header */}
-        <header className="mobile-only-header" style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '1.4rem' }}>🍲</span>
+        <header className="mobile-only-header" style={{ padding: '8px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <BrandLogo size={36} />
             <div>
-              <h1 className="brand-title" style={{ fontSize: '1.15rem' }}>Nay Ăn Gì</h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <h1 className="brand-title" style={{ fontSize: '1.05rem', margin: 0, lineHeight: 1.2 }}>Nay Ăn Gì</h1>
+                <span className="brand-badge" style={{ fontSize: '0.55rem', padding: '1px 5px' }}>TRỢ LÝ BỮA ĂN • AI</span>
+              </div>
+              <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: '1px' }}>
+                Dinh dưỡng & Thực đơn chuẩn vóc dáng
+              </div>
             </div>
           </div>
 

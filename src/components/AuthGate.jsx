@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStorage, calculateBMI, calculateTDEE } from '../hooks/useStorage';
 import { triggerConfetti } from '../utils/confetti';
+import BrandLogo from './BrandLogo';
 import { 
   Lock, Sparkles, UserPlus, LogIn, Activity, Target, 
   ShieldAlert, Eye, EyeOff, Check, Flame, ArrowRight, UserCheck,
@@ -157,30 +158,18 @@ export default function AuthGate() {
         
         {/* Top Utility Bar: Brand Identity & Theme Switcher */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              borderRadius: '12px', 
-              background: 'linear-gradient(135deg, #bbf246 0%, #a3e635 100%)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '1.4rem',
-              boxShadow: '0 4px 14px rgba(187, 242, 70, 0.4)'
-            }}>
-              🍲
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <BrandLogo size={44} />
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '1.22rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
                   Nay Ăn Gì
                 </span>
-                <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '1px 6px', background: 'var(--primary-light)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
+                <span className="brand-badge" style={{ fontSize: '0.62rem', padding: '2px 7px', background: 'var(--primary-light)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
                   TRỢ LÝ BỮA ĂN • AI
                 </span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '0.73rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Dinh dưỡng & Thực đơn chuẩn vóc dáng
               </div>
             </div>

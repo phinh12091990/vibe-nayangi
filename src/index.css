@@ -1882,20 +1882,21 @@ h1, h2, h3, h4 {
    Modern Split-View Auth Gate & Food CAPTCHA (Images 1, 2, 3, 4, 5)
    ========================================================================== */
 
-/* Split Card Container */
+/* Split Card Container - Premium Glassmorphism & Subtle Glow */
 .auth-gate-split-card {
   width: 100%;
-  max-width: 860px;
+  max-width: 890px;
   margin: 0 auto;
   background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
   display: grid;
   grid-template-columns: 1fr 1.08fr;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 65px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
   box-sizing: border-box;
-  animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
 /* Left Side: Landscape Card */
@@ -1941,92 +1942,110 @@ h1, h2, h3, h4 {
 }
 
 /* Celestial Bodies: Moon (Dark) & Sun (Light) */
+.landscape-ambient-radial {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 .landscape-celestial {
   position: absolute;
-  top: 36px;
-  right: 40px;
-  width: 60px;
-  height: 60px;
+  top: 32px;
+  right: 36px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   transition: all 0.4s ease;
+  z-index: 2;
 }
 
 .landscape-celestial.moon .moon-sphere {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 75%, #94a3b8 100%);
-  box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), 0 0 70px rgba(255, 255, 255, 0.3);
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e2e8f0 55%, #94a3b8 100%);
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.85), 0 0 80px rgba(255, 255, 255, 0.4);
   position: relative;
   overflow: hidden;
 }
 
 .moon-crater {
   position: absolute;
-  background: rgba(148, 163, 184, 0.35);
+  background: rgba(148, 163, 184, 0.4);
   border-radius: 50%;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
 }
-.moon-crater.c1 { width: 14px; height: 14px; top: 12px; left: 16px; }
-.moon-crater.c2 { width: 8px; height: 8px; top: 32px; left: 14px; }
-.moon-crater.c3 { width: 10px; height: 10px; top: 22px; right: 14px; }
+.moon-crater.c1 { width: 16px; height: 16px; top: 14px; left: 16px; }
+.moon-crater.c2 { width: 9px; height: 9px; top: 36px; left: 18px; }
+.moon-crater.c3 { width: 12px; height: 12px; top: 24px; right: 14px; }
+.moon-crater.c4 { width: 7px; height: 7px; bottom: 12px; right: 24px; }
 
 .landscape-celestial.sun .sun-sphere {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%, #fef08a 0%, #facc15 60%, #eab308 100%);
-  box-shadow: 0 0 45px rgba(250, 204, 21, 0.85), 0 0 90px rgba(250, 204, 21, 0.4);
+  background: radial-gradient(circle at 38% 38%, #fef08a 0%, #facc15 60%, #eab308 100%);
+  box-shadow: 0 0 50px rgba(250, 204, 21, 0.9), 0 0 100px rgba(250, 204, 21, 0.45);
 }
 
 /* Stars */
 .landscape-stars {
   position: absolute;
-  top: 20px;
+  top: 15px;
   left: 20px;
   right: 120px;
-  height: 160px;
-  color: rgba(255, 255, 255, 0.7);
+  height: 180px;
+  color: rgba(255, 255, 255, 0.85);
   pointer-events: none;
+  z-index: 1;
 }
 .landscape-stars .star {
   position: absolute;
   animation: starTwinkle 3s infinite ease-in-out;
 }
 .landscape-stars .s1 { top: 15px; left: 25px; font-size: 14px; animation-delay: 0s; }
-.landscape-stars .s2 { top: 40px; left: 80px; font-size: 18px; animation-delay: 1.2s; }
-.landscape-stars .s3 { top: 85px; left: 35px; font-size: 13px; animation-delay: 0.6s; }
-.landscape-stars .s4 { top: 110px; left: 95px; font-size: 16px; animation-delay: 1.8s; }
-.landscape-stars .s5 { top: 25px; left: 140px; font-size: 14px; animation-delay: 0.9s; }
-.landscape-stars .s6 { top: 75px; left: 170px; font-size: 17px; animation-delay: 2.1s; }
+.landscape-stars .s2 { top: 45px; left: 75px; font-size: 19px; animation-delay: 1.2s; }
+.landscape-stars .s3 { top: 90px; left: 30px; font-size: 13px; animation-delay: 0.6s; }
+.landscape-stars .s4 { top: 120px; left: 95px; font-size: 16px; animation-delay: 1.8s; }
+.landscape-stars .s5 { top: 25px; left: 135px; font-size: 14px; animation-delay: 0.9s; }
+.landscape-stars .s6 { top: 80px; left: 165px; font-size: 18px; animation-delay: 2.1s; }
+.landscape-stars .s7 { top: 140px; left: 45px; font-size: 12px; animation-delay: 1.5s; }
+.landscape-stars .s8 { top: 110px; left: 150px; font-size: 15px; animation-delay: 2.7s; }
 
 @keyframes starTwinkle {
-  0%, 100% { opacity: 0.3; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.15); }
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* Mountains SVG & Foreground Trees */
+/* Mountains SVG & Foreground Trees - Enhanced full scale */
 .landscape-mountains {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 200px;
+  height: 270px;
   pointer-events: none;
+  z-index: 2;
 }
 
-.landscape-trees {
+.landscape-mist-fog {
   position: absolute;
-  bottom: 75px;
-  left: 24px;
-  display: flex;
-  gap: 6px;
-  font-size: 1.3rem;
-  opacity: 0.65;
-  color: #042f2e;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(180deg, transparent 0%, rgba(9, 14, 26, 0.75) 100%);
+  pointer-events: none;
+  z-index: 3;
 }
 
-.auth-landscape-card.night .landscape-trees {
-  color: #020617;
+.auth-landscape-card.day .landscape-mist-fog {
+  background: linear-gradient(180deg, transparent 0%, rgba(236, 253, 245, 0.75) 100%);
 }
 
 /* Floating Nutrition Badges */
@@ -2041,20 +2060,21 @@ h1, h2, h3, h4 {
 .floating-badge {
   font-size: 0.74rem;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 5px 11px;
   border-radius: var(--radius-full);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .auth-landscape-card.night .floating-badge {
-  background: rgba(30, 41, 59, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #38bdf8;
 }
 
 .auth-landscape-card.day .floating-badge {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #059669;
 }
@@ -2064,21 +2084,35 @@ h1, h2, h3, h4 {
   position: relative;
   z-index: 5;
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 24px;
 }
 
 .landscape-brand-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .landscape-title {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 900;
   margin: 0;
+  line-height: 1.15;
   letter-spacing: -0.01em;
+}
+
+.landscape-subtitle-tag {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(187, 242, 70, 0.2);
+  color: #bbf246;
+  border: 1px solid rgba(187, 242, 70, 0.4);
+  display: inline-block;
+  margin-top: 2px;
 }
 
 .auth-landscape-card.night .landscape-title {
@@ -2162,7 +2196,7 @@ h1, h2, h3, h4 {
   text-align: left;
 }
 
-/* Input Fields */
+/* Input Fields - Sleek modern dark borders */
 .auth-input-wrapper {
   position: relative;
   display: flex;
@@ -2170,13 +2204,17 @@ h1, h2, h3, h4 {
   background: var(--bg-surface-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  transition: all 0.22s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+}
+
+.auth-input-wrapper:hover {
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .auth-input-wrapper:focus-within {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-light), 0 0 16px rgba(187, 242, 70, 0.15);
 }
 
 .auth-input-icon {
@@ -2189,12 +2227,13 @@ h1, h2, h3, h4 {
 
 .auth-text-input {
   width: 100%;
-  height: 46px;
+  height: 48px;
   background: transparent;
   border: none;
   outline: none;
-  padding: 0 14px 0 38px;
-  font-size: 0.92rem;
+  padding: 0 14px 0 40px;
+  font-size: 0.94rem;
+  font-weight: 500;
   color: var(--text-main);
   box-sizing: border-box;
 }
@@ -2206,15 +2245,15 @@ h1, h2, h3, h4 {
 
 .password-flashlight-field.beam-on {
   border-color: #f59e0b;
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
 }
 
 .flashlight-beam-light {
   position: absolute;
   top: 0;
-  right: 42px;
+  right: 44px;
   bottom: 0;
-  left: 32px;
+  left: 36px;
   background: linear-gradient(270deg, rgba(254, 240, 138, 0.45) 0%, rgba(254, 240, 138, 0.22) 40%, rgba(254, 240, 138, 0.05) 85%, transparent 100%);
   opacity: 0;
   pointer-events: none;
@@ -2278,15 +2317,15 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
-  padding: 0 2px;
+  padding: 0 4px;
 }
 
 .auth-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   cursor: pointer;
   user-select: none;
 }
@@ -2295,80 +2334,87 @@ h1, h2, h3, h4 {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
   padding: 0;
   transition: color 0.2s ease;
 }
 
 .auth-link-btn:hover {
-  color: var(--primary-dark);
+  color: var(--primary);
 }
 
 .auth-hint-card {
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
   background: rgba(245, 158, 11, 0.12);
   border: 1px dashed rgba(245, 158, 11, 0.35);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   color: var(--text-main);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
 }
 
 /* Food CAPTCHA Status Pill */
 .captcha-status-pill {
   width: 100%;
-  padding: 9px 12px;
-  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  border-radius: var(--radius-full);
   background: rgba(234, 88, 12, 0.08);
-  border: 1px dashed rgba(234, 88, 12, 0.35);
+  border: 1.5px dashed rgba(234, 88, 12, 0.45);
   color: #ea580c;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .captcha-status-pill:hover {
   background: rgba(234, 88, 12, 0.16);
+  border-color: #ea580c;
   transform: translateY(-1px);
 }
 
 .captcha-status-pill.verified {
   background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #059669;
+  border: 1.5px solid rgba(16, 185, 129, 0.5);
+  color: #10b981;
 }
 
-/* Submit CTA */
+/* Submit CTA - Premium Glow Pill Button */
 .btn-auth-submit {
   width: 100%;
-  height: 48px;
+  height: 50px;
   border-radius: var(--radius-full);
-  background: var(--primary);
-  color: var(--primary-dark);
+  background: linear-gradient(135deg, #bbf246 0%, #a3e635 100%);
+  color: #0f172a;
   border: none;
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 16px var(--primary-glow);
-  transition: all 0.22s ease;
+  box-shadow: 0 4px 18px rgba(187, 242, 70, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   margin-top: 4px;
 }
 
 .btn-auth-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--primary-glow);
+  box-shadow: 0 8px 26px rgba(187, 242, 70, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, #c7f75a 0%, #a3e635 100%);
+}
+
+.btn-auth-submit:active {
+  transform: translateY(0);
 }
 
 .auth-switch-footer {

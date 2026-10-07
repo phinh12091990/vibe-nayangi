@@ -66,6 +66,8 @@ function FlashlightButton({ isOn, onToggle }) {
 
 /**
  * Landscape Illustration Card matching sample (Images 1, 2, 3)
+ * Full rich vector artwork: layered crisp mountains, pine forest silhouetted horizon,
+ * glowing crater moon/sun, soft misty fog, floating nutrient badges.
  */
 function AuthLandscape({ theme, lang }) {
   const isDark = theme !== 'light';
@@ -73,6 +75,10 @@ function AuthLandscape({ theme, lang }) {
   return (
     <div className={`auth-landscape-card ${isDark ? 'night' : 'day'}`}>
       <div className="landscape-sky">
+        
+        {/* Soft background ambient glow */}
+        <div className="landscape-ambient-radial" />
+
         {/* Celestial body: Moon in Night, Sun in Day */}
         {isDark ? (
           <div className="landscape-celestial moon" title="Mặt trăng đêm Nay Ăn Gì">
@@ -81,16 +87,17 @@ function AuthLandscape({ theme, lang }) {
               <span className="moon-crater c1" />
               <span className="moon-crater c2" />
               <span className="moon-crater c3" />
+              <span className="moon-crater c4" />
             </div>
           </div>
         ) : (
-          <div className="landscape-celestial sun" title="Mặt trời sáng mai Nay Ăn Gì">
+          <div className="landscape-celestial sun" title="Mặt trời rạng rỡ Nay Ăn Gì">
             <div className="sun-aura" />
             <div className="sun-sphere" />
           </div>
         )}
 
-        {/* Twinkling stars in night mode */}
+        {/* Twinkling stars & constellations in night mode */}
         {isDark && (
           <div className="landscape-stars">
             <span className="star s1">✦</span>
@@ -99,54 +106,112 @@ function AuthLandscape({ theme, lang }) {
             <span className="star s4">·</span>
             <span className="star s5">✦</span>
             <span className="star s6">·</span>
+            <span className="star s7">✦</span>
+            <span className="star s8">·</span>
           </div>
         )}
 
-        {/* Mountain layers */}
-        <svg className="landscape-mountains" viewBox="0 0 400 240" preserveAspectRatio="none">
-          {/* Back mountain ridge */}
+        {/* Layered Crisp Geometric Mountain Peaks (Exact match to sample 1 & 2) */}
+        <svg className="landscape-mountains" viewBox="0 0 500 360" preserveAspectRatio="none">
+          <defs>
+            {/* Back Mountain Gradients */}
+            <linearGradient id="backMtnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isDark ? "#2a3b53" : "#bfdbfe"} />
+              <stop offset="100%" stopColor={isDark ? "#141e2e" : "#93c5fd"} />
+            </linearGradient>
+            
+            {/* Mid Mountain Gradients */}
+            <linearGradient id="midMtnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isDark ? "#1e293b" : "#6ee7b7"} />
+              <stop offset="100%" stopColor={isDark ? "#0f172a" : "#34d399"} />
+            </linearGradient>
+
+            {/* Front Peak Gradients */}
+            <linearGradient id="frontMtnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isDark ? "#121b29" : "#10b981"} />
+              <stop offset="100%" stopColor={isDark ? "#080d14" : "#059669"} />
+            </linearGradient>
+          </defs>
+
+          {/* Layer 1: Distant majestic mountain ridges */}
           <path 
-            d="M-20 240 L80 120 L180 180 L280 100 L420 240 Z" 
-            fill={isDark ? "rgba(30, 41, 59, 0.7)" : "rgba(147, 197, 253, 0.45)"} 
+            d="M-50 360 L90 140 L190 220 L310 110 L430 210 L550 360 Z" 
+            fill="url(#backMtnGrad)" 
+            opacity="0.75"
           />
-          {/* Middle mountain ridge */}
+
+          {/* Shaded facets for 3D realism on back peaks */}
           <path 
-            d="M-20 240 L120 150 L200 190 L320 130 L420 240 Z" 
-            fill={isDark ? "rgba(15, 23, 42, 0.85)" : "rgba(96, 165, 250, 0.55)"} 
+            d="M90 140 L190 220 L140 360 L-50 360 Z" 
+            fill={isDark ? "rgba(15, 23, 42, 0.45)" : "rgba(59, 130, 246, 0.2)"} 
           />
-          {/* Front mountain ridge */}
           <path 
-            d="M-20 240 L60 170 L160 210 L260 160 L420 240 Z" 
-            fill={isDark ? "#090d16" : "#6ee7b7"} 
+            d="M310 110 L430 210 L380 360 L240 360 Z" 
+            fill={isDark ? "rgba(15, 23, 42, 0.55)" : "rgba(37, 99, 235, 0.25)"} 
           />
+
+          {/* Layer 2: Middle dramatic peaks */}
+          <path 
+            d="M-50 360 L40 210 L160 135 L270 230 L390 150 L550 360 Z" 
+            fill="url(#midMtnGrad)" 
+            opacity="0.9"
+          />
+          <path 
+            d="M160 135 L270 230 L220 360 L80 360 Z" 
+            fill={isDark ? "rgba(10, 15, 25, 0.6)" : "rgba(5, 150, 105, 0.25)"} 
+          />
+
+          {/* Layer 3: Foreground sweeping ridges with pine silhouettes */}
+          <path 
+            d="M-50 360 L110 220 L230 280 L350 205 L550 360 Z" 
+            fill="url(#frontMtnGrad)" 
+          />
+
+          {/* Silhouette Pine Trees array along slopes */}
+          <g fill={isDark ? "#05090f" : "#064e3b"} opacity="0.95">
+            {/* Left slope pines */}
+            <polygon points="20,270 12,295 28,295" />
+            <polygon points="32,260 22,290 42,290" />
+            <polygon points="46,252 35,285 57,285" />
+            <polygon points="60,245 48,280 72,280" />
+            <polygon points="76,240 64,275 88,275" />
+            <polygon points="92,235 80,272 104,272" />
+            
+            {/* Mid ridge pines */}
+            <polygon points="260,265 248,295 272,295" />
+            <polygon points="278,255 264,290 292,290" />
+            <polygon points="295,245 280,285 310,285" />
+            <polygon points="315,235 300,275 330,275" />
+            <polygon points="335,225 320,268 350,268" />
+            <polygon points="352,218 338,260 366,260" />
+            <polygon points="370,228 356,268 384,268" />
+            <polygon points="390,240 376,278 404,278" />
+          </g>
         </svg>
 
-        {/* Foreground Pine Trees */}
-        <div className="landscape-trees">
-          <span className="tree t1">▲</span>
-          <span className="tree t2">▲</span>
-          <span className="tree t3">▲</span>
-          <span className="tree t4">▲</span>
-          <span className="tree t5">▲</span>
-        </div>
+        {/* Ambient Lake / Valley Reflection Mist */}
+        <div className="landscape-mist-fog" />
       </div>
 
-      {/* Floating Nutrition Badges */}
+      {/* Floating Nutrition Tags (Top Left) */}
       <div className="landscape-badges">
         <span className="floating-badge fb1">🥗 Calo chuẩn</span>
         <span className="floating-badge fb2">🥑 Dinh dưỡng AI</span>
       </div>
 
-      {/* Overlay Description Content */}
+      {/* Overlay Description Content matching sample */}
       <div className="landscape-content-overlay">
         <div className="landscape-brand-row">
-          <BrandLogo size={32} />
-          <h3 className="landscape-title">Nay Ăn Gì</h3>
+          <BrandLogo size={34} />
+          <div>
+            <h3 className="landscape-title">Nay Ăn Gì</h3>
+            <span className="landscape-subtitle-tag">TRỢ LÝ BỮA ĂN AI</span>
+          </div>
         </div>
         <p className="landscape-desc">
           {lang === 'vi' 
             ? 'Đăng nhập để nhận gợi ý món ngon chuẩn dinh dưỡng, theo dõi mục tiêu calo và quản lý thực đơn cá nhân.'
-            : 'Sign in to get personalized nutritional meal suggestions and track your daily health balance.'}
+            : 'Sign in to get personalized nutritional meal suggestions and track your daily calorie balance.'}
         </p>
       </div>
     </div>

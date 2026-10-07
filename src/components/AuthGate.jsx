@@ -240,7 +240,6 @@ export default function AuthGate() {
 
   // Mouse cursor flashlight tracking (Buổi tối / Dark mode: chuột rê tới đâu đèn rọi sáng)
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-  const [isPasswordHovered, setIsPasswordHovered] = useState(false);
 
   const handleCardMouseMove = (e) => {
     if (theme === 'light') return;
@@ -508,16 +507,14 @@ export default function AuthGate() {
                   </div>
                 </div>
 
-                {/* Password Input with FLASHLIGHT BEAM INTERACTION (Rê chuột tới đâu đèn pin sáng soi mật khẩu) */}
+                {/* Password Input with FLASHLIGHT BEAM INTERACTION (Chỉ sáng khi người dùng BẤM bật đèn pin) */}
                 <div className="form-group" style={{ margin: 0 }}>
                   <div 
-                    className={`auth-input-wrapper password-flashlight-field ${(showLoginPassword || isPasswordHovered) ? 'beam-on' : ''}`}
-                    onMouseEnter={() => setIsPasswordHovered(true)}
-                    onMouseLeave={() => setIsPasswordHovered(false)}
+                    className={`auth-input-wrapper password-flashlight-field ${showLoginPassword ? 'beam-on' : ''}`}
                   >
                     <Lock size={16} className="auth-input-icon" />
                     <input
-                      type={(showLoginPassword || isPasswordHovered) ? 'text' : 'password'}
+                      type={showLoginPassword ? 'text' : 'password'}
                       className="auth-text-input password-input-element"
                       placeholder={lang === 'vi' ? 'Nhập mật khẩu...' : 'Enter password...'}
                       value={loginPassword}
@@ -526,7 +523,7 @@ export default function AuthGate() {
                     />
                     <div className="flashlight-beam-light" />
                     <FlashlightButton 
-                      isOn={showLoginPassword || isPasswordHovered} 
+                      isOn={showLoginPassword} 
                       onToggle={() => setShowLoginPassword(!showLoginPassword)} 
                     />
                   </div>

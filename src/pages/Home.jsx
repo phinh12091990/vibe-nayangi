@@ -420,9 +420,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
 
   // Feature 3: 1-Click Order Link Generators
   const getShopeeFoodLink = (foodName) => {
-    // ShopeeFood web requires address selection and does not load results via query string directly on root.
-    // Foody.vn (ShopeeFood's listing partner) directly renders all restaurants in TP.HCM serving the dish:
-    return `https://www.foody.vn/ho-chi-minh/dia-diem?q=${encodeURIComponent(foodName)}`;
+    return `https://shopeefood.vn/ho-chi-minh/danh-sach-dia-diem-phuc-vu-giao-hang-tai-nha?search=${encodeURIComponent(foodName)}`;
   };
 
   const getGrabFoodLink = (foodName) => {
@@ -931,7 +929,7 @@ export default function HomePage({ onOpenProfile, onOpenCreateAccount, onOpenSwi
                           href={getShopeeFoodLink(result.food.name)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          title={lang === 'vi' ? "Tìm quán bán món này trên hệ thống ShopeeFood / Foody" : "Find dish on ShopeeFood"}
+                          title={lang === 'vi' ? "Tìm quán bán món này trên ShopeeFood (shopeefood.vn)" : "Find dish on ShopeeFood (shopeefood.vn)"}
                           style={{
                             display: 'flex',
                             alignItems: 'center',

@@ -67,12 +67,14 @@ const DEFAULT_GROUP = [
   { id: 'g3', name: 'Huy (Ăn thanh đạm/né bò)', allergies: ['Bò'], active: false }
 ];
 
+const ADMIN_INITIAL_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '';
+
 const ADMIN_ACCOUNT = {
   id: 'acc_admin',
   name: 'Quản Trị Viên',
   username: 'admin',
   email: 'admin@nayangi.vn',
-  password: 'admin',
+  password: ADMIN_INITIAL_PASSWORD,
   role: 'admin',
   avatar: '👑',
   age: 30,
@@ -94,16 +96,10 @@ function useStorageManager() {
       // Filter out stale mock acc_default
       userAccounts = saved.filter(a => a && a.id && a.id !== 'acc_default');
     }
-    // Always guarantee admin account exists with username: 'admin' and password: 'admin'
+    // Only initialize admin account if provided via environment variable or if user previously configured it
     const hasAdmin = userAccounts.some(a => a.id === 'acc_admin' || a.username === 'admin');
-    if (!hasAdmin) {
+    if (!hasAdmin && ADMIN_INITIAL_PASSWORD) {
       userAccounts = [ADMIN_ACCOUNT, ...userAccounts];
-    } else {
-      userAccounts = userAccounts.map(a => 
-        (a.id === 'acc_admin' || a.username === 'admin') 
-          ? { ...a, id: 'acc_admin', name: a.name || 'Quản Trị Viên', username: 'admin', password: 'admin', role: 'admin', avatar: a.avatar || '👑' } 
-          : a
-      );
     }
     return userAccounts;
   });
@@ -445,8 +441,8 @@ function useStorageManager() {
       return { success: false, message: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại Tên đăng nhập hoặc đăng ký tài khoản mới.' };
     }
 
-    // Strict password verification (admin: admin, users: their registered password)
-    const expectedPassword = (found.username === 'admin' || found.role === 'admin') ? 'admin' : (found.password || '');
+    // Password verification based on registered account password
+    const expectedPassword = found.password || '';
     if (expectedPassword !== pwd) {
       return { success: false, message: 'Mật khẩu không chính xác. Vui lòng kiểm tra lại.' };
     }

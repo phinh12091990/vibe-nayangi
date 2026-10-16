@@ -108,16 +108,21 @@ export async function initDbSchema() {
       );
     `);
 
-    // Ensure Master Admin account exists
-    await client.query(`
-      INSERT INTO accounts (
-        id, username, name, email, password, role, avatar, age, gender, height, weight, activity, goal, allergies, created_at
-      )
-      VALUES (
-        'acc_admin', 'admin', 'Quản Trị Viên', 'admin@nayangi.vn', 'admin', 'admin', '👑', 30, 'Nam', 172, 68, 'Văn phòng (Ít vận động)', 'Cân bằng', '[]'::jsonb, 1710000000000
-      )
-      ON CONFLICT (username) DO NOTHING;
-    `);
+    // Ensure Master Admin account exists (configured via environment variables or generated safely)
+    const adminUser = process.env.ADMIN_USERNAME || 'admin';
+    const adminPass = process.env.ADMIN_PASSWORD;
+    
+    if (adminPass) {
+      await client.query(`
+        INSERT INTO accounts (
+          id, username, name, email, password, role, avatar, age, gender, height, weight, activity, goal, allergies, created_at
+        )
+        VALUES (
+          'acc_admin', $1, 'Quản Trị Viên', 'admin@nayangi.vn', $2, 'admin', '👑', 30, 'Nam', 172, 68, 'Văn phòng (Ít vận động)', 'Cân bằng', '[]'::jsonb, 1710000000000
+        )
+        ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password;
+      `, [adminUser, adminPass]);
+    }
 
     await client.query('COMMIT');
     console.log('✅ PostgreSQL Schema initialized successfully.');

@@ -555,8 +555,8 @@ export default function AuthGate() {
                     <HelpCircle size={14} color="#f59e0b" />
                     <span>
                       {lang === 'vi' 
-                        ? 'Tài khoản Quản trị mẫu: admin / admin hoặc đăng ký tài khoản mới bên dưới.'
-                        : 'Default Admin: admin / admin or register a new profile below.'}
+                        ? 'Vui lòng sử dụng tài khoản cá nhân đã đăng ký hoặc bấm "Đăng ký ngay" bên dưới để tạo tài khoản mới.'
+                        : 'Please use your registered account or click "Register now" below to create a new profile.'}
                     </span>
                   </div>
                 )}

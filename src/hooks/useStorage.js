@@ -226,9 +226,14 @@ function useStorageManager() {
         setDbName(status.postgres.database || 'PostgreSQL');
         // Fetch accounts from PostgreSQL
         api.fetchRemoteAccounts().then(remoteAccounts => {
-          if (Array.isArray(remoteAccounts) && remoteAccounts.length > 0) {
             setAccounts(prev => {
-              const combined = [...remoteAccounts];
+              const combined = remoteAccounts.map(rem => {
+                const existing = prev.find(p => p.username === rem.username);
+                return {
+                  ...rem,
+                  password: existing?.password || ''
+                };
+              });
               // Keep any existing not yet in DB
               for (const localAcc of prev) {
                 if (!combined.some(r => r.username === localAcc.username)) {
@@ -237,7 +242,6 @@ function useStorageManager() {
               }
               return combined;
             });
-          }
         });
         // Fetch foods from PostgreSQL
         api.fetchRemoteFoods().then(remoteFoods => {

@@ -40,7 +40,8 @@ app.get('/api/accounts', async (req, res) => {
       username: r.username,
       name: r.name,
       email: r.email,
-      password: r.password,
+      // Exclude raw password from public endpoint for security compliance
+      hasPassword: Boolean(r.password),
       role: r.role,
       avatar: r.avatar,
       age: Number(r.age),

@@ -136,7 +136,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
   };
 
   // Submit Create Account
-  const handleCreateSubmit = (e) => {
+  const handleCreateSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     if (!createForm.name.trim()) {
@@ -149,7 +149,7 @@ export default function AccountModal({ isOpen, onClose, initialTab = 'create' })
     }
 
     try {
-      const newAcc = createAccount({
+      const newAcc = await createAccount({
         ...createForm,
         name: createForm.name.trim(),
         username: createForm.username.trim() || `user_${Date.now().toString().slice(-4)}`,

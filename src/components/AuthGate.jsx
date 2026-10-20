@@ -295,7 +295,7 @@ export default function AuthGate() {
     }
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -333,7 +333,7 @@ export default function AuthGate() {
     }
 
     try {
-      createAccount({
+      await createAccount({
         ...regForm,
         name: regForm.name.trim(),
         username: uname,
@@ -349,7 +349,7 @@ export default function AuthGate() {
   };
 
   // Submit Login credentials
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     const uname = loginUsername.trim();
@@ -363,43 +363,35 @@ export default function AuthGate() {
       return;
     }
 
-    // Check credentials first
-    const found = accounts.find(a => 
-      (a.username || '').toLowerCase() === uname.toLowerCase() || 
-      (a.name || '').toLowerCase() === uname.toLowerCase() ||
-      (a.email || '').toLowerCase() === uname.toLowerCase()
-    );
-
-    if (!found || found.password !== pwd) {
-      setErrorMsg(lang === 'vi' ? 'Tên đăng nhập hoặc mật khẩu không chính xác.' : 'Invalid username or password.');
-      return;
-    }
-
-    // If credentials are valid but CAPTCHA not verified yet -> Prompt Food CAPTCHA!
+    // Require interactive Food CAPTCHA first for security protection
     if (!isCaptchaVerified) {
       setShowCaptcha(true);
       return;
     }
 
-    // Both credentials & CAPTCHA verified -> Login!
-    const res = loginWithCredentials(uname, pwd);
+    // Server-side authentication
+    const res = await loginWithCredentials(uname, pwd);
     if (!res.success) {
-      setErrorMsg(res.message);
+      setErrorMsg(res.message || (lang === 'vi' ? 'Tên đăng nhập hoặc mật khẩu không chính xác.' : 'Invalid username or password.'));
+      setIsCaptchaVerified(false);
     } else {
       triggerConfetti();
     }
   };
 
   // CAPTCHA solved successfully
-  const handleCaptchaSuccess = () => {
+  const handleCaptchaSuccess = async () => {
     setIsCaptchaVerified(true);
     setShowCaptcha(false);
     const uname = loginUsername.trim();
     const pwd = loginPassword.trim();
     if (uname && pwd) {
-      const res = loginWithCredentials(uname, pwd);
+      const res = await loginWithCredentials(uname, pwd);
       if (res.success) {
         triggerConfetti();
+      } else {
+        setErrorMsg(res.message || (lang === 'vi' ? 'Tên đăng nhập hoặc mật khẩu không chính xác.' : 'Invalid username or password.'));
+        setIsCaptchaVerified(false);
       }
     }
   };

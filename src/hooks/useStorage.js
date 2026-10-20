@@ -226,15 +226,10 @@ function useStorageManager() {
         setDbName(status.postgres.database || 'PostgreSQL');
         // Fetch accounts from PostgreSQL
         api.fetchRemoteAccounts().then(remoteAccounts => {
+          if (Array.isArray(remoteAccounts) && remoteAccounts.length > 0) {
             setAccounts(prev => {
-              const combined = remoteAccounts.map(rem => {
-                const existing = prev.find(p => p.username === rem.username);
-                return {
-                  ...rem,
-                  password: existing?.password || ''
-                };
-              });
-              // Keep any existing not yet in DB
+              const combined = [...remoteAccounts];
+              // Keep any local that haven't synced yet
               for (const localAcc of prev) {
                 if (!combined.some(r => r.username === localAcc.username)) {
                   combined.push(localAcc);
@@ -242,6 +237,7 @@ function useStorageManager() {
               }
               return combined;
             });
+          }
         });
         // Fetch foods from PostgreSQL
         api.fetchRemoteFoods().then(remoteFoods => {
@@ -349,7 +345,7 @@ function useStorageManager() {
     updateAccount(currentAccountId, data);
   };
 
-  const createAccount = (accountData) => {
+  const createAccount = async (accountData) => {
     const rawUsername = (accountData.username || '').trim().toLowerCase().replace(/\s+/g, '_');
     const username = rawUsername || `user_${Date.now().toString().slice(-4)}`;
 
@@ -385,10 +381,29 @@ function useStorageManager() {
       createdAt: Date.now()
     };
 
+    // Try server-side registration first if available
+    try {
+      const regRes = await api.register(newAccount);
+      if (regRes && regRes.success && regRes.account) {
+        const serverAcc = regRes.account;
+        setAccounts(prev => [...prev.filter(a => a.id !== serverAcc.id && a.username !== serverAcc.username), serverAcc]);
+        setCurrentAccountId(serverAcc.id);
+        setAllergies(serverAcc.allergies || []);
+        return serverAcc;
+      }
+      if (regRes && !regRes.success && !regRes.networkError) {
+        throw new Error(regRes.error || 'Đăng ký tài khoản không thành công.');
+      }
+    } catch (err) {
+      if (err.message && !err.message.includes('fetch')) {
+        throw err;
+      }
+    }
+
+    // Fallback: Local registration for standalone/offline mode
     setAccounts(prev => [...prev, newAccount]);
     setCurrentAccountId(newId);
     setAllergies(newAccount.allergies);
-    api.saveRemoteAccount(newAccount).catch(() => {});
     return newAccount;
   };
 
@@ -424,7 +439,7 @@ function useStorageManager() {
     return false;
   };
 
-  const loginWithCredentials = (usernameOrEmail, password = '') => {
+  const loginWithCredentials = async (usernameOrEmail, password = '') => {
     const term = (usernameOrEmail || '').trim().toLowerCase();
     const pwd = (password || '').trim();
 
@@ -435,6 +450,31 @@ function useStorageManager() {
       return { success: false, message: 'Vui lòng nhập Mật khẩu bảo mật để đăng nhập.' };
     }
 
+    // 1. Try server-side authentication first
+    const remoteRes = await api.login(term, pwd);
+    if (remoteRes && remoteRes.success && remoteRes.account) {
+      const acc = remoteRes.account;
+      setAccounts(prev => {
+        const filtered = prev.filter(a => a.id !== acc.id && a.username !== acc.username);
+        return [acc, ...filtered];
+      });
+      setCurrentAccountId(acc.id);
+      setAllergies(Array.isArray(acc.allergies) ? acc.allergies : []);
+      // Refresh accounts list from server with newly acquired JWT
+      api.fetchRemoteAccounts().then(remAccounts => {
+        if (Array.isArray(remAccounts) && remAccounts.length > 0) {
+          setAccounts(remAccounts);
+        }
+      });
+      return { success: true, account: acc };
+    }
+
+    // If server actively rejected credentials (invalid password or user not found)
+    if (remoteRes && !remoteRes.success && !remoteRes.networkError) {
+      return { success: false, message: remoteRes.error || 'Tên đăng nhập hoặc mật khẩu không chính xác.' };
+    }
+
+    // 2. Fallback: Local authentication for standalone/offline mode
     const found = accounts.find(a => 
       (a.username || '').toLowerCase() === term || 
       (a.name || '').toLowerCase() === term ||
@@ -445,9 +485,8 @@ function useStorageManager() {
       return { success: false, message: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại Tên đăng nhập hoặc đăng ký tài khoản mới.' };
     }
 
-    // Password verification based on registered account password
     const expectedPassword = found.password || '';
-    if (expectedPassword !== pwd) {
+    if (expectedPassword && expectedPassword !== pwd) {
       return { success: false, message: 'Mật khẩu không chính xác. Vui lòng kiểm tra lại.' };
     }
 
@@ -459,6 +498,7 @@ function useStorageManager() {
   const logout = () => {
     setCurrentAccountId(null);
     localStorage.removeItem('nayangi_current_account_id');
+    api.clearAuthToken();
   };
 
   const createDemoAccount = () => {

@@ -1,5 +1,6 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
+import { hashPassword } from './auth.js';
 dotenv.config();
 
 const { Pool } = pg;
@@ -113,6 +114,7 @@ export async function initDbSchema() {
     const adminPass = process.env.ADMIN_PASSWORD;
     
     if (adminPass) {
+      const secureHashedPass = hashPassword(adminPass);
       await client.query(`
         INSERT INTO accounts (
           id, username, name, email, password, role, avatar, age, gender, height, weight, activity, goal, allergies, created_at
@@ -121,7 +123,7 @@ export async function initDbSchema() {
           'acc_admin', $1, 'Quản Trị Viên', 'admin@nayangi.vn', $2, 'admin', '👑', 30, 'Nam', 172, 68, 'Văn phòng (Ít vận động)', 'Cân bằng', '[]'::jsonb, 1710000000000
         )
         ON CONFLICT (username) DO UPDATE SET password = EXCLUDED.password;
-      `, [adminUser, adminPass]);
+      `, [adminUser, secureHashedPass]);
     }
 
     await client.query('COMMIT');
